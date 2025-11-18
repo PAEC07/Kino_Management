@@ -10,7 +10,7 @@ public class KinoManager {
         //TODO: Methoden zur Main hinzufügen
     }
 
-    public logError(Exception e) {
+    public void logError(Exception e) {
         System.out.println(e.toString());
     }
 }
