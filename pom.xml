@@ -1,8 +1,57 @@
+<!-- Diese Datei gehört zum Java Projekt der Gruppe 2 ITFO1 direkter Ansprechpartner: Paul -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.STDM-MS</groupId>
-  <artifactId>kino-verwaltungsmanagement</artifactId>
+  
+  <!-- Standart Werte zur definition des Projektes -->
+  <groupId>org.stdmms</groupId>
+  <artifactId>KinoManager</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>Kino Verwaltung</name>
   <description>Eine STDM Aufgabe</description>
+
+  <!-- Definierung der Java Version und Zeichenformat für das Projekt -->
+  <properties>
+    <maven.compiler.source>25</maven.compiler.source>
+    <maven.compiler.target>25</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <!-- Nutzt den Xerial JDBC Connector, der auch in älterer Version im Unterricht verwendet wurde. Hier wird er automatisch integriert. -->
+  <!-- Integration hinzugefügt von: NB -->
+  <dependencies>
+
+    <dependency>
+      <groupId>org.xerial</groupId> <!-- https://central.sonatype.com/artifact/org.xerial/sqlite-jdbc -->
+      <artifactId>sqlite-jdbc</artifactId>
+      <version>3.51.0.0</version>
+      <!-- <scope>provided</scope> -->
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.gson</groupId> <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+      <artifactId>gson</artifactId>
+      <version>2.10.1</version>
+      <!-- <scope>provided</scope> -->
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId> <!-- https://spring.io/guides/gs/spring-boot -->
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  <dependencies>
+
+  <!-- This will automatically place the sqlitejdbc library in the /target folder of your project, creating a functional execution environment. 
+  When packaging the resulting app, simply include the library in the distribution bundle. -->
+  <plugin>
+    <groupId>org.graalvm.buildtools</groupId> <!-- https://graalvm.github.io/native-build-tools/latest/index.html -->
+    <artifactId>native-maven-plugin</artifactId>
+    <configuration>
+        <buildArgs>
+            <buildArg>-Dorg.sqlite.lib.exportPath=${project.build.directory}</buildArg>
+        </buildArgs>
+    </configuration>
+  </plugin>
+
 </project>
