@@ -36,7 +36,8 @@ public class Connector {
                 conn = DriverManager.getConnection("jdbc:sqlite:kino.db");
             }  
         } catch (Exception e) {
-            logError(e);
+            KinoManager.logError(e);
         }
+        return conn;
     }
 }
