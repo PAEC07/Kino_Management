@@ -45,7 +45,7 @@
   When packaging the resulting app, simply include the library in the distribution bundle. #
   WARN: This configuration is only necessary when creating a native image with GraalVM.
   https://graalvm.github.io/native-build-tools/latest/index.html -->
-  <plugin>
+  <!-- <plugin>
     <groupId>org.graalvm.buildtools</groupId>
     <artifactId>native-maven-plugin</artifactId>
     <configuration>
@@ -53,6 +53,6 @@
             <buildArg>-Dorg.sqlite.lib.exportPath=${project.build.directory}</buildArg>
         </buildArgs>
     </configuration>
-  </plugin>
+  </plugin> -->
 
 </project>
