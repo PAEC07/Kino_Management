@@ -36,15 +36,16 @@
     <dependency>
       <groupId>org.springframework.boot</groupId> <!-- https://spring.io/guides/gs/spring-boot -->
       <artifactId>spring-boot-starter-test</artifactId>
+      <version>4.0.0-RC2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
   <!-- This will automatically place the sqlitejdbc library in the /target folder of your project, creating a functional execution environment. 
   When packaging the resulting app, simply include the library in the distribution bundle. #
-  WARN: This configuration is only necessary when creating a native image with GraalVM. Needs a dependency installed
+  WARN: This configuration is only necessary when creating a native image with GraalVM.
   https://graalvm.github.io/native-build-tools/latest/index.html -->
-  <!-- <plugin>
+  <plugin>
     <groupId>org.graalvm.buildtools</groupId>
     <artifactId>native-maven-plugin</artifactId>
     <configuration>
@@ -52,6 +53,6 @@
             <buildArg>-Dorg.sqlite.lib.exportPath=${project.build.directory}</buildArg>
         </buildArgs>
     </configuration>
-  </plugin> -->
+  </plugin>
 
 </project>
