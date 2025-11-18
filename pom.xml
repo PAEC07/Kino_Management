@@ -18,6 +18,7 @@
 
   <!-- Nutzt den Xerial JDBC Connector, der auch in älterer Version im Unterricht verwendet wurde. Hier wird er automatisch integriert. -->
   <!-- Integration hinzugefügt von: NB -->
+  <dependencies>
     <dependency>
       <groupId>org.xerial</groupId> <!-- https://central.sonatype.com/artifact/org.xerial/sqlite-jdbc -->
       <artifactId>sqlite-jdbc</artifactId>
@@ -37,6 +38,7 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+  </dependencies>
 
   <!-- This will automatically place the sqlitejdbc library in the /target folder of your project, creating a functional execution environment. 
   When packaging the resulting app, simply include the library in the distribution bundle. -->
