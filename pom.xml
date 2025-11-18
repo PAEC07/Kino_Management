@@ -41,15 +41,17 @@
   </dependencies>
 
   <!-- This will automatically place the sqlitejdbc library in the /target folder of your project, creating a functional execution environment. 
-  When packaging the resulting app, simply include the library in the distribution bundle. -->
-  <plugin>
-    <groupId>org.graalvm.buildtools</groupId> <!-- https://graalvm.github.io/native-build-tools/latest/index.html -->
+  When packaging the resulting app, simply include the library in the distribution bundle. #
+  WARN: This configuration is only necessary when creating a native image with GraalVM. Needs a dependency installed
+  https://graalvm.github.io/native-build-tools/latest/index.html -->
+  <!-- <plugin>
+    <groupId>org.graalvm.buildtools</groupId>
     <artifactId>native-maven-plugin</artifactId>
     <configuration>
         <buildArgs>
             <buildArg>-Dorg.sqlite.lib.exportPath=${project.build.directory}</buildArg>
         </buildArgs>
     </configuration>
-  </plugin>
+  </plugin> -->
 
 </project>
