@@ -4,7 +4,6 @@ package org.stdmms.kinomanager;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import org.stdmms.kinomanager.KinoManager;
 
 
 // NB 18.11.2025
@@ -12,10 +11,13 @@ public class Connector {
 
     private String username;
     private String password;
+    private String dblocation;
+    private Connection conn;
 
-    public Connector(String username, String password) {
+    public Connector(String dblocation, String username, String password) {
         this.username = username;
         this.password = password;
+        this.dblocation = dblocation;
         connectionService();
     }
 
@@ -27,17 +29,20 @@ public class Connector {
     */
     //TODO: Verbindungsaufbau testen
     private Connection connectionService() {
-        Connection conn = null;
         try {
             // Class.forName("org.sqlite.JDBC");
-            if (username != null) {
-                conn = DriverManager.getConnection("jdbc:sqlite:kino.db", username, password);
+            if (username.isEmpty() || password.isEmpty()) {
+                conn = DriverManager.getConnection(dblocation);
             } else {
-                conn = DriverManager.getConnection("jdbc:sqlite:kino.db");
+                conn = DriverManager.getConnection(dblocation, username, password);
             }  
         } catch (Exception e) {
             KinoManager.logError(e);
         }
+        return conn;
+    }
+
+    public Connection getConnection() {
         return conn;
     }
 }

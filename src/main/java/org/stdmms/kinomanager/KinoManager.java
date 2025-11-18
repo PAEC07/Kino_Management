@@ -5,7 +5,14 @@ package org.stdmms.kinomanager;
 public class KinoManager {
     
     public static void main(String[] args) {
-        //TODO: Methoden zur Main hinzufügen
+        //Config auslesen
+        ConfigReader configReader = new ConfigReader();
+        //Mit den Config Daten eine Verbindung zur DB herstellen
+        Connector connector = new Connector(configReader.getDatabaseUrl(),
+                                            configReader.getDatabaseUsername(),
+                                            configReader.getDatabasePassword());
+        //TODO: Weiteren Programmablauf hier implementieren
+        //connector.getConnection();
     }
 
     public static void logError(Exception e) {

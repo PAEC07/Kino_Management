@@ -39,6 +39,13 @@
       <version>4.0.0-RC2</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>2.5</version>
+    </dependency>
+    
   </dependencies>
 
   <!-- This will automatically place the sqlitejdbc library in the /target folder of your project, creating a functional execution environment. 
