@@ -7,13 +7,15 @@ public class KinoManager {
     
     public static void main(String[] args) {
         //Config auslesen
-        //ConfigReader configReader = new ConfigReader();
+        ConfigReader configReader = new ConfigReader();
         //Mit den Config Daten eine Verbindung zur DB herstellen
-        Connector connector = new Connector("jdbc:sqlite:kino-v1.db", "", "");
+        Connector connector = new Connector(configReader.getDbUrl(),
+                                            configReader.getDbUsername(),
+                                            configReader.getDbPassword());
         //TODO: Weiteren Programmablauf hier implementieren
         System.out.println("Verbindung zur Datenbank hergestellt.");
         Connection con = connector.getConnection();
-        String sqlcmd = "SELECT * FROM Accounts;";
+        String sqlcmd = "SELECT Email FROM Accounts;";
         System.out.println("Abfrage wird ausgeführt: " + sqlcmd);
         try {
             Statement state = con.createStatement();
