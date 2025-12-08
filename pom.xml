@@ -1,65 +1,73 @@
 <!-- Diese Datei gehört zum Java Projekt der Gruppe 2 ITFO1 direkter Ansprechpartner: Paul -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   
-  <!-- Standart Werte zur definition des Projektes -->
-  <groupId>org.stdmms</groupId>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.stdmms.kinomanager</groupId>
   <artifactId>KinoManager</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>Kino Verwaltung</name>
   <description>Eine STDM Aufgabe</description>
 
-  <!-- Definierung der Java Version und Zeichenformat für das Projekt -->
   <properties>
-    <maven.compiler.source>25</maven.compiler.source>
-    <maven.compiler.target>25</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
-  <!-- Nutzt den Xerial JDBC Connector, der auch in älterer Version im Unterricht verwendet wurde. Hier wird er automatisch integriert. -->
-  <!-- Integration hinzugefügt von: NB -->
   <dependencies>
+
+    <!-- SQLite JDBC -->
     <dependency>
-      <groupId>org.xerial</groupId> <!-- https://central.sonatype.com/artifact/org.xerial/sqlite-jdbc -->
+      <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
       <version>3.51.0.0</version>
-      <!-- <scope>provided</scope> -->
     </dependency>
 
+    <!-- Gson -->
     <dependency>
-      <groupId>com.google.code.gson</groupId> <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+      <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.10.1</version>
-      <!-- <scope>provided</scope> -->
     </dependency>
 
-    <dependency>
-      <groupId>org.springframework.boot</groupId> <!-- https://spring.io/guides/gs/spring-boot -->
-      <artifactId>spring-boot-starter-test</artifactId>
-      <version>4.0.0-RC2</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>2.5</version>
-    </dependency>
-    
   </dependencies>
 
-  <!-- This will automatically place the sqlitejdbc library in the /target folder of your project, creating a functional execution environment. 
-  When packaging the resulting app, simply include the library in the distribution bundle. #
-  WARN: This configuration is only necessary when creating a native image with GraalVM.
-  https://graalvm.github.io/native-build-tools/latest/index.html -->
-  <!-- <plugin>
-    <groupId>org.graalvm.buildtools</groupId>
-    <artifactId>native-maven-plugin</artifactId>
-    <configuration>
-        <buildArgs>
-            <buildArg>-Dorg.sqlite.lib.exportPath=${project.build.directory}</buildArg>
-        </buildArgs>
-    </configuration>
-  </plugin> -->
+  <build>
+    <plugins>
+
+      <!-- Ausführbares JAR mit Main-Class -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.2</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.stdmms.kinomanager.KinoManager</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <!-- FAT JAR (inkl. sqlite-jdbc einbetten!) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.4.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
 
 </project>

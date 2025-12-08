@@ -30,9 +30,13 @@ public class Connector {
     //TODO: Verbindungsaufbau testen
     private Connection connectionService() {
         try {
-            // Class.forName("org.sqlite.JDBC");
+            Class.forName("org.sqlite.JDBC");
             if (username.isEmpty() || password.isEmpty()) {
-                conn = DriverManager.getConnection(dblocation);
+                try {
+                    conn = DriverManager.getConnection(dblocation);
+                } catch (Exception e) {
+                    System.out.println(e.toString());
+                }
             } else {
                 conn = DriverManager.getConnection(dblocation, username, password);
             }  

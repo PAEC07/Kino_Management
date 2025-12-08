@@ -1,5 +1,5 @@
 # Setting up database connection
 database:
-  url: "jdbc:sqlite:kino.db"
-  username: "admin"
-  password: "12345"
+  url: "jdbc:sqlite:kino-v1.db"
+  username: ""
+  password: ""

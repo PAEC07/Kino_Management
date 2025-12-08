@@ -1,3 +1,4 @@
+/*
 package org.stdmms.kinomanager;
 import java.io.InputStream;
 import org.yaml.snakeyaml.Yaml;
@@ -34,4 +35,4 @@ public class ConfigReader {
     public String getDatabasePassword() {
         return config.get("password");
     }
-}
+}*/
