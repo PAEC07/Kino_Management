@@ -1,7 +1,10 @@
 package de.kinoapplikation.kino.entity;
 
-import jakarta.persistence.*;
-import java.util.List;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 /**
  * Entität für Sitzplätze im Kino-System.
@@ -20,10 +23,10 @@ public class Sitzplatz {
     private String bereich;
 
     @ManyToOne
-    private Saal saalId;
+    private Saal saal;
 
     @ManyToOne
-    private SitzTyp sitzTypId;
+    private SitzTyp sitzTyp;
 
     // Getter & Setter
     public Long getId() {
@@ -50,16 +53,16 @@ public class Sitzplatz {
     public void setBereich(String bereich) {
         this.bereich = bereich;
     }
-    public Saal getSaalId() {
-        return saalId;
+    public Saal getSaal() {
+        return saal;
     }
-    public void setSaalId(Saal saalId) {
-        this.saalId = saalId;
+    public void setSaalId(Saal Saal) {
+        this.saal = Saal;
     }
-    public SitzTyp getSitzTypId() {
-        return sitzTypId;
+    public SitzTyp getSitzTyp() {
+        return sitzTyp;
     }
-    public void setSitzTypId(SitzTyp sitzTypId) {
-        this.sitzTypId = sitzTypId;
+    public void setSitzTyp(SitzTyp sitzTyp1) {
+        this.sitzTyp = sitzTyp1;
     }
 }

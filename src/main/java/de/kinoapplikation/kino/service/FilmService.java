@@ -21,7 +21,7 @@ public class FilmService {
 
     public List<Film> filterByGenre(String genre) {
         return filmRepo.findAll().stream()
-                .filter(f -> f.getGenre().equalsIgnoreCase(genre))
+                .filter(f -> f.getGenre().equalsIgnoreCase(genre))//Unvollständige änderung - ich weis nicht ob das mit rein muss
                 .toList();
     }
 }

@@ -1,7 +1,13 @@
 package de.kinoapplikation.kino.entity;
 
-import jakarta.persistence.*;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 /**
  * Entität für Filme im Kino-System.
@@ -10,7 +16,7 @@ import java.util.List;
  */
 
 @Entity
-public class Filme {
+public class Film {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +28,7 @@ public class Filme {
     private String kategorie;
     private Long basispreis;
 
-    @OneToMany(mappedBy = "filme", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "film", cascade = CascadeType.ALL)
     private List<Vorstellung> vorstellungen;
 
     // Getter & Setter

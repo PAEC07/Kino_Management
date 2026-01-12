@@ -12,7 +12,7 @@ import jakarta.persistence.*;
  */
 
 @Entity
-public class Buchungen {
+public class Buchung {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 

@@ -1,7 +1,10 @@
 package de.kinoapplikation.kino.entity;
 
-import java.time.LocalDateTime;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 /**
  * Entität für Tickets im Kino-System.
@@ -14,16 +17,16 @@ public class Tickets {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ticketId;
+    private int ticketId;
 
     @ManyToOne
-    private Buchungen buchungsId;
+    private Buchung buchung;
 
     @ManyToOne
     private Vorstellung vorstellungId;
 
     @ManyToOne
-    private Accounts accountId;
+    private Benutzer benutzer;
 
     @ManyToOne
     private Discounts discountId;
@@ -35,45 +38,59 @@ public class Tickets {
     private int sitzplatzId;
 
     // Getter & Setter
-    public Long getId() {
+
+    public int getTicketId() {
         return ticketId;
     }
-    public void setId(Long ticketId) {
+
+    public void setTicketId(int ticketId) {
         this.ticketId = ticketId;
     }
-    public Buchungen getBuchungsId() {
-        return buchungsId;
+
+    public Buchung getBuchung() {
+        return buchung;
     }
-    public void setBuchungsId(Buchungen buchungsId) {
-        this.buchungsId = buchungsId;
+
+    public void setBuchung(Buchung buchung) {
+        this.buchung = buchung;
     }
+
     public Vorstellung getVorstellungId() {
         return vorstellungId;
     }
-    public void setVorstellungId(Vorstellung vorstellungId) {       
+
+    public void setVorstellungId(Vorstellung vorstellungId) {
         this.vorstellungId = vorstellungId;
     }
-    public Accounts getAccountId() {
-        return accountId;
+
+    public Benutzer getBenutzer() {
+        return benutzer;
     }
-    public void setAccountId(Accounts accountId) {
-        this.accountId = accountId;
+
+    public void setBenutzer(Benutzer benutzer) {
+        this.benutzer = benutzer;
     }
+
     public Discounts getDiscountId() {
         return discountId;
     }
+
     public void setDiscountId(Discounts discountId) {
         this.discountId = discountId;
     }
+
     public PreisZuschlag getPreisZuschlagId() {
         return preisZuschlagId;
     }
+
     public void setPreisZuschlagId(PreisZuschlag preisZuschlagId) {
         this.preisZuschlagId = preisZuschlagId;
     }
+
     public int getSitzplatzId() {
         return sitzplatzId;
     }
+
     public void setSitzplatzId(int sitzplatzId) {
         this.sitzplatzId = sitzplatzId;
     }

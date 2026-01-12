@@ -1,7 +1,13 @@
 package de.kinoapplikation.kino.entity;
 
-import jakarta.persistence.*;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 /**
  * Entität für Säle im Kino-System.
@@ -40,5 +46,12 @@ public class Saal {
     }
     public void setMaxReihen(int maxReihen) {
         MaxReihen = maxReihen;
+    }
+
+    public List<Vorstellung> getVorstellungen() {
+        return vorstellungen;
+    }
+    public void setVorstellungen(List<Vorstellung> vorstellungen) {
+        this.vorstellungen = vorstellungen;
     }
 }

@@ -1,17 +1,19 @@
 package de.kinoapplikation.kino.service;
 
 
-import de.kinoapplikation.kino.entity.Benutzer;
-import de.kinoapplikation.kino.repository.BenutzerRepository;
-import org.springframework.stereotype.Service;
 import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import de.kinoapplikation.kino.entity.Benutzer;
+import de.kinoapplikation.kino.repository.I_BenutzerRepository;
 
 @Service
 public class BenutzerService {
 
-    private final BenutzerRepository benutzerRepo;
+    private final I_BenutzerRepository benutzerRepo;
 
-    public BenutzerService(BenutzerRepository benutzerRepo) {
+    public BenutzerService(I_BenutzerRepository benutzerRepo) {
         this.benutzerRepo = benutzerRepo;
     }
 
@@ -21,7 +23,7 @@ public class BenutzerService {
 
     public Benutzer datenAendern(Long id, Benutzer updated) {
         return benutzerRepo.findById(id).map(b -> {
-            b.setUsername(updated.getUsername());
+            b.setBenutzername(updated.getBenutzername());
             b.setEmail(updated.getEmail());
             b.setPassword(updated.getPassword());
             return benutzerRepo.save(b);

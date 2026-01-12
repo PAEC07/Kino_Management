@@ -9,7 +9,7 @@ import jakarta.persistence.*;
  */
 
 @Entity
-public class Accounts {
+public class Benutzer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 

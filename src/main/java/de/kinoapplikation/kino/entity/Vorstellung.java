@@ -1,8 +1,12 @@
 package de.kinoapplikation.kino.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 /**
  * Entität für Vorstellungen im Kino-System.
@@ -11,7 +15,7 @@ import java.util.List;
  */
 
 @Entity
-public class Vorstellungen {
+public class Vorstellung {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long vorstellungId;
