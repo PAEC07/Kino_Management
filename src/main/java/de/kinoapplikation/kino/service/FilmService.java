@@ -1,10 +1,12 @@
 package de.kinoapplikation.kino.service;
 
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import de.kinoapplikation.kino.entity.Film;
 import de.kinoapplikation.kino.repository.FilmRepository;
-import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class FilmService {
@@ -21,7 +23,7 @@ public class FilmService {
 
     public List<Film> filterByGenre(String genre) {
         return filmRepo.findAll().stream()
-                .filter(f -> f.getGenre().equalsIgnoreCase(genre))//Unvollständige änderung - ich weis nicht ob das mit rein muss
+                .filter(f -> f.getKategorie().equalsIgnoreCase(genre))
                 .toList();
     }
 }
