@@ -28,7 +28,7 @@ public class Film {
     private String kategorie;
     private Long basispreis;
 
-    @OneToMany(mappedBy = "film", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "filmid", cascade = CascadeType.ALL)
     private List<Vorstellung> vorstellungen;
 
     // Getter & Setter

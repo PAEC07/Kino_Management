@@ -35,7 +35,7 @@ public class Tickets {
     private PreisZuschlag preisZuschlagId;
 
     @ManyToOne
-    private int sitzplatzId;
+    private Sitzplatz sitzplatz;
 
     // Getter & Setter
 
@@ -87,11 +87,11 @@ public class Tickets {
         this.preisZuschlagId = preisZuschlagId;
     }
 
-    public int getSitzplatzId() {
-        return sitzplatzId;
+    public Sitzplatz getSitzplatzId() {
+        return sitzplatz;
     }
 
-    public void setSitzplatzId(int sitzplatzId) {
-        this.sitzplatzId = sitzplatzId;
+    public void setSitzplatzId(Sitzplatz sitzplatz1) {
+        this.sitzplatz = sitzplatz1;
     }
 }

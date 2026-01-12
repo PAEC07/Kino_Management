@@ -1,14 +1,12 @@
 package de.kinoapplikation.kino.repository;
 
-
 import de.kinoapplikation.kino.entity.Vorstellung;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-import java.time.LocalDateTime;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import java.util.List;
 
-@Repository
 public interface VorstellungRepository extends JpaRepository<Vorstellung, Long> {
-    List<Vorstellung> findByFilmIdAndZeitAfter(Long filmId, LocalDateTime zeit);
+    @Query("select v from Vorstellung v where v.filmId.filmId = :filmId")
+    List<Vorstellung> findByFilmIdValue(@Param("filmId") Long filmId);
 }
