@@ -6,14 +6,14 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import de.kinoapplikation.kino.entity.Benutzer;
-import de.kinoapplikation.kino.repository.I_BenutzerRepository;
+import de.kinoapplikation.kino.repository.BenutzerRepository;
 
 @Service
 public class BenutzerService {
 
-    private final I_BenutzerRepository benutzerRepo;
+    private final BenutzerRepository benutzerRepo;
 
-    public BenutzerService(I_BenutzerRepository benutzerRepo) {
+    public BenutzerService(BenutzerRepository benutzerRepo) {
         this.benutzerRepo = benutzerRepo;
     }
 
