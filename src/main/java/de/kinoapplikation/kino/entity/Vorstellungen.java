@@ -4,6 +4,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Entität für Vorstellungen im Kino-System.
+ * Enthält Informationen über die Vorstellung-ID, den Film, den Saal, den Darstellungstyp und das Datum.
+ * @author Niklas
+ */
+
 @Entity
 public class Vorstellungen {
     @Id

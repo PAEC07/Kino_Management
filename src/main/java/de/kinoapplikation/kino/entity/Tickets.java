@@ -1,8 +1,14 @@
 package de.kinoapplikation.kino.entity;
 
 import java.time.LocalDateTime;
-
 import jakarta.persistence.*;
+
+/**
+ * Entität für Tickets im Kino-System.
+ * Verknüpft Buchungen, Vorstellungen, Accounts, Discounts, PreisZuschläge und Sitzplätze.
+ * @author Niklas
+ */
+
 @Entity
 public class Tickets {
 

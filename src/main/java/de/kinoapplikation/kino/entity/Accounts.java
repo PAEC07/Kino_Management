@@ -2,6 +2,12 @@ package de.kinoapplikation.kino.entity;
 
 import jakarta.persistence.*;
 
+/**
+ * Entität für Accounts im Kino-System.
+ * Enthält Informationen über Benutzerkonten wie Benutzername, Passwort und E-Mail.
+ * @author Niklas
+ */
+
 @Entity
 public class Accounts {
     @Id

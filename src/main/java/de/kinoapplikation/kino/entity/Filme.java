@@ -3,6 +3,12 @@ package de.kinoapplikation.kino.entity;
 import jakarta.persistence.*;
 import java.util.List;
 
+/**
+ * Entität für Filme im Kino-System.
+ * Enthält Informationen über Filme wie Name, Beschreibung, FSK, Kategorie und Basispreis.
+ * @author Niklas
+ */
+
 @Entity
 public class Filme {
 

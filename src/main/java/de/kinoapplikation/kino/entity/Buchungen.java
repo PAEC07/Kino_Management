@@ -4,6 +4,13 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 
+
+/**
+ * Entität für Buchungen im Kino-System.
+ * Enthält Informationen über die Buchungs-ID und das Datum der Buchung.
+ * @author Niklas
+ */
+
 @Entity
 public class Buchungen {
     @Id
