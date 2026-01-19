@@ -38,11 +38,11 @@
 		</dependency>
 
 		<!-- PostgreSQL Driver -->
-		<dependency>
+		<!--<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>42.6.0</version>
-		</dependency>
+		</dependency>-->
 
 		<!-- SQLite Driver -->
 		<dependency>
@@ -51,12 +51,12 @@
       		<version>3.51.0.0</version>
     	</dependency>
 
-		<!-- Hibernate SQLite Dialect 
+		<!-- Hibernate SQLite Dialect -->
 		<dependency>
 			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-community-dialects</artifactId>
-			<version>6.6.8.Final</version>
-		</dependency>-->
+		</dependency>
+
 
 
 

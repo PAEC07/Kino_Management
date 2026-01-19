@@ -25,8 +25,9 @@ public class Saal {
     private int plaetzePerReihe;
     private int MaxReihen;
 
-    @OneToMany(mappedBy = "saal", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "saalId", cascade = CascadeType.ALL)
     private List<Vorstellung> vorstellungen;
+
 
     // Getter & Setter
     public Long getId() {
