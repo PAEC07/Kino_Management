@@ -1,0 +1,134 @@
+/* theme.css - zentraler Light/Dark-Mode via CSS-Variablen */
+
+:root{
+  --bg:#f5f5f5;
+  --surface:#ffffff;
+  --surface-2:#fafafa;
+  --text:#212529;
+  --muted:#555555;
+  --border:#dddddd;
+  --field-border:#cccccc;
+
+  --surface-muted:#f2f2f2;
+  --surface-muted-2:#ededed;
+  --surface-muted-3:#e8e8e8;
+
+  --brand:#3cb371;
+  --danger:#c0392b;
+  --accent:#452abb;
+  --info:#3c6fb3;
+  --info-soft:#e6f0ff;
+  --info-soft-2:#f0f4ff;
+
+  --btn-muted-bg:#777777;
+  --btn-muted-text:#ffffff;
+
+  --seat-unavailable-bg:#b3b3b3;
+  --seat-unavailable-border:#777777;
+  --seat-unavailable-text:#ffffff;
+  --seat-selected:#000000;
+
+  --btn-bg:var(--brand);
+  --btn-text:#ffffff;
+
+  --shadow:0 0 8px rgba(0,0,0,.10);
+  --shadow-strong:0 0 15px rgba(0,0,0,.30);
+}
+
+html[data-theme="dark"]{
+  --bg:#141414;
+  --surface:#1f1f1f;
+  --surface-2:#262626;
+  --text:#f3f3f3;
+  --muted:#b9b9b9;
+  --border:#3f3f3f;
+  --field-border:#555555;
+
+  --surface-muted:#1d1d1d;
+  --surface-muted-2:#232323;
+  --surface-muted-3:#2b2b2b;
+
+  --brand:#57d18f;
+  --danger:#ff6b5f;
+  --accent:#8a7dff;
+  --info:#6e9eea;
+  --info-soft:#22304a;
+  --info-soft-2:#1e2a3f;
+
+  --btn-muted-bg:#4a4a4a;
+  --btn-muted-text:#f3f3f3;
+
+  --seat-unavailable-bg:#4a4a4a;
+  --seat-unavailable-border:#3a3a3a;
+  --seat-unavailable-text:#f3f3f3;
+  --seat-selected:#ffffff;
+
+  --btn-bg:var(--brand);
+  --btn-text:#0f0f0f;
+
+  --shadow:0 8px 24px rgba(0,0,0,.35);
+  --shadow-strong:0 12px 34px rgba(0,0,0,.55);
+}
+
+html,body{
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* Basis-Fonts etc. (deine Seiten setzen teils selbst font-family, das ist ok) */
+body{margin:0;}
+
+/* Allgemeine Elemente */
+a{color:inherit;}
+
+input,select,textarea{
+  background:var(--surface);
+  color:var(--text);
+  border:1px solid var(--border);
+}
+
+input::placeholder, textarea::placeholder{color:var(--muted);}
+
+/* Topbar (falls nicht in Page-CSS überschrieben) */
+.topbar{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+}
+
+.logo-round{
+  background:var(--surface);
+  box-shadow:var(--shadow);
+}
+
+/* Panels / Cards (falls vorhanden) */
+.liste,
+.Acc-DetailsWrapper,
+.login-card,
+.filter,
+.inhalt,
+.buchen-box,
+.details-table-wrapper{
+  background:var(--surface);
+  border-color:var(--border);
+  box-shadow:var(--shadow);
+}
+
+/* Modal */
+.modal{background:var(--surface); box-shadow:var(--shadow-strong);}
+.modal-overlay{background:rgba(0,0,0,.55);} /* im Dark gut, im Light auch ok */
+
+/* Kleine Theme-Toggle UI */
+.theme-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  color:var(--text);
+  text-decoration:none;
+  cursor:pointer;
+  font-weight:600;
+}
+.theme-toggle:hover{filter:brightness(1.05);} 

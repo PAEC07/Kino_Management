@@ -1,0 +1,100 @@
+/* login.css (themed) – verwendet Variablen aus css/theme.css */
+
+:root {
+    --accent: #3cb371;
+    --border-strong: #bbb;
+}
+
+html[data-theme="dark"] {
+    --border-strong: #4a4a4a;
+}
+
+body {
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+.page-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.login-card {
+    color: var(--text);
+    width: 450px;
+    background: var(--surface);
+    padding: 40px;
+    border-radius: 8px;
+    border-left: 5px solid var(--accent);
+    box-shadow: 0 0 12px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+.logo img {
+    width: 130px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.hint {
+    font-size: 16px;
+    margin-bottom: 30px;
+}
+
+.title {
+    font-size: 24px;
+    margin: 0 0 10px 0;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.form-grid input {
+    padding: 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    font-size: 18px;
+}
+
+.btn-login {
+    padding: 12px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 20px;
+}
+
+.btn-login:hover {
+    filter: brightness(90%);
+}
+
+.divider {
+    margin: 25px 0;
+    font-size: 16px;
+    color: var(--muted);
+}
+
+.guest {
+    font-size: 18px;
+    text-decoration: underline;
+    color: var(--accent);
+    cursor: pointer;
+}
+
+.guest:hover {
+    opacity: 0.8;
+}
