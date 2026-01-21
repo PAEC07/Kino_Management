@@ -25,11 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalOverlay = document.getElementById('modalOverlay');
     const modalFilm = document.getElementById('modalFilm');
     const modalVorstellung = document.getElementById('modalVorstellung');
+    const modalSitzplan = document.getElementById('modalSitzplan');
 
     const btnOpenFilmModal = document.getElementById('btnOpenFilmModal');
     const btnOpenVorstellungModal = document.getElementById('btnOpenVorstellungModal');
+    const btnOpenSitzplanModal = document.getElementById('btnOpenSitzplanModal');
     const closeFilmModal = document.getElementById('closeFilmModal');
     const closeVorstellungModal = document.getElementById('closeVorstellungModal');
+    const closeSitzplanModal = document.getElementById('closeSitzplanModal');
 
     // Film-Form
     const filmTitelInput = document.getElementById('filmTitelInput');
@@ -46,6 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const vorstellungZeitInput = document.getElementById('vorstellungZeitInput');
     const vorstellungSaalInput = document.getElementById('vorstellungSaalInput');
     const vorstellungSaveBtn = document.getElementById('vorstellungSaveBtn');
+
+    // Sitzplan-Form
+    const anzahlReihenInput = document.getElementById('anzahlReihenInput');
+    const sitzeProReiheInput = document.getElementById('sitzeProReiheInput');
+    const prozentLogeInput = document.getElementById('prozentLogeInput');
+    const sitzplanSaveBtn = document.getElementById('sitzplanSaveBtn');
 
     // Daten (Demo)
     let nextMovieId = 4;
@@ -99,11 +108,14 @@ document.addEventListener('DOMContentLoaded', () => {
         modalOverlay.classList.remove('hidden');
         modalFilm.classList.add('hidden');
         modalVorstellung.classList.add('hidden');
+        modalSitzplan.classList.add('hidden');
 
         if (which === 'film') {
             modalFilm.classList.remove('hidden');
         } else if (which === 'show') {
             modalVorstellung.classList.remove('hidden');
+        } else if (which === 'sitzplan') {
+            modalSitzplan.classList.remove('hidden');
         }
     }
 
@@ -111,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalOverlay.classList.add('hidden');
         modalFilm.classList.add('hidden');
         modalVorstellung.classList.add('hidden');
+        modalSitzplan.classList.add('hidden');
     }
 
     function getMovieById(id) {
@@ -438,8 +451,14 @@ document.addEventListener('DOMContentLoaded', () => {
         openModal('show');
     });
 
+    btnOpenSitzplanModal?.addEventListener('click', () => {
+        loadSitzplanConfig();
+        openModal('sitzplan');
+    });
+
     closeFilmModal?.addEventListener('click', closeModal);
     closeVorstellungModal?.addEventListener('click', closeModal);
+    closeSitzplanModal?.addEventListener('click', closeModal);
 
     modalOverlay?.addEventListener('click', (e) => {
         if (e.target === modalOverlay) {
@@ -502,6 +521,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function loadSitzplanConfig() {
+        const config = JSON.parse(localStorage.getItem('sitzplanConfig')) || { anzahlReihen: 6, sitzeProReihe: 10, prozentLoge: 25 };
+        anzahlReihenInput.value = config.anzahlReihen;
+        sitzeProReiheInput.value = config.sitzeProReihe;
+        prozentLogeInput.value = config.prozentLoge;
+    }
+
     vorstellungSaveBtn?.addEventListener('click', () => {
         const filmIdStr = vorstellungFilmSelect.value;
         const datum = vorstellungDatumInput.value;
@@ -544,6 +570,25 @@ document.addEventListener('DOMContentLoaded', () => {
     filmSuche?.addEventListener('keyup', (e) => {
         if (e.key === 'Enter') {
             applyFilter();
+        }
+    });
+
+    sitzplanSaveBtn?.addEventListener('click', () => {
+        const anzahlReihen = parseInt(anzahlReihenInput.value);
+        const sitzeProReihe = parseInt(sitzeProReiheInput.value);
+        const prozentLoge = parseInt(prozentLogeInput.value);
+
+        if (anzahlReihen && sitzeProReihe && prozentLoge >= 0 && prozentLoge <= 100) {
+            const config = {
+                anzahlReihen,
+                sitzeProReihe,
+                prozentLoge
+            };
+            localStorage.setItem('sitzplanConfig', JSON.stringify(config));
+            alert('Sitzplan-Konfiguration gespeichert!');
+            closeModal();
+        } else {
+            alert('Bitte gültige Werte eingeben.');
         }
     });
 

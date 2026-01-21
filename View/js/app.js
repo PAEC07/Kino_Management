@@ -42,11 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const ausgewaehlteSitzeTxt = document.getElementById('ausgewaehlteSitze');
     const ticketsTbody = document.getElementById('ticketsTbody');
 
-    // Neue Elemente für dynamische Generierung
-    const plaetzeProReiheInput = document.getElementById('plaetzeProReihe');
-    const maxReihenInput = document.getElementById('maxReihen');
-    const generiereSitzplanBtn = document.getElementById('generiereSitzplanBtn');
-
     // Filter & Suche
     const filterFormat = document.getElementById('filterFormat');
     const filterFsk = document.getElementById('filterFsk');
@@ -343,29 +338,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // ----------------------------
     // SITZPLÄTZE & TICKETS
     // ----------------------------
-
-    let ausgewaehlteSitze = []; // { id, seatType, bereich, personType }
-
-    // Funktion zum Generieren der Sitzplan-Konfiguration
-    function generiereSitzplanKonfig(plaetzeProReihe, maxReihen) {
-        const konfig = [];
-        const logeReihenAnzahl = Math.ceil(maxReihen * 0.25); // 25% der Reihen als Loge, aufgerundet
-        const startLogeReihe = maxReihen - logeReihenAnzahl; // Die letzten Reihen
-
-        for (let r = 0; r < maxReihen; r++) {
-            const reiheBuchstabe = String.fromCharCode(65 + r); // A, B, C, ...
-            const isLogeReihe = r >= startLogeReihe;
-            konfig.push({
-                reihe: reiheBuchstabe,
-                anzahl: plaetzeProReihe,
-                seatType: isLogeReihe ? 'premium' : 'standard',
-                bereich: isLogeReihe ? 'Loge' : 'Parkett'
-            });
-        }
-        return konfig;
+    function getSitzplanConfig() {
+        const defaultConfig = { anzahlReihen: 6, sitzeProReihe: 10, prozentLoge: 25 };
+        const stored = localStorage.getItem('sitzplanConfig');
+        return stored ? JSON.parse(stored) : defaultConfig;
     }
 
-    let SITZPLAN_KONFIG = generiereSitzplanKonfig(20, 10); // Standardwerte
+    function buildSitzplanConfig() {
+        const config = getSitzplanConfig();
+        const SITZPLAN_KONFIG = [];
+        for (let i = 1; i <= config.anzahlReihen; i++) {
+            const reiheBuchstabe = String.fromCharCode(65 + i - 1); // 1 -> A, 2 -> B, etc.
+            const istLoge = i > config.anzahlReihen * (1 - config.prozentLoge / 100);
+            SITZPLAN_KONFIG.push({
+                reihe: reiheBuchstabe,
+                anzahl: config.sitzeProReihe,
+                seatType: istLoge ? 'premium' : 'standard',
+                bereich: istLoge ? 'Loge' : 'Parkett'
+            });
+        }
+        return SITZPLAN_KONFIG;
+    }
+
+    let ausgewaehlteSitze = []; // { id, seatType, bereich, personType }
 
     function aktualisiereSitzAnzeige() {
         if (!ausgewaehlteSitzeTxt) return;
@@ -483,6 +478,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sitzContainer.innerHTML = '';
         ausgewaehlteSitze = [];
 
+        const SITZPLAN_KONFIG = buildSitzplanConfig();
+
         SITZPLAN_KONFIG.forEach(reiheInfo => {
             const rowDiv = document.createElement('div');
             rowDiv.classList.add('sitzreihe');
@@ -492,16 +489,14 @@ document.addEventListener('DOMContentLoaded', () => {
             label.textContent = reiheInfo.reihe;
             rowDiv.appendChild(label);
 
-            const { anzahl, seatType, bereich } = reiheInfo;
-
-            for (let i = 1; i <= anzahl; i++) {
+            for (let i = 1; i <= reiheInfo.anzahl; i++) {
                 const seat = document.createElement('button');
                 seat.type = 'button';
-                seat.classList.add('sitz', seatType);
+                seat.classList.add('sitz', reiheInfo.seatType);
                 const id = `${reiheInfo.reihe}${i}`;
                 seat.dataset.id = id;
-                seat.dataset.seatType = seatType;
-                seat.dataset.bereich = bereich;
+                seat.dataset.seatType = reiheInfo.seatType;
+                seat.dataset.bereich = reiheInfo.bereich;
                 seat.textContent = i;
 
                 if (Math.random() < 0.07) {
@@ -723,16 +718,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ----------------------------
-    // Event für Sitzplan-Generierung
-    if (generiereSitzplanBtn) {
-        generiereSitzplanBtn.addEventListener('click', () => {
-            const plaetze = parseInt(plaetzeProReiheInput.value) || 20;
-            const reihen = parseInt(maxReihenInput.value) || 10;
-            SITZPLAN_KONFIG = generiereSitzplanKonfig(plaetze, reihen);
-            baueSitzplan();
-        });
-    }
-
     // INITIAL
     // ----------------------------
     if (detailsWrapper) {
