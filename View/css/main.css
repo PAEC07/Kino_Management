@@ -1,19 +1,36 @@
 /* main.css (themed) – verwendet Variablen aus css/theme.css */
-:root{--accent:#3cb371;--accent-strong:#2f9d63;--accent-soft:#e6ffe6;--accent-soft-2:#d4f8d4;--surface-2:#f0f0f0;--border-strong:#ccc;}
-html[data-theme="dark"]{--surface-2:#242424;--border-strong:#555;}
+
+:root {
+    --accent: #3cb371;
+    --accent-strong: #2f9d63;
+    --accent-soft: #e6ffe6;
+    --accent-soft-2: #d4f8d4;
+    --surface-2: #f0f0f0;
+    --border-strong: #ccc;
+}
+
+html[data-theme="dark"] {
+    --surface-2: #242424;
+    --border-strong: #555;
+}
 
 
 /* Global: Breite im Griff behalten */
+
 * {
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     max-width: 100%;
-    overflow-x: hidden;   /* horizontales Scrollen unterbinden */
+    overflow-x: hidden;
+    /* horizontales Scrollen unterbinden */
 }
 
+
 /* Grundlayout */
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -21,12 +38,16 @@ body {
     font-size: 18px;
 }
 
+
 /* Utility */
+
 .hidden {
     display: none !important;
 }
 
+
 /* Topbar oben */
+
 .topbar {
     width: 100%;
     height: 90px;
@@ -44,7 +65,9 @@ body {
     gap: 25px;
 }
 
+
 /* Login-Button oben rechts */
+
 .btn-outline {
     padding: 10px 22px;
     border-radius: 6px;
@@ -60,7 +83,9 @@ body {
     color: var(--surface);
 }
 
+
 /* Rundes Logo oben rechts */
+
 .logo-round {
     width: 70px;
     height: 70px;
@@ -68,10 +93,12 @@ body {
     object-fit: contain;
     background: var(--surface);
     padding: 6px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
 
+
 /* Hauptlayout: links / rechts nebeneinander */
+
 .page {
     display: flex;
     gap: 20px;
@@ -80,13 +107,16 @@ body {
     min-height: calc(100vh - 110px);
 }
 
+
 /* linke Spalte: Filter + Filmliste untereinander */
+
 .left-column {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    min-height: 0; /* wichtig, damit die Liste sauber scrollen kann */
+    min-height: 0;
+    /* wichtig, damit die Liste sauber scrollen kann */
 }
 
 .filter-launch {
@@ -94,7 +124,9 @@ body {
     justify-content: flex-end;
 }
 
+
 /* rechte Spalte: Inhalt / Buchung */
+
 .right-column {
     flex: 2;
     display: flex;
@@ -102,13 +134,15 @@ body {
     min-height: 0;
 }
 
+
 /* FILTER */
+
 .filter {
     background: var(--surface);
     padding: 20px;
     border-radius: 8px;
     border-left: 5px solid var(--accent);
-    box-shadow: 0 0 6px rgba(0,0,0,0.12);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
 }
 
 .filter-title {
@@ -164,7 +198,7 @@ body {
     padding: 20px;
     background: var(--surface);
     border-radius: 10px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
 .modal-filter {
@@ -224,17 +258,20 @@ body.no-scroll {
     overflow: hidden;
 }
 
+
 /* FILMLISTE – füllt den ganzen Rest der Spalte nach unten */
+
 .liste {
     background: var(--surface);
     border-radius: 8px;
     border-left: 5px solid var(--accent);
     padding: 20px;
     overflow-y: auto;
-    box-shadow: 0 0 6px rgba(0,0,0,0.12);
-
-    flex: 1;       /* Höhe auffüllen */
-    min-height: 0; /* damit das Overflow sauber funktioniert */
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
+    flex: 1;
+    /* Höhe auffüllen */
+    min-height: 0;
+    /* damit das Overflow sauber funktioniert */
 }
 
 .liste-header {
@@ -276,14 +313,16 @@ body.no-scroll {
     border-color: var(--accent);
 }
 
+
 /* INHALT + BUCHUNG (rechte Spalte) */
+
 .inhalt,
 .buchen-box {
     background: var(--surface);
     padding: 25px;
     border-radius: 8px;
     border-left: 5px solid var(--accent);
-    box-shadow: 0 0 6px rgba(0,0,0,0.12);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -294,7 +333,9 @@ body.no-scroll {
     font-size: 20px;
 }
 
+
 /* Info-Feld Inhalt */
+
 .film-info {
     margin-top: 25px;
     background: var(--surface);
@@ -309,7 +350,9 @@ body.no-scroll {
     margin-bottom: 12px;
 }
 
+
 /* BUCHUNGSGRID */
+
 .buchung-rahmen {
     margin-top: 25px;
     border: 3px solid var(--accent);
@@ -354,7 +397,9 @@ body.no-scroll {
     margin-bottom: 4px;
 }
 
+
 /* falls du die Selects optisch neutraler willst, kannst du die Border noch anpassen */
+
 .karten-feld select {
     border: 1px solid var(--field-border);
     border-radius: 6px;
@@ -380,7 +425,9 @@ body.no-scroll {
     display: none;
 }
 
+
 /* SUMME */
+
 .summe-row {
     grid-column: 1 / span 2;
     margin-top: 10px;
@@ -389,7 +436,9 @@ body.no-scroll {
     font-size: 22px;
 }
 
+
 /* Buttons unten */
+
 .buttons-row {
     margin-top: auto;
     padding-top: 20px;
@@ -419,54 +468,63 @@ body.no-scroll {
     filter: brightness(90%);
 }
 
+
 /* DETAILS-BOXEN OBEN */
+
 .details-row {
-   display: flex;
-   gap: 20px;
-   margin-top: 10px;
-   margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
+
 
 /* beide Kästen oben */
+
 .details-left,
 .details-right {
-   flex: 1;
-   border: 4px solid var(--accent);
-   border-radius: 6px;
-   padding: 10px 12px;
-   background: var(--surface);
-   box-sizing: border-box;
-   font-size: 20px;
-   line-height: 1.7;
+    flex: 1;
+    border: 4px solid var(--accent);
+    border-radius: 6px;
+    padding: 10px 12px;
+    background: var(--surface);
+    box-sizing: border-box;
+    font-size: 20px;
+    line-height: 1.7;
 }
+
 
 /* unterer Bereich: Tabelle über ganze Breite */
+
 .details-table-wrapper {
-   border: 2px solid var(--accent);
-   border-radius: 6px;
-   padding: 10px 12px;
-   background: var(--surface);
-   box-sizing: border-box;
-   margin-bottom: 20px;
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    padding: 10px 12px;
+    background: var(--surface);
+    box-sizing: border-box;
+    margin-bottom: 20px;
 }
 
+
 /* Tabelle selber */
+
 .details-table {
-   width: 100%;
-   border-collapse: collapse;
-   font-size: 16px;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
 }
 
 .details-table th,
 .details-table td {
-   border: 1px solid var(--border-strong);
-   padding: 6px 8px;
-   text-align: left;
+    border: 1px solid var(--border-strong);
+    padding: 6px 8px;
+    text-align: left;
 }
 
 .details-table th {
-   background: var(--surface-2);
+    background: var(--surface-2);
 }
+
 
 /* =======================
    TOGGLE FÜR ANSICHT
@@ -479,7 +537,9 @@ body.no-scroll {
     margin-bottom: 10px;
 }
 
+
 /* kleine Buttons für Vorstellungen/Kalender */
+
 .btn-small {
     font-size: 18px;
     padding: 8px 18px;
@@ -498,6 +558,7 @@ body.no-scroll {
     background: var(--accent) !important;
     color: var(--surface) !important;
 }
+
 
 /* =======================
    KALENDER-ANSICHT
@@ -543,14 +604,18 @@ body.no-scroll {
     font-weight: 600;
 }
 
+
 /* Kalender-Tabelle */
+
 .kalender-tabelle {
     width: 100%;
     border-collapse: collapse;
     font-size: 16px;
 }
 
+
 /* Kopfzeile */
+
 .kalender-tabelle th {
     background: var(--surface-2);
     padding: 10px;
@@ -560,27 +625,24 @@ body.no-scroll {
     text-align: center;
 }
 
+
 /* Tageszellen – gleich groß + scrollbar */
+
 .kalender-tabelle td {
     border: 1px solid var(--border-strong);
     background: var(--surface);
-
     /* identische Kachelgröße */
     width: 100px;
     min-width: 100px;
     max-width: 100px;
-
     height: 100px;
     min-height: 100px;
     max-height: 100px;
-
     vertical-align: top;
     position: relative;
     padding: 6px 8px;
-
     overflow-y: auto;
     overflow-x: hidden;
-
     border-radius: 6px;
 }
 
@@ -588,7 +650,9 @@ body.no-scroll {
     background: var(--surface-muted-2);
 }
 
+
 /* Tagesnummer oben */
+
 .tag-nr {
     font-weight: 700;
     color: var(--accent);
@@ -597,7 +661,9 @@ body.no-scroll {
     display: block;
 }
 
+
 /* Einträge (Vorstellungen) im Kalender */
+
 .kal-event {
     display: block;
     margin-top: 4px;
@@ -615,6 +681,7 @@ body.no-scroll {
 .kal-event:hover {
     background: var(--accent-soft-2);
 }
+
 
 /* ===========================
    Sitzplatzauswahl
@@ -687,7 +754,6 @@ body.no-scroll {
     padding: 16px;
     background: var(--surface-muted-3);
     margin-bottom: 8px;
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -714,7 +780,8 @@ body.no-scroll {
 .sitzreihe {
     display: flex;
     align-items: center;
-    gap: 2px; /* Reduziert von 5px für engere Sitze */
+    gap: 2px;
+    /* Reduziert von 5px für engere Sitze */
 }
 
 .sitzreihe-label {
@@ -747,6 +814,7 @@ body.no-scroll {
 .sitz.premium {
     border-color: var(--info);
     background: var(--info-soft-2);
+    color: var(--accent-soft);
 }
 
 .sitz.belegt {
@@ -765,6 +833,7 @@ body.no-scroll {
     margin-top: 6px;
 }
 
+
 /* ===========================
    Tickets-Tabelle pro Sitz
    (nur optisch aufgehübscht)
@@ -773,7 +842,8 @@ body.no-scroll {
 .tickets-tabelle {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 6px;      /* Abstand zwischen Ticket-Zeilen */
+    border-spacing: 0 6px;
+    /* Abstand zwischen Ticket-Zeilen */
     font-size: 14px;
     margin-top: 8px;
 }
@@ -789,13 +859,13 @@ body.no-scroll {
 
 .tickets-tabelle tbody tr {
     background: var(--surface);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     transition: background 0.15s ease, box-shadow 0.15s ease;
 }
 
 .tickets-tabelle tbody tr:hover {
     background: var(--surface-muted-2);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .tickets-tabelle td {
@@ -804,7 +874,9 @@ body.no-scroll {
     border-bottom: 1px solid var(--border);
 }
 
+
 /* abgerundete Ecken je Ticket-Zeile */
+
 .tickets-tabelle tbody tr td:first-child {
     border-left: 1px solid var(--border);
     border-top-left-radius: 8px;
@@ -817,7 +889,9 @@ body.no-scroll {
     border-bottom-right-radius: 8px;
 }
 
+
 /* Select-Feld in der Tabelle */
+
 .tickets-tabelle select {
     width: 100%;
     padding: 4px 6px;
@@ -834,16 +908,17 @@ body.no-scroll {
     display: flex;
     justify-content: flex-end;
 }
-.search{
+
+.search {
     margin-right: 15px;
     margin-bottom: 15px;
     border-radius: 15px;
     border: 1px solid var(--field-border);
     padding: 10px;
     font-size: 18px;
-
 }
-.btn-add{
+
+.btn-add {
     padding: 10px 22px;
     border-radius: 6px;
     border: none;
@@ -853,10 +928,14 @@ body.no-scroll {
     font-weight: 600;
     cursor: pointer;
 }
+
+
 /* ausgewählte Vorstellung in der Tabelle hervorheben */
+
 .details-table tr.selected-show {
     background: var(--surface-2);
 }
+
 .buchung-vorstellung-info {
     font-weight: 600;
     margin-bottom: 10px;
