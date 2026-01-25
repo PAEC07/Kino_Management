@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Entität für Vorstellungen im Kino-System.
@@ -22,10 +23,13 @@ public class Vorstellung {
 
 
     @ManyToOne
+    @JsonIgnoreProperties("vorstellungen")
     private Film filmId;
 
     @ManyToOne
+    @JsonIgnoreProperties("vorstellungen")
     private Saal saalId;
+
 
     private String darstellungstyp;
     private LocalDateTime datum;

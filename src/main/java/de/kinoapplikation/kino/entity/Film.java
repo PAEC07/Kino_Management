@@ -8,6 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 /**
  * Entität für Filme im Kino-System.
@@ -28,9 +30,9 @@ public class Film {
     private String kategorie;
     private Long basispreis;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "filmId", cascade = CascadeType.ALL)
     private List<Vorstellung> vorstellungen;
-
 
     // Getter & Setter
     public Long getId() {

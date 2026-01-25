@@ -10,7 +10,8 @@
 
 <header class="topbar">
     <div class="topbar-right">
-        <a href="login.html" class="btn-outline">Login</a>
+        <a href="login.html" class="btn-outline" id="loginLink">Login</a>
+
         <img src="img/kino_logo_whitebg.png" alt="Kino Logo" class="logo-round">
     </div>
 </header>
@@ -84,36 +85,11 @@
         <!-- FILMLISTE -->
         <aside class="liste" id="filmListe">
             <h2>Filme</h2>
-            <ul>
-                <li data-titel="Film 1"
-                    data-beschreibung="Spannender Actionfilm."
-                    data-fsk="16"
-                    data-format="3D"
-                    data-kategorie="Action"
-                    data-bereich="Parkett"
-                    data-preis="12.99">
-                    Film 1
-                </li>
-                <li data-titel="Film 2"
-                    data-beschreibung="Romantische Komödie."
-                    data-fsk="12"
-                    data-format="2D"
-                    data-kategorie="Komödie"
-                    data-bereich="Loge"
-                    data-preis="9.99">
-                    Film 2
-                </li>
-                <li data-titel="Film 3"
-                    data-beschreibung="Science-Fiction Abenteuer."
-                    data-fsk="6"
-                    data-format="3D"
-                    data-kategorie="Sci-Fi"
-                    data-bereich="Parkett"
-                    data-preis="14.50">
-                    Film 3
-                </li>
+            <ul id="movieList">
+                <!-- wird per JS gefüllt -->
             </ul>
         </aside>
+
 
     </section>
 
@@ -293,10 +269,11 @@
         </section>
 
     </section>
-
+s
 </main>
 
 <script src="js/app.js" defer></script>
+<script src="js/nav.js" defer></script>
 
 </body>
 </html>

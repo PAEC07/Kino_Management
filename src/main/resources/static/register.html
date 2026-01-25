@@ -19,25 +19,24 @@
         <h2 class="title">Registrieren</h2>
         <p class="hint">Erstellen Sie ein Konto, um Buchungen zu speichern.</p>
 
-        <form method="post" action="/register" class="form-grid">
-            <input type="text" name="username" placeholder="Benutzername" required>
+        <form class="form-grid" data-auth="register">
+            <input id="regUsername" type="text" name="username" placeholder="Benutzername" required>
+            <input id="regEmail" type="email" name="email" placeholder="E-Mail-Adresse" required>
 
-            <input type="email" name="email" placeholder="E-Mail-Adresse" required>
+            <input id="regPassword" type="password" name="password"
+                   placeholder="Passwort (mind. 8 Zeichen)" required minlength="8">
 
-            <input type="password"
-                   name="password"
-                   placeholder="Passwort (mind. 8 Zeichen)"
-                   required
-                   minlength="8">
-
-            <input type="password"
-                   name="passwordConfirm"
-                   placeholder="Passwort wiederholen"
-                   required
-                   minlength="8">
+            <input id="regPasswordConfirm" type="password" name="passwordConfirm"
+                   placeholder="Passwort wiederholen" required minlength="8">
 
             <button type="submit" class="btn-login">Registrieren</button>
         </form>
+
+        <p id="regError" style="color:#c00; margin-top:10px;"></p>
+
+        <script src="js/register.js" defer></script>
+
+
 
         <div class="divider">oder</div>
 
@@ -46,6 +45,7 @@
     </div>
 
 </div>
+<script src="js/auth.js" defer></script>
 
 </body>
 </html>

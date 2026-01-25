@@ -15,9 +15,10 @@ public class VorstellungService {
         this.vorstellungRepo = vorstellungRepo;
     }
 
-    public Vorstellung addVorstellung(Vorstellung v) { 
-        return vorstellungRepo.save(v); 
+    public Vorstellung addVorstellung(Vorstellung v) {
+        return vorstellungRepo.save(v);
     }
     public void deleteVorstellung(Long id) { vorstellungRepo.deleteById(id); }
     public List<Vorstellung> alleVorstellungen() { return vorstellungRepo.findAll(); }
+
 }
