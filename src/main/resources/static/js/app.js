@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_BASE = "http://localhost:4040";
+  const API_BASE = "http://localhost:8080";
 
   // DOM
   const movieListEl = document.getElementById("movieList");
@@ -340,7 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
       await reloadAll();
     } catch (e) {
       console.error(e);
-      alert("Konnte Daten nicht laden. Läuft Backend auf http://localhost:4040 ?");
+      alert("Konnte Daten nicht laden. Läuft Backend auf http://localhost:8080 ?");
     }
   })();
 });

@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ============================
   // KONFIG
   // ============================
-  const API_BASE = "http://localhost:4040";
+  const API_BASE = "http://localhost:8080";
   const LS_SAAL_KEY = "kino_admin_saal_map_v2";
 
   // ============================
