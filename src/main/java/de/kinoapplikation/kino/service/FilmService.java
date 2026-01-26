@@ -1,6 +1,5 @@
 package de.kinoapplikation.kino.service;
 
-
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -17,9 +16,17 @@ public class FilmService {
         this.filmRepo = filmRepo;
     }
 
-    public Film addFilm(Film film) { return filmRepo.save(film); }
-    public void deleteFilm(Long id) { filmRepo.deleteById(id); }
-    public List<Film> getAlleFilme() { return filmRepo.findAll(); }
+    public Film addFilm(Film film) {
+        return filmRepo.save(film);
+    }
+
+    public void deleteFilm(Long id) {
+        filmRepo.deleteById(id);
+    }
+
+    public List<Film> getAlleFilme() {
+        return filmRepo.findAll();
+    }
 
     public List<Film> filterByGenre(String genre) {
         return filmRepo.findAll().stream()

@@ -26,8 +26,7 @@ public class Vorstellung {
 
     @ManyToOne
     private Saal saalId;
-
-    private String darstellungstyp;
+    
     private LocalDateTime datum;
 
     // TODO: Baran bitte mal kommentar schreiben
@@ -53,12 +52,6 @@ public class Vorstellung {
     }
     public void setSaalId(Saal saalId) {
         this.saalId = saalId;
-    }
-    public String getDarstellungstyp() {
-        return darstellungstyp;
-    }
-    public void setDarstellungstyp(String darstellungstyp) {
-        this.darstellungstyp = darstellungstyp;
     }
     public LocalDateTime getDatum() {
         return datum;

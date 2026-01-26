@@ -29,6 +29,7 @@ public class Film {
     private String kategorie;
     private Long basispreis;
     private Duration filmdauer;
+    private String darstellungstyp;
 
     @OneToMany(mappedBy = "filmId", cascade = CascadeType.ALL)
     private List<Vorstellung> vorstellungen;
@@ -82,5 +83,11 @@ public class Film {
     }
     public Duration getFilmdauer() {
         return filmdauer;
+    }
+    public String getDarstellungstyp() {
+        return darstellungstyp;
+    }
+    public void setDarstellungstyp(String darstellungstyp) {
+        this.darstellungstyp = darstellungstyp;
     }
 }
