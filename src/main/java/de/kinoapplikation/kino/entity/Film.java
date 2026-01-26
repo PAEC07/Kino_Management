@@ -1,5 +1,6 @@
 package de.kinoapplikation.kino.entity;
 
+import java.time.Duration;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -27,6 +28,7 @@ public class Film {
     private int fsk;
     private String kategorie;
     private Long basispreis;
+    private Duration filmdauer;
 
     @OneToMany(mappedBy = "filmId", cascade = CascadeType.ALL)
     private List<Vorstellung> vorstellungen;
@@ -74,5 +76,11 @@ public class Film {
     }
     public void setVorstellungen(List<Vorstellung> vorstellungen) {
         this.vorstellungen = vorstellungen;
+    }
+    public void setFilmdauer(Duration filmtime) {
+        this.filmdauer = filmtime;
+    }
+    public Duration getFilmdauer() {
+        return filmdauer;
     }
 }
