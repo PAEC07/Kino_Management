@@ -1,6 +1,5 @@
 package de.kinoapplikation.kino.controller;
 
-
 import de.kinoapplikation.kino.entity.Buchung;
 import de.kinoapplikation.kino.service.BuchungService;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +16,22 @@ public class BuchungController {
     }
 
     @GetMapping
-    public List<Buchung> alleBuchungen() { return buchungService.alleBuchungen(); }
+    public List<Buchung> alleBuchungen() {
+        return buchungService.alleBuchungen();
+    }
 
     @GetMapping("/{id}")
-    public Buchung getBuchung(@PathVariable Long id) { return buchungService.getBuchung(id); }
+    public Buchung getBuchung(@PathVariable Long id) {
+        return buchungService.getBuchung(id);
+    }
 
     @PostMapping
-    public Buchung buchen(@RequestBody Buchung b) { return buchungService.buchen(b); }
+    public Buchung buchen(@RequestBody Buchung b) {
+        return buchungService.buchen(b);
+    }
 
     @DeleteMapping("/{id}")
-    public void stornieren(@PathVariable Long id) { buchungService.stornieren(id); }
+    public void stornieren(@PathVariable Long id) {
+        buchungService.stornieren(id);
+    }
 }

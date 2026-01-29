@@ -20,7 +20,9 @@ public class AuthController {
     public ResponseEntity<AuthDtos.AuthResponse> register(@RequestBody AuthDtos.RegisterRequest req) {
         AuthDtos.AuthResponse resp = authService.register(req);
 
-        if (resp.ok) return ResponseEntity.ok(resp);
+        if (resp.ok) {
+            return ResponseEntity.ok(resp);
+        }
 
         // simple Statuswahl (kannst du später feiner machen)
         if (resp.message.contains("bereits")) {
@@ -32,7 +34,9 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthDtos.AuthResponse> login(@RequestBody AuthDtos.LoginRequest req) {
         AuthDtos.AuthResponse resp = authService.login(req);
-        if (resp.ok) return ResponseEntity.ok(resp);
+        if (resp.ok) {
+            return ResponseEntity.ok(resp);
+        }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp); // 401
     }
 }

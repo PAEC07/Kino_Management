@@ -1,6 +1,5 @@
 package de.kinoapplikation.kino.controller;
 
-
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,11 +24,12 @@ public class BenutzerController {
     }
 
     @GetMapping
-    public List<Benutzer> alleBenutzer() { return benutzerService.alleBenutzer(); }
+    public List<Benutzer> alleBenutzer() {
+        return benutzerService.alleBenutzer();
+    }
 
     @PostMapping("/registrieren")
     public Benutzer registrieren(@RequestBody Benutzer b) {
-        
         return benutzerService.registrieren(b);
     }
 
