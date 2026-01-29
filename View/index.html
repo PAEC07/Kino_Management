@@ -41,13 +41,13 @@
                     <button class="btn btn-grey" type="button" id="suchBtn">Suchen</button>
                 </div>
                 <ul>
-                    <li data-titel="Film 1" data-beschreibung="Spannender Actionfilm." data-fsk="16" data-format="3D" data-kategorie="Action" data-bereich="Parkett" data-preis="12.99">
+                    <li data-titel="Film 1" data-beschreibung="Spannender Actionfilm." data-fsk="16" data-format="3D" data-kategorie="Action" data-bereich="Parkett" data-preis="12.99" data-laufzeit="120">
                         Film 1
                     </li>
-                    <li data-titel="Film 2" data-beschreibung="Romantische Komödie." data-fsk="12" data-format="2D" data-kategorie="Komödie" data-bereich="Loge" data-preis="9.99">
+                    <li data-titel="Film 2" data-beschreibung="Romantische Komödie." data-fsk="12" data-format="2D" data-kategorie="Komödie" data-bereich="Loge" data-preis="9.99" data-laufzeit="105">
                         Film 2
                     </li>
-                    <li data-titel="Film 3" data-beschreibung="Science-Fiction Abenteuer." data-fsk="6" data-format="3D" data-kategorie="Sci-Fi" data-bereich="Parkett" data-preis="14.50">
+                    <li data-titel="Film 3" data-beschreibung="Science-Fiction Abenteuer." data-fsk="6" data-format="3D" data-kategorie="Sci-Fi" data-bereich="Parkett" data-preis="14.50" data-laufzeit="132">
                         Film 3
                     </li>
                 </ul>
@@ -117,6 +117,22 @@
             </div>
         </div>
 
+        <div class="modal hidden" id="showInfoModal" role="dialog" aria-modal="true" aria-labelledby="showInfoTitle">
+            <div class="modal-backdrop" data-showinfo-close></div>
+            <div class="modal-panel">
+                <button class="modal-close" type="button" data-showinfo-close aria-label="Schliessen">x</button>
+                <h3 class="modal-title" id="showInfoTitle">Vorstellung</h3>
+
+                <div class="show-info-list">
+                    <div><strong>Film:</strong> <span id="showInfoFilm"></span></div>
+                    <div><strong>Datum:</strong> <span id="showInfoDate"></span></div>
+                    <div><strong>Uhrzeit:</strong> <span id="showInfoTime"></span></div>
+                    <div><strong>Saal:</strong> <span id="showInfoSaal"></span></div>
+                    <div><strong>Laufzeit:</strong> <span id="showInfoRuntime"></span></div>
+                    <div><strong>Preis:</strong> <span id="showInfoPrice"></span></div>
+                </div>
+            </div>
+        </div>
         <!-- RECHTE SPALTE: Inhalt / Buchung -->
         <section class="right-column">
 
@@ -130,6 +146,7 @@
                             <div><strong>FSK: </strong><span id="infoFsk"></span></div>
                             <div><strong>Format: </strong><span id="infoFormat"></span></div>
                             <div><strong>Kategorie: </strong><span id="infoKategorie"></span></div>
+                            <div><strong>Laufzeit: </strong><span id="infoLaufzeit"></span></div>
                             <div><strong>Preis pro Karte: </strong><span id="infoPreis"></span></div>
                         </div>
                         <div class="details-right">
@@ -215,13 +232,6 @@
                     <!-- SITZPLATZAUSWAHL -->
                     <div class="sitzplan-bereich">
                         <h3>Sitzplatzauswahl</h3>
-
-                        <!-- Eingabefelder für dynamische Generierung -->
-                        <div class="sitzplan-config">
-                            <label>Plätze pro Reihe: <input type="number" id="plaetzeProReihe" min="1" value="20"></label>
-                            <label>Maximale Anzahl Reihen: <input type="number" id="maxReihen" min="1" value="10"></label>
-                            <button id="generiereSitzplanBtn" class="btn btn-grey" type="button">Sitzplan generieren</button>
-                        </div>
 
                         <div class="sitzlegende">
                             <span class="legend standard"></span> Normal (Parkett)
@@ -310,3 +320,4 @@
 </body>
 
 </html>
+

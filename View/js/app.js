@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const infoFsk = document.getElementById('infoFsk');
     const infoFormat = document.getElementById('infoFormat');
     const infoKategorie = document.getElementById('infoKategorie');
+    const infoLaufzeit = document.getElementById('infoLaufzeit');
     const infoPreis = document.getElementById('infoPreis');
 
     const vorstellungenTbody = document.getElementById('vorstellungenTbody');
@@ -54,6 +55,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterModal = document.getElementById('filterModal');
     const btnFilterOpen = document.getElementById('btnFilterOpen');
     const modalCloseButtons = filterModal ? filterModal.querySelectorAll('[data-modal-close]') : [];
+    const showInfoModal = document.getElementById('showInfoModal');
+    const showInfoFilm = document.getElementById('showInfoFilm');
+    const showInfoDate = document.getElementById('showInfoDate');
+    const showInfoTime = document.getElementById('showInfoTime');
+    const showInfoSaal = document.getElementById('showInfoSaal');
+    const showInfoRuntime = document.getElementById('showInfoRuntime');
+    const showInfoPrice = document.getElementById('showInfoPrice');
+    const showInfoCloseButtons = showInfoModal ? showInfoModal.querySelectorAll('[data-showinfo-close]') : [];
 
     // Info im Buchungsfenster zur gewählten Vorstellung
     const buchungVorstellungInfo = document.getElementById('buchungVorstellungInfo');
@@ -68,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Aktueller Film / Preis
     let aktuellerFilm = null;
     let grundpreis = 0;
+    let aktuellerFilmData = null;
 
     // Ausgewählte Vorstellung (muss gewählt werden, bevor gebucht wird)
     let ausgewaehlteVorstellung = null;
@@ -150,7 +160,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // diese Zeile markieren
-        trElement.classList.add('selected-show');
+        if (trElement) {
+            trElement.classList.add('selected-show');
+        }
 
         // Daten merken
         ausgewaehlteVorstellung = {
@@ -272,6 +284,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         const ev = document.createElement('span');
                         ev.classList.add('kal-event');
                         ev.textContent = `${show.uhrzeit} • ${show.saal}`;
+                        ev.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            selectVorstellung(filmTitel, show, null);
+                            openShowInfo(show);
+                        });
                         td.appendChild(ev);
                     });
 
@@ -548,16 +565,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const fsk = li.dataset.fsk || '';
             const format = li.dataset.format || '';
             const kat = li.dataset.kategorie || '';
+            const laufzeit = li.dataset.laufzeit || '';
             const preis = parseFloat(li.dataset.preis || '0');
 
             aktuellerFilm = titel;
             grundpreis = preis || 0;
+            aktuellerFilmData = {
+                titel,
+                beschr,
+                fsk,
+                format,
+                kat,
+                laufzeit: parseInt(laufzeit || '0', 10),
+                preis: grundpreis
+            };
 
             if (inhaltTitel) inhaltTitel.textContent = titel;
             if (inhaltText) inhaltText.textContent = beschr;
             if (infoFsk) infoFsk.textContent = fsk;
             if (infoFormat) infoFormat.textContent = format;
             if (infoKategorie) infoKategorie.textContent = kat;
+            if (infoLaufzeit) infoLaufzeit.textContent = laufzeit ? `${laufzeit} Min` : 'k.A.';
             if (infoPreis) infoPreis.textContent = formatEuro(grundpreis);
 
             if (detailsWrapper) {
@@ -631,6 +659,30 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.remove('no-scroll');
     }
 
+    function openShowInfo(show) {
+        if (!showInfoModal) return;
+        const laufzeitText = aktuellerFilmData && aktuellerFilmData.laufzeit
+            ? `${aktuellerFilmData.laufzeit} Min`
+            : 'k.A.';
+        const preisText = aktuellerFilmData ? formatEuro(aktuellerFilmData.preis) : formatEuro(0);
+
+        if (showInfoFilm) showInfoFilm.textContent = aktuellerFilmData ? aktuellerFilmData.titel : 'Unbekannt';
+        if (showInfoDate) showInfoDate.textContent = show.datum;
+        if (showInfoTime) showInfoTime.textContent = show.uhrzeit;
+        if (showInfoSaal) showInfoSaal.textContent = show.saal;
+        if (showInfoRuntime) showInfoRuntime.textContent = laufzeitText;
+        if (showInfoPrice) showInfoPrice.textContent = preisText;
+
+        showInfoModal.classList.remove('hidden');
+        document.body.classList.add('no-scroll');
+    }
+
+    function closeShowInfo() {
+        if (!showInfoModal) return;
+        showInfoModal.classList.add('hidden');
+        document.body.classList.remove('no-scroll');
+    }
+
     if (btnFilterApply) {
         btnFilterApply.addEventListener('click', filterAndSearchFilms);
     }
@@ -654,9 +706,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalCloseButtons.length) {
         modalCloseButtons.forEach(btn => btn.addEventListener('click', closeFilterModal));
     }
+    if (showInfoCloseButtons.length) {
+        showInfoCloseButtons.forEach(btn => btn.addEventListener('click', closeShowInfo));
+    }
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && filterModal && !filterModal.classList.contains('hidden')) {
             closeFilterModal();
+        }
+        if (e.key === 'Escape' && showInfoModal && !showInfoModal.classList.contains('hidden')) {
+            closeShowInfo();
         }
     });
 

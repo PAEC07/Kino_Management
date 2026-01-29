@@ -20,19 +20,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnFilterApply = document.getElementById('btnFilterApply');
     const filmSuche = document.getElementById('filmSuche');
     const suchBtn = document.getElementById('suchBtn');
+    const filterModal = document.getElementById('filterModal');
+    const btnFilterOpen = document.getElementById('btnFilterOpen');
+    const filterCloseButtons = filterModal ? filterModal.querySelectorAll('[data-filter-close]') : [];
 
     // Modals
     const modalOverlay = document.getElementById('modalOverlay');
     const modalFilm = document.getElementById('modalFilm');
     const modalVorstellung = document.getElementById('modalVorstellung');
     const modalSitzplan = document.getElementById('modalSitzplan');
+    const modalSaal = document.getElementById('modalSaal');
+    const modalSaalInfo = document.getElementById('modalSaalInfo');
+    const modalShowInfo = document.getElementById('modalShowInfo');
 
     const btnOpenFilmModal = document.getElementById('btnOpenFilmModal');
     const btnOpenVorstellungModal = document.getElementById('btnOpenVorstellungModal');
     const btnOpenSitzplanModal = document.getElementById('btnOpenSitzplanModal');
+    const btnOpenSaalModal = document.getElementById('btnOpenSaalModal');
     const closeFilmModal = document.getElementById('closeFilmModal');
     const closeVorstellungModal = document.getElementById('closeVorstellungModal');
     const closeSitzplanModal = document.getElementById('closeSitzplanModal');
+    const closeSaalModal = document.getElementById('closeSaalModal');
+    const closeSaalInfoModal = document.getElementById('closeSaalInfoModal');
+    const closeShowInfoModal = document.getElementById('closeShowInfoModal');
 
     // Film-Form
     const filmTitelInput = document.getElementById('filmTitelInput');
@@ -40,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filmFskInput = document.getElementById('filmFskInput');
     const filmFormatInput = document.getElementById('filmFormatInput');
     const filmKategorieInput = document.getElementById('filmKategorieInput');
+    const filmLaufzeitInput = document.getElementById('filmLaufzeitInput');
     const filmPreisInput = document.getElementById('filmPreisInput');
     const filmSaveBtn = document.getElementById('filmSaveBtn');
 
@@ -56,9 +67,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const prozentLogeInput = document.getElementById('prozentLogeInput');
     const sitzplanSaveBtn = document.getElementById('sitzplanSaveBtn');
 
+    // Säle
+    const saeleTbody = document.getElementById('saeleTbody');
+    const saalModalTitle = document.getElementById('saalModalTitle');
+    const saalNameInput = document.getElementById('saalNameInput');
+    const saalReihenInput = document.getElementById('saalReihenInput');
+    const saalSitzeInput = document.getElementById('saalSitzeInput');
+    const saalLogeInput = document.getElementById('saalLogeInput');
+    const saalSaveBtn = document.getElementById('saalSaveBtn');
+    const saalInfoTitle = document.getElementById('saalInfoTitle');
+    const saalInfoMeta = document.getElementById('saalInfoMeta');
+    const saalInfoSeatContainer = document.getElementById('saalInfoSeatContainer');
+    const saalInfoCloseBtn = document.getElementById('saalInfoCloseBtn');
+
+    const showInfoTitle = document.getElementById('showInfoTitle');
+    const showInfoFilm = document.getElementById('showInfoFilm');
+    const showInfoDate = document.getElementById('showInfoDate');
+    const showInfoTime = document.getElementById('showInfoTime');
+    const showInfoSaal = document.getElementById('showInfoSaal');
+    const showInfoRuntime = document.getElementById('showInfoRuntime');
+    const showInfoCloseBtn = document.getElementById('showInfoCloseBtn');
+
     // Daten (Demo)
     let nextMovieId = 4;
     let nextShowId = 7;
+    let nextHallId = 4;
 
     let movies = [
         {
@@ -68,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fsk: '16',
             format: '3D',
             kategorie: 'Action',
+            laufzeit: 120,
             preis: 12.99
         },
         {
@@ -77,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fsk: '12',
             format: '2D',
             kategorie: 'Komödie',
+            laufzeit: 105,
             preis: 9.99
         },
         {
@@ -86,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fsk: '6',
             format: '3D',
             kategorie: 'Sci-Fi',
+            laufzeit: 132,
             preis: 14.5
         }
     ];
@@ -99,6 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 6, filmId: 3, datum: '2025-11-26', uhrzeit: '16:00', saal: 'Saal 2' }
     ];
 
+    let halls = [
+        { id: 1, name: 'Saal 1', rows: 6, seatsPerRow: 10, logePercent: 25 },
+        { id: 2, name: 'Saal 2', rows: 5, seatsPerRow: 8, logePercent: 20 },
+        { id: 3, name: 'Saal 3', rows: 7, seatsPerRow: 12, logePercent: 30 }
+    ];
+
     let currentMovieId = null;
 
     // ============================
@@ -109,6 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
         modalFilm.classList.add('hidden');
         modalVorstellung.classList.add('hidden');
         modalSitzplan.classList.add('hidden');
+        modalSaal.classList.add('hidden');
+        modalSaalInfo.classList.add('hidden');
+        modalShowInfo.classList.add('hidden');
 
         if (which === 'film') {
             modalFilm.classList.remove('hidden');
@@ -116,6 +161,12 @@ document.addEventListener('DOMContentLoaded', () => {
             modalVorstellung.classList.remove('hidden');
         } else if (which === 'sitzplan') {
             modalSitzplan.classList.remove('hidden');
+        } else if (which === 'saal') {
+            modalSaal.classList.remove('hidden');
+        } else if (which === 'saal-info') {
+            modalSaalInfo.classList.remove('hidden');
+        } else if (which === 'show-info') {
+            modalShowInfo.classList.remove('hidden');
         }
     }
 
@@ -124,6 +175,9 @@ document.addEventListener('DOMContentLoaded', () => {
         modalFilm.classList.add('hidden');
         modalVorstellung.classList.add('hidden');
         modalSitzplan.classList.add('hidden');
+        modalSaal.classList.add('hidden');
+        modalSaalInfo.classList.add('hidden');
+        modalShowInfo.classList.add('hidden');
     }
 
     function getMovieById(id) {
@@ -133,6 +187,32 @@ document.addEventListener('DOMContentLoaded', () => {
     function formatEuro(wert) {
         const n = isNaN(wert) ? 0 : Number(wert);
         return n.toFixed(2).replace('.', ',') + ' €';
+    }
+
+    function buildSeatPlan(container, config) {
+        if (!container || !config) return;
+        container.innerHTML = '';
+
+        for (let i = 1; i <= config.rows; i++) {
+            const rowDiv = document.createElement('div');
+            rowDiv.classList.add('sitzreihe');
+
+            const label = document.createElement('span');
+            label.classList.add('sitzreihe-label');
+            label.textContent = String.fromCharCode(64 + i);
+            rowDiv.appendChild(label);
+
+            const isLogeRow = i > config.rows * (1 - config.logePercent / 100);
+
+            for (let seatIdx = 1; seatIdx <= config.seatsPerRow; seatIdx++) {
+                const seat = document.createElement('span');
+                seat.classList.add('sitz', isLogeRow ? 'premium' : 'standard');
+                seat.textContent = seatIdx;
+                rowDiv.appendChild(seat);
+            }
+
+            container.appendChild(rowDiv);
+        }
     }
 
     // ============================
@@ -177,8 +257,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const metaDiv = document.createElement('div');
             metaDiv.classList.add('movie-meta');
+            const laufzeitText = movie.laufzeit ? `${movie.laufzeit} Min` : 'k.A.';
             metaDiv.innerHTML =
-                `FSK: ${movie.fsk} • Format: ${movie.format} • Kategorie: ${movie.kategorie} • ${formatEuro(movie.preis)}`;
+                `FSK: ${movie.fsk} • Format: ${movie.format} • Kategorie: ${movie.kategorie} • Laufzeit: ${laufzeitText} • ${formatEuro(movie.preis)}`;
 
             infoDiv.appendChild(titleDiv);
             infoDiv.appendChild(metaDiv);
@@ -293,6 +374,110 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
+    // ============================
+    // Säle rendern
+    // ============================
+    function renderHallList() {
+        if (!saeleTbody) return;
+        saeleTbody.innerHTML = '';
+
+        if (!halls.length) {
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            td.colSpan = 5;
+            td.textContent = 'Keine Säle vorhanden.';
+            tr.appendChild(td);
+            saeleTbody.appendChild(tr);
+            return;
+        }
+
+        halls.forEach(hall => {
+            const tr = document.createElement('tr');
+
+            const tdName = document.createElement('td');
+            const tdRows = document.createElement('td');
+            const tdSeats = document.createElement('td');
+            const tdLoge = document.createElement('td');
+            const tdAction = document.createElement('td');
+
+            tdName.textContent = hall.name;
+            tdRows.textContent = String(hall.rows);
+            tdSeats.textContent = String(hall.seatsPerRow);
+            tdLoge.textContent = `${hall.logePercent}%`;
+
+            const infoBtn = document.createElement('button');
+            infoBtn.type = 'button';
+            infoBtn.classList.add('table-action-btn');
+            infoBtn.textContent = 'Information';
+            infoBtn.addEventListener('click', () => openHallInfo(hall.id));
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.classList.add('delete-btn');
+            deleteBtn.textContent = 'Löschen';
+            deleteBtn.addEventListener('click', () => deleteHall(hall.id));
+
+            const actionWrap = document.createElement('div');
+            actionWrap.classList.add('table-action-wrap');
+            actionWrap.appendChild(infoBtn);
+            actionWrap.appendChild(deleteBtn);
+
+            tdAction.appendChild(actionWrap);
+
+            tr.appendChild(tdName);
+            tr.appendChild(tdRows);
+            tr.appendChild(tdSeats);
+            tr.appendChild(tdLoge);
+            tr.appendChild(tdAction);
+
+            saeleTbody.appendChild(tr);
+        });
+    }
+
+    function getHallById(hallId) {
+        return halls.find(h => h.id === hallId) || null;
+    }
+
+    function openHallInfo(hallId) {
+        const hall = getHallById(hallId);
+        if (!hall) return;
+
+        if (saalInfoTitle) saalInfoTitle.textContent = hall.name;
+        if (saalInfoMeta) {
+            saalInfoMeta.textContent = `Reihen: ${hall.rows} • Sitze/ Reihe: ${hall.seatsPerRow} • Loge: ${hall.logePercent}%`;
+        }
+
+        buildSeatPlan(saalInfoSeatContainer, hall);
+        openModal('saal-info');
+    }
+
+    function openShowInfo(show) {
+        if (!show) return;
+        const movie = getMovieById(show.filmId);
+        const laufzeitText = movie && movie.laufzeit ? `${movie.laufzeit} Min` : 'k.A.';
+
+        if (showInfoTitle) showInfoTitle.textContent = 'Vorstellung';
+        if (showInfoFilm) showInfoFilm.textContent = movie ? movie.titel : 'Unbekannt';
+        if (showInfoDate) showInfoDate.textContent = show.datum;
+        if (showInfoTime) showInfoTime.textContent = show.uhrzeit;
+        if (showInfoSaal) showInfoSaal.textContent = show.saal;
+        if (showInfoRuntime) showInfoRuntime.textContent = laufzeitText;
+
+        openModal('show-info');
+    }
+
+    function deleteHall(hallId) {
+        const hall = getHallById(hallId);
+        if (!hall) return;
+
+        if (!confirm(`Saal "${hall.name}" wirklich löschen?`)) {
+            return;
+        }
+
+        halls = halls.filter(h => h.id !== hallId);
+        renderHallList();
+    }
+
     function deleteShow(showId) {
         const show = shows.find(s => s.id === showId);
         if (!show) return;
@@ -373,6 +558,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         ev.classList.add('kal-event');
                         ev.textContent =
                             `${show.uhrzeit} • ${show.saal} • ${(movie && movie.titel) || 'Unbekannt'}`;
+                        ev.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            openShowInfo(show);
+                        });
                         td.appendChild(ev);
                     });
 
@@ -439,6 +628,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filmFskInput.value = '';
         filmFormatInput.value = '';
         filmKategorieInput.value = '';
+        filmLaufzeitInput.value = '';
         filmPreisInput.value = '';
         openModal('film');
     });
@@ -456,9 +646,23 @@ document.addEventListener('DOMContentLoaded', () => {
         openModal('sitzplan');
     });
 
+    btnOpenSaalModal?.addEventListener('click', () => {
+        if (saalModalTitle) saalModalTitle.textContent = 'Saal hinzufügen';
+        saalNameInput.value = '';
+        saalReihenInput.value = '';
+        saalSitzeInput.value = '';
+        saalLogeInput.value = '';
+        openModal('saal');
+    });
+
     closeFilmModal?.addEventListener('click', closeModal);
     closeVorstellungModal?.addEventListener('click', closeModal);
     closeSitzplanModal?.addEventListener('click', closeModal);
+    closeSaalModal?.addEventListener('click', closeModal);
+    closeSaalInfoModal?.addEventListener('click', closeModal);
+    saalInfoCloseBtn?.addEventListener('click', closeModal);
+    closeShowInfoModal?.addEventListener('click', closeModal);
+    showInfoCloseBtn?.addEventListener('click', closeModal);
 
     modalOverlay?.addEventListener('click', (e) => {
         if (e.target === modalOverlay) {
@@ -472,10 +676,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const fsk = filmFskInput.value;
         const format = filmFormatInput.value;
         const kat = filmKategorieInput.value.trim() || 'Allgemein';
+        const laufzeit = parseInt(filmLaufzeitInput.value, 10);
         const preis = parseFloat(filmPreisInput.value.replace(',', '.'));
 
-        if (!titel || !fsk || !format || isNaN(preis)) {
-            alert('Bitte mindestens Titel, FSK, Format und Preis korrekt ausfüllen.');
+        if (!titel || !fsk || !format || isNaN(preis) || !laufzeit) {
+            alert('Bitte Titel, FSK, Format, Laufzeit und Preis korrekt ausfüllen.');
             return;
         }
 
@@ -486,6 +691,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fsk,
             format,
             kategorie: kat,
+            laufzeit,
             preis
         };
 
@@ -573,6 +779,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    function openFilterModal() {
+        if (!filterModal) return;
+        filterModal.classList.remove('hidden');
+        document.body.classList.add('no-scroll');
+    }
+
+    function closeFilterModal() {
+        if (!filterModal) return;
+        filterModal.classList.add('hidden');
+        document.body.classList.remove('no-scroll');
+    }
+
+    btnFilterOpen?.addEventListener('click', openFilterModal);
+    if (filterCloseButtons.length) {
+        filterCloseButtons.forEach(btn => btn.addEventListener('click', closeFilterModal));
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && filterModal && !filterModal.classList.contains('hidden')) {
+            closeFilterModal();
+        }
+    });
+
     sitzplanSaveBtn?.addEventListener('click', () => {
         const anzahlReihen = parseInt(anzahlReihenInput.value);
         const sitzeProReihe = parseInt(sitzeProReiheInput.value);
@@ -592,6 +821,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    saalSaveBtn?.addEventListener('click', () => {
+        const name = saalNameInput.value.trim();
+        const rows = parseInt(saalReihenInput.value, 10);
+        const seatsPerRow = parseInt(saalSitzeInput.value, 10);
+        const logePercent = parseInt(saalLogeInput.value, 10);
+
+        if (!name || !rows || !seatsPerRow || isNaN(logePercent) || logePercent < 0 || logePercent > 100) {
+            alert('Bitte Name, Reihen, Sitze pro Reihe und Loge-Prozent korrekt ausfüllen.');
+            return;
+        }
+
+        halls.push({
+            id: nextHallId++,
+            name,
+            rows,
+            seatsPerRow,
+            logePercent
+        });
+
+        renderHallList();
+        closeModal();
+    });
+
     // ============================
     // Initial
     // ============================
@@ -600,4 +852,5 @@ document.addEventListener('DOMContentLoaded', () => {
     renderShowList();
     renderCalendar();
     fillVorstellungFilmSelect();
+    renderHallList();
 });

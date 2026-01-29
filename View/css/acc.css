@@ -41,15 +41,15 @@ body {
 .btn-outline {
     padding: 10px 22px;
     border-radius: 6px;
-    border: 2px solid var(--brand);
+    border: 2px solid var(--accent);
     text-decoration: none;
-    color: var(--brand);
+    color: var(--accent);
     font-size: 18px;
     font-weight: 600;
 }
 
 .btn-outline:hover {
-    background: var(--brand);
+    background: var(--accent);
     color: var(--surface);
 }
 

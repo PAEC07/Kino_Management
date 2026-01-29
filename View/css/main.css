@@ -201,6 +201,17 @@ body {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
+.modal-title {
+    margin: 0 0 12px 0;
+    font-size: 22px;
+}
+
+.show-info-list {
+    display: grid;
+    gap: 8px;
+    font-size: 18px;
+}
+
 .modal-filter {
     border-left: 0;
     box-shadow: none;
@@ -669,9 +680,10 @@ body.no-scroll {
     margin-top: 4px;
     padding: 4px 6px;
     border-radius: 4px;
-    background: var(--accent-soft);
+    background: var(--accent);
     border-left: 4px solid var(--accent);
     font-size: 14px;
+    color: var(--surface);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -679,7 +691,7 @@ body.no-scroll {
 }
 
 .kal-event:hover {
-    background: var(--accent-soft-2);
+    background: var(--accent-strong);
 }
 
 
