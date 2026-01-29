@@ -2,6 +2,53 @@
 :root{--accent:var(--accent);--accent-soft:var(--accent-soft);--accent-soft-2:var(--accent-soft-2);--surface-2:var(--surface-2);--border-strong:var(--border-strong);--surface-muted:var(--surface-muted);}
 html[data-theme="dark"]{--surface-2:#242424;--border-strong:#555;--surface-muted:#1b1b1b;}
 
+/* Light-Mode Rahmen grün (Dark bleibt lila über --accent) */
+html:not([data-theme="dark"]) .column {
+    border-left-color: var(--brand);
+}
+
+html:not([data-theme="dark"]) .kalender-view,
+html:not([data-theme="dark"]) .details-table-wrapper,
+html:not([data-theme="dark"]) .liste li {
+    border-color: var(--brand);
+}
+
+html:not([data-theme="dark"]) .details-table th {
+    border-bottom-color: var(--brand);
+}
+
+html:not([data-theme="dark"]) .btn-small {
+    border-color: var(--brand);
+    color: var(--brand);
+}
+
+/* Light-Mode Rahmen sicher nach allen Basisregeln setzen */
+html:not([data-theme="dark"]) .column {
+    border: 1px solid var(--brand) !important;
+    border-left: 5px solid var(--brand) !important;
+}
+
+html:not([data-theme="dark"]) .filter,
+html:not([data-theme="dark"]) .details-table-wrapper,
+html:not([data-theme="dark"]) .kalender-view {
+    border-color: var(--brand) !important;
+}
+
+html:not([data-theme="dark"]) .liste li {
+    border-color: var(--brand) !important;
+}
+
+/* Light-Mode Buttons grün (Dark bleibt lila) */
+html:not([data-theme="dark"]) .btn-green,
+html:not([data-theme="dark"]) .add-session-btn,
+html:not([data-theme="dark"]) .btn-add,
+html:not([data-theme="dark"]) .btn-small,
+html:not([data-theme="dark"]) .table-action-btn {
+    background: var(--brand) !important;
+    color: var(--surface) !important;
+    border-color: var(--brand) !important;
+}
+
 /* =============================
    GLOBAL SETTINGS
 ============================= */
