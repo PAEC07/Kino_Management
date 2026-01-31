@@ -1,7 +1,20 @@
+/* login.css (themed) – verwendet Variablen aus css/theme.css */
+
+:root {
+    --accent: #3cb371;
+    --border-strong: #bbb;
+}
+
+html[data-theme="dark"] {
+    --border-strong: #4a4a4a;
+}
+
 body {
+    color: var(--text);
     margin: 0;
     padding: 0;
-    background: #ffffff;
+    background: var(--bg);
+    color: var(--text);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,11 +29,12 @@ body {
 }
 
 .login-card {
+    color: var(--text);
     width: 450px;
-    background: #ffffff;
+    background: var(--surface);
     padding: 40px;
     border-radius: 8px;
-    border-left: 5px solid #3cb371;
+    border-left: 5px solid var(--accent);
     box-shadow: 0 0 12px rgba(0,0,0,0.15);
     text-align: center;
 }
@@ -50,14 +64,14 @@ body {
 .form-grid input {
     padding: 14px;
     border-radius: 6px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--border-strong);
     font-size: 18px;
 }
 
 .btn-login {
     padding: 12px;
     border: none;
-    background: #3cb371;
+    background: var(--accent);
     color: white;
     cursor: pointer;
     border-radius: 6px;
@@ -71,13 +85,13 @@ body {
 .divider {
     margin: 25px 0;
     font-size: 16px;
-    color: #777;
+    color: var(--muted);
 }
 
 .guest {
     font-size: 18px;
     text-decoration: underline;
-    color: #3cb371;
+    color: var(--accent);
     cursor: pointer;
 }
 

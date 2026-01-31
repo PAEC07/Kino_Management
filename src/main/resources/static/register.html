@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrieren – Kino</title>
+    <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
@@ -12,31 +13,35 @@
 
     <div class="login-card">
 
-        <div class="logo">
+                <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+            <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false">☀️ Light</button>
+        </div>
+<div class="logo">
             <img src="img/kino_logo_whitebg.png" alt="Kino Logo">
         </div>
 
         <h2 class="title">Registrieren</h2>
         <p class="hint">Erstellen Sie ein Konto, um Buchungen zu speichern.</p>
 
-        <form class="form-grid" data-auth="register">
-            <input id="regUsername" type="text" name="username" placeholder="Benutzername" required>
-            <input id="regEmail" type="email" name="email" placeholder="E-Mail-Adresse" required>
+        <form method="post" action="/register" class="form-grid">
+            <input type="text" name="username" placeholder="Benutzername" required>
 
-            <input id="regPassword" type="password" name="password"
-                   placeholder="Passwort (mind. 8 Zeichen)" required minlength="8">
+            <input type="email" name="email" placeholder="E-Mail-Adresse" required>
 
-            <input id="regPasswordConfirm" type="password" name="passwordConfirm"
-                   placeholder="Passwort wiederholen" required minlength="8">
+            <input type="password"
+                   name="password"
+                   placeholder="Passwort (mind. 8 Zeichen)"
+                   required
+                   minlength="8">
+
+            <input type="password"
+                   name="passwordConfirm"
+                   placeholder="Passwort wiederholen"
+                   required
+                   minlength="8">
 
             <button type="submit" class="btn-login">Registrieren</button>
         </form>
-
-        <p id="regError" style="color:#c00; margin-top:10px;"></p>
-
-        <script src="js/register.js" defer></script>
-
-
 
         <div class="divider">oder</div>
 
@@ -45,7 +50,8 @@
     </div>
 
 </div>
-<script src="js/auth.js" defer></script>
+
+    <script src="js/theme.js" defer></script>
 
 </body>
 </html>

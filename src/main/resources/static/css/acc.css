@@ -13,7 +13,7 @@ body {
     font-family: Arial, sans-serif;
     max-width: 100%;
     overflow-x: hidden;
-    background-color: #f5f5f5;
+    background-color: var(--bg);
 }
 
 
@@ -28,8 +28,8 @@ body {
     justify-content: flex-end;
     align-items: center;
     padding: 0 30px;
-    background: #ffffff;
-    border-bottom: 1px solid #ddd;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
 }
 
 .topbar-right {
@@ -41,16 +41,16 @@ body {
 .btn-outline {
     padding: 10px 22px;
     border-radius: 6px;
-    border: 2px solid #3cb371;
+    border: 2px solid var(--accent);
     text-decoration: none;
-    color: #3cb371;
+    color: var(--accent);
     font-size: 18px;
     font-weight: 600;
 }
 
 .btn-outline:hover {
-    background: #3cb371;
-    color: #ffffff;
+    background: var(--accent);
+    color: var(--surface);
 }
 
 .logo-round {
@@ -58,9 +58,9 @@ body {
     height: 70px;
     border-radius: 50%;
     object-fit: contain;
-    background: #ffffff;
+    background: var(--surface);
     padding: 6px;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
 }
 
 
@@ -93,11 +93,11 @@ body {
 ============================= */
 
 .liste {
-    background: #ffffff;
+    background: var(--surface);
     border-radius: 8px;
-    border-left: 5px solid #c0392b;
+    border-left: 5px solid var(--danger);
     padding: 20px;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow);
     flex: 1;
 }
 
@@ -116,8 +116,8 @@ body {
 }
 
 .liste li {
-    background: #ffffff;
-    border: 2px solid #c0392b;
+    background: var(--surface);
+    border: 2px solid var(--danger);
     border-radius: 8px;
     padding: 12px;
 }
@@ -148,7 +148,7 @@ body {
 
 .ticket-meta {
     font-size: 16px;
-    color: #555;
+    color: var(--muted);
     display: flex;
     gap: 16px;
     flex-wrap: wrap;
@@ -162,7 +162,7 @@ body {
     padding: 6px 16px;
     border: none;
     border-radius: 12px;
-    background: #c0392b;
+    background: var(--danger);
     color: white;
     font-size: 14px;
     cursor: pointer;
@@ -173,7 +173,7 @@ body {
     padding: 6px 16px;
     border: none;
     border-radius: 12px;
-    background: #462bc0;
+    background: var(--accent);
     color: white;
     font-size: 14px;
     cursor: pointer;
@@ -194,11 +194,11 @@ body {
 ============================= */
 
 .Acc-DetailsWrapper {
-    background: #ffffff;
+    background: var(--surface);
     padding: 25px;
     border-radius: 8px;
-    border-left: 5px solid #452abb;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
+    border-left: 5px solid var(--accent);
+    box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -220,10 +220,10 @@ body {
 /* Info-Felder rechts */
 
 .acc-info-details-field {
-    border: 1px solid #bbb;
+    border: 1px solid var(--border);
     padding: 12px;
     border-radius: 6px;
-    background: #fafafa;
+    background: var(--surface-2);
 }
 
 .acc-info-details-field p {
@@ -240,7 +240,7 @@ body {
     padding: 12px 36px;
     border-radius: 18px;
     border: none;
-    background: #452abb;
+    background: var(--accent);
     color: white;
     font-size: 20px;
     cursor: pointer;
@@ -278,12 +278,12 @@ body {
 }
 
 .modal {
-    background: #ffffff;
+    background: var(--surface);
     padding: 20px 24px;
     border-radius: 8px;
     min-width: 320px;
     max-width: 520px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-strong);
     position: relative;
 }
 
@@ -314,7 +314,7 @@ body {
     width: 100%;
     padding: 8px 10px;
     border-radius: 6px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--border);
     font-size: 16px;
     margin-top: 4px;
 }
@@ -332,3 +332,6 @@ body {
 .hidden {
     display: none;
 }
+/* Theme-Fixes für Dark Mode */
+.modal-close{ color: var(--text); }
+.modal-input{ background: var(--surface); color: var(--text); border: 1px solid var(--border); }

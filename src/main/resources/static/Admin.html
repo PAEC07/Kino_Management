@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kino – Adminbereich</title>
+    <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/adm.css">
 </head>
 
@@ -12,7 +13,8 @@
     <!-- TOPBAR -->
     <header class="topbar">
         <div class="topbar-right">
-            <strong>Admin-Bereich</strong>
+                    <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false">☀️ Light</button>
+<strong>Admin-Bereich</strong>
             <a href="login.html" class="btn-outline">Abmelden</a>
             <a href="index.html" class="btn-outline">Zurück</a>
             <img src="img/kino_logo_whitebg.png" alt="Kino Logo" class="logo-round">
@@ -26,46 +28,11 @@
         <section class="column left-column">
             <h2>Filme</h2>
 
-            <!-- FILTER / SUCHE / FILM HINZUFÜGEN -->
+                        <!-- FILTER / SUCHE / FILM HINZUFÜGEN -->
             <section class="filter">
-                <h3 class="filter-title">Filtern nach</h3>
-
-                <div class="filter-row">
-                    <div class="filter-field">
-                        <label>Format</label>
-                        <select id="filterFormat">
-                            <option value="">Alle</option>
-                            <option value="2D">2D</option>
-                            <option value="3D">3D</option>
-                        </select>
-                    </div>
-
-                    <div class="filter-field">
-                        <label>FSK</label>
-                        <select id="filterFsk">
-                            <option value="">Alle</option>
-                            <option value="0">0</option>
-                            <option value="6">6</option>
-                            <option value="12">12</option>
-                            <option value="16">16</option>
-                            <option value="18">18</option>
-                        </select>
-                    </div>
-
-                    <div class="filter-field">
-                        <label>Stil</label>
-                        <select id="filterStil">
-                            <option value="">Alle</option>
-                            <option value="Action">Action</option>
-                            <option value="Komödie">Komödie</option>
-                            <option value="Horror">Horror</option>
-                            <option value="Sci-Fi">Sci-Fi</option>
-                        </select>
-                    </div>
-
-                    <div class="filter-field-btn">
-                        <button class="btn btn-green" type="button" id="btnFilterApply">Anwenden</button>
-                    </div>
+                <div class="filter-header">
+                    <h3 class="filter-title">Filter</h3>
+                    <button class="btn btn-green" type="button" id="btnFilterOpen">Filter</button>
                 </div>
 
                 <div class="filter-search">
@@ -74,7 +41,7 @@
                     <button class="btn-add" type="button" id="btnOpenFilmModal">Film hinzufügen</button>
                 </div>
             </section>
-
+<br>
             <aside class="liste">
                 <ul class="movie-list" id="movieList">
                     <!-- per JS gefüllt -->
@@ -82,6 +49,53 @@
             </aside>
         </section>
 
+        <div class="filter-modal hidden" id="filterModal" role="dialog" aria-modal="true" aria-labelledby="filterTitle">
+            <div class="filter-modal-backdrop" data-filter-close></div>
+            <div class="filter-modal-panel">
+                <button class="filter-modal-close" type="button" data-filter-close aria-label="Schliessen">x</button>
+                <section class="filter modal-filter">
+                    <h3 class="filter-title" id="filterTitle">Filtern nach</h3>
+
+                    <div class="filter-row">
+                        <div class="filter-field">
+                            <label>Format</label>
+                            <select id="filterFormat">
+                                <option value="">Alle</option>
+                                <option value="2D">2D</option>
+                                <option value="3D">3D</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-field">
+                            <label>FSK</label>
+                            <select id="filterFsk">
+                                <option value="">Alle</option>
+                                <option value="0">0</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="16">16</option>
+                                <option value="18">18</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-field">
+                            <label>Stil</label>
+                            <select id="filterStil">
+                                <option value="">Alle</option>
+                                <option value="Action">Action</option>
+                                <option value="Komödie">Komödie</option>
+                                <option value="Horror">Horror</option>
+                                <option value="Sci-Fi">Sci-Fi</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-field-btn">
+                            <button class="btn btn-green" type="button" id="btnFilterApply">Anwenden</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
         <!-- RECHTE SPALTE: VORSTELLUNGEN & KALENDER -->
         <section class="column right-column">
             <h2>Vorstellungen</h2>
@@ -89,6 +103,9 @@
             <div class="film-vorstellung-btns">
                 <button class="add-session-btn" type="button" id="btnOpenVorstellungModal">
                     Vorstellung hinzufügen
+                </button>
+                <button class="add-session-btn" type="button" id="btnOpenSitzplanModal">
+                    Sitzplan konfigurieren
                 </button>
             </div>
 
@@ -150,9 +167,37 @@
 
         </section>
 
+        <!-- SPALTE: SÄLE -->
+        <section class="column hall-column">
+            <h2>Säle</h2>
+
+            <div class="hall-actions">
+                <button class="add-session-btn" type="button" id="btnOpenSaalModal">
+                    Saal hinzufügen
+                </button>
+            </div>
+
+            <div class="details-table-wrapper">
+                <table class="details-table hall-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Reihen</th>
+                            <th>Sitze/ Reihe</th>
+                            <th>Loge %</th>
+                            <th>Aktion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="saeleTbody">
+                        <!-- per JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
     </main>
 
-    <!-- MODAL OVERLAY -->
+        <!-- MODAL OVERLAY -->
     <div id="modalOverlay" class="modal-overlay hidden">
 
         <!-- Modal: Film hinzufügen -->
@@ -196,6 +241,11 @@
                 <div class="film-create-details-field">
                     <p><strong>Stil / Kategorie</strong></p>
                     <input class="modal-input" type="text" id="filmKategorieInput" placeholder="z.B. Action, Komödie">
+                </div>
+
+                <div class="film-create-details-field">
+                    <p><strong>Laufzeit (Minuten)</strong></p>
+                    <input class="modal-input" type="number" min="1" id="filmLaufzeitInput" placeholder="z.B. 120">
                 </div>
 
                 <div class="film-create-details-field">
@@ -243,9 +293,116 @@
                 </div>
             </section>
         </div>
+
+        <!-- Modal: Sitzplan konfigurieren -->
+        <div class="modal" id="modalSitzplan">
+            <button class="modal-close" id="closeSitzplanModal">&times;</button>
+            <h2>Sitzplan konfigurieren</h2>
+            <p>Hier können Sie die Anzahl der Reihen, Sitze pro Reihe und den Prozentsatz für Loge-Plätze festlegen.</p>
+
+            <section class="modal-left-column">
+                <div class="film-create-details-field">
+                    <p><strong>Anzahl Reihen</strong></p>
+                    <input class="modal-input" type="number" min="1" max="26" id="anzahlReihenInput" placeholder="z.B. 6">
+                </div>
+
+                <div class="film-create-details-field">
+                    <p><strong>Sitze pro Reihe</strong></p>
+                    <input class="modal-input" type="number" min="1" id="sitzeProReiheInput" placeholder="z.B. 10">
+                </div>
+
+                <div class="film-create-details-field">
+                    <p><strong>Prozentsatz Loge (%)</strong></p>
+                    <input class="modal-input" type="number" min="0" max="100" id="prozentLogeInput" placeholder="z.B. 25">
+                </div>
+
+                <div class="film-create-details-field">
+                    <button class="btn btn-green" id="sitzplanSaveBtn" type="button">Speichern</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Modal: Saal anlegen -->
+        <div class="modal hidden" id="modalSaal">
+            <button class="modal-close" id="closeSaalModal">&times;</button>
+            <h2 id="saalModalTitle">Saal hinzufügen</h2>
+            <p>Hier können Sie Säle anlegen.</p>
+
+            <section class="modal-left-column">
+                <div class="film-create-details-field">
+                    <p><strong>Name</strong></p>
+                    <input class="modal-input" type="text" id="saalNameInput" placeholder="z.B. Saal 1">
+                </div>
+
+                <div class="film-create-details-field">
+                    <p><strong>Anzahl Reihen</strong></p>
+                    <input class="modal-input" type="number" min="1" max="26" id="saalReihenInput" placeholder="z.B. 6">
+                </div>
+
+                <div class="film-create-details-field">
+                    <p><strong>Sitze pro Reihe</strong></p>
+                    <input class="modal-input" type="number" min="1" id="saalSitzeInput" placeholder="z.B. 10">
+                </div>
+
+                <div class="film-create-details-field">
+                    <p><strong>Prozentsatz Loge (%)</strong></p>
+                    <input class="modal-input" type="number" min="0" max="100" id="saalLogeInput" placeholder="z.B. 25">
+                </div>
+
+                <div class="film-create-details-field">
+                    <button class="btn btn-green" id="saalSaveBtn" type="button">Speichern</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Modal: Saal-Information -->
+        <div class="modal hidden" id="modalSaalInfo">
+            <button class="modal-close" id="closeSaalInfoModal">&times;</button>
+            <h2 id="saalInfoTitle">Saal</h2>
+            <p id="saalInfoMeta"></p>
+
+            <section class="modal-left-column">
+                <div class="sitzplan">
+                    <div class="leinwand">Leinwand</div>
+                    <div class="sitzreihen" id="saalInfoSeatContainer">
+                        <!-- Sitzplan-Preview -->
+                    </div>
+                </div>
+
+                <div class="btn btn-grey" id="saalInfoCloseBtn">Schließen</div>
+            </section>
+        </div>
+
+        <!-- Modal: Vorstellung-Information -->
+        <div class="modal hidden" id="modalShowInfo">
+            <button class="modal-close" id="closeShowInfoModal">&times;</button>
+            <h2 id="showInfoTitle">Vorstellung</h2>
+
+            <section class="modal-left-column">
+                <div class="film-create-details-field">
+                    <p><strong>Film:</strong> <span id="showInfoFilm"></span></p>
+                </div>
+                <div class="film-create-details-field">
+                    <p><strong>Datum:</strong> <span id="showInfoDate"></span></p>
+                </div>
+                <div class="film-create-details-field">
+                    <p><strong>Uhrzeit:</strong> <span id="showInfoTime"></span></p>
+                </div>
+                <div class="film-create-details-field">
+                    <p><strong>Saal:</strong> <span id="showInfoSaal"></span></p>
+                </div>
+                <div class="film-create-details-field">
+                    <p><strong>Laufzeit:</strong> <span id="showInfoRuntime"></span></p>
+                </div>
+
+                <div class="btn btn-grey" id="showInfoCloseBtn">Schliessen</div>
+            </section>
+        </div>
     </div>
 
     <script src="js/adm.js" defer></script>
+    <script src="js/theme.js" defer></script>
+
 </body>
 
 </html>
