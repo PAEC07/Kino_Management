@@ -110,6 +110,12 @@ body {
     color: var(--surface);
 }
 
+/* Light-Mode: Text in der Topbar beim Hover nicht weiß */
+html:not([data-theme="dark"]) .topbar .btn-outline:hover {
+    color: #000000;
+    background: transparent;
+}
+
 .logo-round {
     width: 70px;
     height: 70px;
