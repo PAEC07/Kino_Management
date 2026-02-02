@@ -1,18 +1,18 @@
 package de.kinoapplikation.kino.service;
 
 import de.kinoapplikation.kino.dto.AuthDtos;
-import de.kinoapplikation.kino.entity.AppUser;
-import de.kinoapplikation.kino.repository.UserRepository;
+import de.kinoapplikation.kino.entity.Benutzer;
+import de.kinoapplikation.kino.repository.BenutzerRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
-    private final UserRepository userRepo;
+    private final BenutzerRepository userRepo;
     private final BCryptPasswordEncoder encoder;
 
-    public AuthService(UserRepository userRepo, BCryptPasswordEncoder encoder) {
+    public AuthService(BenutzerRepository userRepo, BCryptPasswordEncoder encoder) {
         this.userRepo = userRepo;
         this.encoder = encoder;
     }
@@ -40,7 +40,7 @@ public class AuthService {
         }
 
         String hash = encoder.encode(password);
-        userRepo.save(new AppUser(username, email, hash));
+        userRepo.save(new Benutzer(username, email, hash));
 
         return new AuthDtos.AuthResponse(true, "Registrierung erfolgreich.");
     }

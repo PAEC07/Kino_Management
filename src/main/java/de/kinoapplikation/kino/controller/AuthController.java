@@ -24,11 +24,10 @@ public class AuthController {
             return ResponseEntity.ok(resp);
         }
 
-        // simple Statuswahl (kannst du später feiner machen)
         if (resp.message.contains("bereits")) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(resp); // 409
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(resp);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resp); // 400
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resp);
     }
 
     @PostMapping("/login")
@@ -37,6 +36,6 @@ public class AuthController {
         if (resp.ok) {
             return ResponseEntity.ok(resp);
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp); // 401
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp);
     }
 }
