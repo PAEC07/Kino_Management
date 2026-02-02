@@ -10,7 +10,7 @@ import java.util.List;
  */
 
 @Entity
-public class SitzTyp { 
+public class SitzTyp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
