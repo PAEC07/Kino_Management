@@ -1,10 +1,7 @@
 package de.kinoapplikation.kino.service;
 
-
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
 import de.kinoapplikation.kino.entity.Benutzer;
 import de.kinoapplikation.kino.repository.BenutzerRepository;
 

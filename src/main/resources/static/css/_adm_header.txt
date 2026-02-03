@@ -1,4 +1,0 @@
-/* adm.css (themed) – verwendet Variablen aus css/theme.css */
-:root{--accent:#842bc0;--accent-soft:#f5e9ff;--accent-soft-2:#f9f2ff;--surface-2:#f0f0f0;--border-strong:#ccc;--surface-muted:#fafafa;}
-html[data-theme="dark"]{--surface-2:#242424;--border-strong:#555;--surface-muted:#1b1b1b;}
-

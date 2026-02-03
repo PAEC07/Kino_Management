@@ -15,7 +15,7 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    @GetMapping
+    @GetMapping("/list")
     public List<Film> alleFilme() {
         return filmService.getAlleFilme();
     }
@@ -25,7 +25,7 @@ public class FilmController {
         return filmService.filterByGenre(genre);
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public Film addFilm(@RequestBody Film film) {
         return filmService.addFilm(film);
     }

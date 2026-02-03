@@ -24,6 +24,8 @@ public class Saal {
 
     private int plaetzePerReihe;
     private int MaxReihen;
+    private int logeAnteilProzent;
+    private String saalName;
 
     @OneToMany(mappedBy = "saalId", cascade = CascadeType.ALL)
     private List<Vorstellung> vorstellungen;
@@ -47,6 +49,21 @@ public class Saal {
     }
     public void setMaxReihen(int maxReihen) {
         MaxReihen = maxReihen;
+    }
+    
+    public int getLogeAnteilProzent() {
+        return logeAnteilProzent;
+    }
+
+    public void setLogeAnteilProzent(int logeAnteilProzent) {
+        this.logeAnteilProzent = logeAnteilProzent;
+    }
+    public String getSaalName() {
+        return saalName;
+    } 
+
+    public void setSaalName(String saalName) {
+        this.saalName = saalName;
     }
 
     public List<Vorstellung> getVorstellungen() {

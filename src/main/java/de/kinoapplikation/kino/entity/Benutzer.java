@@ -1,46 +1,94 @@
 package de.kinoapplikation.kino.entity;
 
 import jakarta.persistence.*;
-
-/**
- * Entität für Accounts im Kino-System.
- * Enthält Informationen über Benutzerkonten wie Benutzername, Passwort und E-Mail.
- * @author Niklas
- */
+import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "username" }),
+        @UniqueConstraint(columnNames = { "email" })
+})
 public class Benutzer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private Long accountId;
-    private String benutzername;
-    private String password;
+    @Column(nullable = false)
+    private String username;
+
+    @Column(nullable = false)
     private String email;
 
-    // Getter & Setter
+    // bcrypt hash
+    @Column(nullable = false)
+    private String passwordHash;
+
+    @Column(nullable = false)
+    private String role = "USER";
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    public Benutzer() {}
+
+    public Benutzer(String username, String email, String passwordHash) {
+        this.username = username;
+        this.email = email;
+        this.passwordHash = passwordHash;
+    }
+
     public Long getId() {
-        return accountId;
+        return id;
     }
-    public void setId(Long accountId) {
-        this.accountId = accountId;
+
+    public String getUsername() {
+        return username;
     }
-    public String getBenutzername() {
-        return benutzername;
-    }
-    public void setBenutzername(String benutzername) {
-        this.benutzername = benutzername;
-    }
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
-    }
+
     public String getEmail() {
         return email;
     }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Object getBenutzername() {
+        return getBenutzername();
+    }
+
+    public void setBenutzername(Object benutzername) {
+    }
+
+    public Object getPassword() {
+        return passwordHash;
+    }
+
+    public void setPassword(Object password) {
     }
 }

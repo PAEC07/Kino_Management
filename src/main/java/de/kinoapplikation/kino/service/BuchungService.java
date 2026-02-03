@@ -1,6 +1,5 @@
 package de.kinoapplikation.kino.service;
 
-
 import de.kinoapplikation.kino.entity.Buchung;
 import de.kinoapplikation.kino.repository.BuchungRepository;
 import org.springframework.stereotype.Service;
@@ -15,8 +14,19 @@ public class BuchungService {
         this.buchungRepo = buchungRepo;
     }
 
-    public Buchung buchen(Buchung b) { return buchungRepo.save(b); }
-    public void stornieren(Long id) { buchungRepo.deleteById(id); }
-    public Buchung getBuchung(Long id) { return buchungRepo.findById(id).orElse(null); }
-    public List<Buchung> alleBuchungen() { return buchungRepo.findAll(); }
+    public Buchung buchen(Buchung b) {
+        return buchungRepo.save(b);
+    }
+
+    public void stornieren(Long id) {
+        buchungRepo.deleteById(id);
+    }
+
+    public Buchung getBuchung(Long id) {
+        return buchungRepo.findById(id).orElse(null);
+    }
+
+    public List<Buchung> alleBuchungen() {
+        return buchungRepo.findAll();
+    }
 }
