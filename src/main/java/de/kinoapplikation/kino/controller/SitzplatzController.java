@@ -39,8 +39,8 @@ public class SitzplatzController {
     }
 
     // Zum Testen, ob überhaupt Daten da sind
-    @GetMapping("/test-alle")
-    public List<Sitzplatz> testAlle() {
+    @GetMapping("/list")
+    public List<Sitzplatz> auflisten() {
         return sitzplatzRepository.findAll();
     }
 }

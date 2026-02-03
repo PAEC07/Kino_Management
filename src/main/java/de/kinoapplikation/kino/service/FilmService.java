@@ -17,15 +17,28 @@ public class FilmService {
     }
 
     public Film addFilm(Film film) {
+        if (film == null) {
+            throw new IllegalArgumentException("Film cannot be null");
+        }
         return filmRepo.save(film);
     }
 
     public void deleteFilm(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null");
+        }
         filmRepo.deleteById(id);
     }
 
     public List<Film> getAlleFilme() {
         return filmRepo.findAll();
+    }
+
+    public Film getFilm(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null");
+        }
+        return filmRepo.findById(id).orElse(null);
     }
 
     public List<Film> filterByGenre(String genre) {

@@ -1,6 +1,13 @@
 package de.kinoapplikation.kino.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 
 @Entity
 @Table(name = "tickets")
@@ -19,10 +26,27 @@ public class Tickets {
     private Sitzplatz sitzplatz;
 
     // Getter & Setter
-    public int getTicketId() { return ticketId; }
-    public void setTicketId(int ticketId) { this.ticketId = ticketId; }
-    public Vorstellung getVorstellungId() { return vorstellungId; }
-    public void setVorstellungId(Vorstellung vorstellungId) { this.vorstellungId = vorstellungId; }
-    public Sitzplatz getSitzplatz() { return sitzplatz; }
-    public void setSitzplatz(Sitzplatz sitzplatz) { this.sitzplatz = sitzplatz; }
+    public int getTicketId() {
+        return ticketId;
+    }
+
+    public void setTicketId(int ticketId) {
+        this.ticketId = ticketId;
+    }
+
+    public Vorstellung getVorstellungId() {
+        return vorstellungId;
+    }
+
+    public void setVorstellungId(Vorstellung vorstellungId) {
+        this.vorstellungId = vorstellungId;
+    }
+
+    public Sitzplatz getSitzplatz() {
+        return sitzplatz;
+    }
+
+    public void setSitzplatz(Sitzplatz sitzplatz) {
+        this.sitzplatz = sitzplatz;
+    }
 }

@@ -1,7 +1,9 @@
 package de.kinoapplikation.kino.entity;
 
-import jakarta.persistence.*;
-import java.util.List;  
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 /**
  * Generelle Entität für Preisnachlässe wie für Studenten, Kinder oder Senioren.

@@ -15,17 +15,22 @@ public class VorstellungController {
         this.vorstellungService = vorstellungService;
     }
 
-    @GetMapping
+    @GetMapping("/list")
     public List<Vorstellung> alleVorstellungen() {
         return vorstellungService.alleVorstellungen();
     }
+    
+    @GetMapping("/{id}/get")
+    public Vorstellung getVorstellung(@PathVariable Long id) {
+        return vorstellungService.getVorstellung(id);
+    }
 
-    @PostMapping
+    @PostMapping("/add")
     public Vorstellung addVorstellung(@RequestBody Vorstellung v) {
         return vorstellungService.addVorstellung(v);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/delete")
     public void deleteVorstellung(@PathVariable Long id) {
         vorstellungService.deleteVorstellung(id);
     }

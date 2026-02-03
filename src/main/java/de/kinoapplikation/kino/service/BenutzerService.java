@@ -15,10 +15,16 @@ public class BenutzerService {
     }
 
     public Benutzer registrieren(Benutzer benutzer) {
+        if (benutzer == null) {
+            throw new IllegalArgumentException("Benutzer darf nicht null sein");
+        }
         return benutzerRepo.save(benutzer);
     }
 
     public Benutzer datenAendern(Long id, Benutzer updated) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID darf nicht null sein");
+        }
         return benutzerRepo.findById(id).map(b -> {
             b.setBenutzername(updated.getBenutzername());
             b.setEmail(updated.getEmail());

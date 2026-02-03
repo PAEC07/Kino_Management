@@ -4,8 +4,6 @@ import de.kinoapplikation.kino.entity.Saal;
 import de.kinoapplikation.kino.service.SaalService;
 
 import java.util.List;
-
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Admin;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +33,7 @@ public class SaalController {
         return saalService.listeSaele();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/get")
     public ResponseEntity<Saal> getSaalById(@PathVariable Long id) {
         Saal saal = saalService.getSaalById(id);
         if (saal != null) {

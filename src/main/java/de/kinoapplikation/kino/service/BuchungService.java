@@ -15,15 +15,24 @@ public class BuchungService {
     }
 
     public Buchung buchen(Buchung b) {
+        if (b == null) {
+            throw new IllegalArgumentException("Buchung cannot be null");
+        }
         return buchungRepo.save(b);
     }
 
     public void stornieren(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null");
+        }
         buchungRepo.deleteById(id);
     }
 
     public Buchung getBuchung(Long id) {
-        return buchungRepo.findById(id).orElse(null);
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null");
+        }
+        return buchungRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Buchung not found"));
     }
 
     public List<Buchung> alleBuchungen() {

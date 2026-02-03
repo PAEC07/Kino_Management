@@ -11,10 +11,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-
 /**
  * Entität für Filme im Kino-System.
- * Enthält Informationen über Filme wie Name, Beschreibung, FSK, Kategorie und Basispreis.
+ * Enthält Informationen über Filme wie Name, Beschreibung, FSK, Kategorie und
+ * Basispreis.
+ * 
  * @author Niklas
  */
 
@@ -41,54 +42,71 @@ public class Film {
     public Long getId() {
         return filmId;
     }
+
     public void setId(Long filmId) {
         this.filmId = filmId;
     }
+
     public String getFilmname() {
         return filmname;
     }
+
     public void setFilmname(String filmname) {
         this.filmname = filmname;
     }
+
     public String getBeschreibung() {
         return beschreibung;
     }
+
     public void setBeschreibung(String beschreibung) {
         this.beschreibung = beschreibung;
     }
+
     public int getFsk() {
         return fsk;
     }
+
     public void setFsk(int fsk) {
         this.fsk = fsk;
     }
+
     public String getKategorie() {
         return kategorie;
     }
+
     public void setKategorie(String kategorie) {
         this.kategorie = kategorie;
     }
+
     public Long getBasispreis() {
         return basispreis;
     }
+
     public void setBasispreis(Long basispreis) {
         this.basispreis = basispreis;
     }
+
     public List<Vorstellung> getVorstellungen() {
         return vorstellungen;
     }
+
     public void setVorstellungen(List<Vorstellung> vorstellungen) {
         this.vorstellungen = vorstellungen;
     }
+
     public void setFilmdauer(Duration filmtime) {
         this.filmdauer = filmtime;
     }
+
     public Duration getFilmdauer() {
         return filmdauer;
     }
+
     public String getDarstellungstyp() {
         return darstellungstyp;
     }
+
     public void setDarstellungstyp(String darstellungstyp) {
         this.darstellungstyp = darstellungstyp;
     }

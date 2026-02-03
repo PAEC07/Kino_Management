@@ -1,11 +1,15 @@
 package de.kinoapplikation.kino.entity;
 
-import jakarta.persistence.*;
-import java.util.List; 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 /**
- * Generelle Entität für Sitztypen im Kino wie z.B. VIP, Standard oder Rollstuhlsitz.
+ * Generelle Entität für Sitztypen im Kino wie z.B. VIP, Standard oder
+ * Rollstuhlsitz.
  * Kein direkter Bezug zu PreisZuschlag oder Discounts.
+ * 
  * @author Niklas
  */
 
@@ -23,18 +27,23 @@ public class SitzTyp {
     public Long getId() {
         return sitzTypId;
     }
+
     public void setId(Long sitzTypId) {
         this.sitzTypId = sitzTypId;
     }
+
     public String getBezeichnung() {
         return bezeichnung;
     }
+
     public void setBezeichnung(String bezeichnung) {
         this.bezeichnung = bezeichnung;
     }
+
     public Long getAufschlagWert() {
         return aufschlagWert;
     }
+
     public void setAufschlagWert(Long aufschlagWert) {
         this.aufschlagWert = aufschlagWert;
     }

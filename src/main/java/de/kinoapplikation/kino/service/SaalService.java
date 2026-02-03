@@ -15,6 +15,9 @@ public class SaalService {
     }
 
     public boolean addSaal(Saal saal) {
+        if (saal == null) {
+            throw new IllegalArgumentException("Saal cannot be null");
+        }
         // Implementierung zum Hinzufügen eines Saals
         // Diese Methode sollte die Logik enthalten, um einen neuen Saal in der Datenbank zu speichern
         return saalRepo.save(saal) != null; // Rückgabe true bei Erfolg, false bei Fehler
@@ -27,10 +30,16 @@ public class SaalService {
     }
 
     public Saal getSaalById(Long id) {
-        return saalRepo.findById(id).orElse(null);
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null");
+        }
+        return saalRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Saal not found"));
     }
 
     public void deleteSaal(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null");
+        }
         saalRepo.deleteById(id);
     }
 }

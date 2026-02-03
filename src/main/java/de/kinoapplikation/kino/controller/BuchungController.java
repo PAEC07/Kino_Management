@@ -15,22 +15,22 @@ public class BuchungController {
         this.buchungService = buchungService;
     }
 
-    @GetMapping
+    @GetMapping("/list")
     public List<Buchung> alleBuchungen() {
         return buchungService.alleBuchungen();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/get")
     public Buchung getBuchung(@PathVariable Long id) {
         return buchungService.getBuchung(id);
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public Buchung buchen(@RequestBody Buchung b) {
         return buchungService.buchen(b);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/delete")
     public void stornieren(@PathVariable Long id) {
         buchungService.stornieren(id);
     }
