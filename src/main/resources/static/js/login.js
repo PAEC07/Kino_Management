@@ -4,32 +4,44 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
   const err = document.getElementById("loginError");
 
-  form?.addEventListener("submit", async (e) => {
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     err.textContent = "";
 
-    const username = document.getElementById("loginUsername").value.trim();
-    const password = document.getElementById("loginPassword").value;
+    const username = document.getElementById("loginUsername")?.value.trim();
+    const password = document.getElementById("loginPassword")?.value;
+
+    if (!username || !password) {
+      err.textContent = "Bitte Benutzername und Passwort eingeben.";
+      return;
+    }
 
     try {
       const res = await fetch(API_BASE + "/api/auth/login", {
         method: "POST",
-        headers: {"Content-Type":"application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
       });
 
-      if (!res.ok) {
-        const t = await res.text();
-        throw new Error(t || ("Login fehlgeschlagen (" + res.status + ")"));
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        err.textContent = data.message || "Login fehlgeschlagen.";
+        return;
       }
 
-      const user = await res.json();
-      localStorage.setItem("kino_user", JSON.stringify(user));
+      // ✅ NUR den Benutzer speichern
+      localStorage.setItem("kino_user", JSON.stringify(data.user));
 
-      // zurück zur Startseite
+      // Optional: Token später
+      // localStorage.setItem("kino_token", data.token);
+
       window.location.href = "index.html";
     } catch (e2) {
-      err.textContent = e2.message || "Login fehlgeschlagen";
+      console.error(e2);
+      err.textContent = "Server nicht erreichbar.";
     }
   });
 });

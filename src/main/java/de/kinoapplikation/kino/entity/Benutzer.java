@@ -1,12 +1,7 @@
 package de.kinoapplikation.kino.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.UniqueConstraint;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,7 +21,8 @@ public class Benutzer {
     @Column(nullable = false)
     private String email;
 
-    // bcrypt hash
+    // bcrypt hash (niemals im JSON ausgeben!)
+    @JsonIgnore
     @Column(nullable = false)
     private String passwordHash;
 
@@ -44,57 +40,21 @@ public class Benutzer {
         this.passwordHash = passwordHash;
     }
 
-    public Long getId() {
-        return id;
-    }
+    // --- Getter ---
+    public Long getId() { return id; }
+    public String getUsername() { return username; }
+    public String getEmail() { return email; }
+    public String getRole() { return role; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 
-    public String getUsername() {
-        return username;
-    }
+    // --- Setter ---
+    public void setId(Long id) { this.id = id; }
+    public void setUsername(String username) { this.username = username; }
+    public void setEmail(String email) { this.email = email; }
+    public void setRole(String role) { this.role = role; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Object getBenutzername() {
-        return getBenutzername();
-    }
-
-    public void setBenutzername(Object benutzername) {
-    }
-
-    public Object getPassword() {
-        return passwordHash;
-    }
-
-    public void setPassword(Object password) {
-    }
+    // Passwort nur intern benutzen (Service), nicht fürs JSON
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 }

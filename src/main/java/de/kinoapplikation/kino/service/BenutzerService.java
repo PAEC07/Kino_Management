@@ -22,16 +22,19 @@ public class BenutzerService {
     }
 
     public Benutzer datenAendern(Long id, Benutzer updated) {
-        if (id == null) {
-            throw new IllegalArgumentException("ID darf nicht null sein");
-        }
+        if (id == null) throw new IllegalArgumentException("ID darf nicht null sein");
+
         return benutzerRepo.findById(id).map(b -> {
-            b.setBenutzername(updated.getBenutzername());
-            b.setEmail(updated.getEmail());
-            b.setPassword(updated.getPassword());
+            if (updated.getUsername() != null) b.setUsername(updated.getUsername());
+            if (updated.getEmail() != null) b.setEmail(updated.getEmail());
+
+            // wenn du Password ändern willst, dann nur passwordHash setzen
+            if (updated.getPasswordHash() != null) b.setPasswordHash(updated.getPasswordHash());
+
             return benutzerRepo.save(b);
         }).orElse(null);
     }
+
 
     public List<Benutzer> alleBenutzer() {
         return benutzerRepo.findAll();
