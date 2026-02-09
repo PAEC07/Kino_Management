@@ -1,7 +1,11 @@
 package de.kinoapplikation.kino.service;
 
 import java.util.List;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import de.kinoapplikation.kino.dto.AuthDtos;
 import de.kinoapplikation.kino.entity.Benutzer;
 import de.kinoapplikation.kino.repository.BenutzerRepository;
 
@@ -9,34 +13,75 @@ import de.kinoapplikation.kino.repository.BenutzerRepository;
 public class BenutzerService {
 
     private final BenutzerRepository benutzerRepo;
+    private final BCryptPasswordEncoder encoder;
 
-    public BenutzerService(BenutzerRepository benutzerRepo) {
+    public BenutzerService(BenutzerRepository benutzerRepo, BCryptPasswordEncoder encoder) {
         this.benutzerRepo = benutzerRepo;
+        this.encoder = encoder;
     }
 
-    public Benutzer registrieren(Benutzer benutzer) {
-        if (benutzer == null) {
-            throw new IllegalArgumentException("Benutzer darf nicht null sein");
+    public AuthDtos.AuthResponse register(AuthDtos.RegisterRequest req) {
+        String username = (req.username == null) ? "" : req.username.trim();
+        String email = (req.email == null) ? "" : req.email.trim().toLowerCase();
+        String password = (req.password == null) ? "" : req.password;
+        String passwordConfirm = (req.passwordConfirm == null) ? "" : req.passwordConfirm;
+
+        if (username.isBlank() || email.isBlank() || password.isBlank()) {
+            return new AuthDtos.AuthResponse(false, "Bitte Username, Email und Passwort angeben.");
         }
-        return benutzerRepo.save(benutzer);
+        if (password.length() < 8) {
+            return new AuthDtos.AuthResponse(false, "Passwort muss mindestens 8 Zeichen haben.");
+        }
+        if (!password.equals(passwordConfirm)) {
+            return new AuthDtos.AuthResponse(false, "Passwörter stimmen nicht überein.");
+        }
+        if (benutzerRepo.existsByUsername(username)) {
+            return new AuthDtos.AuthResponse(false, "Username ist bereits vergeben.");
+        }
+        if (benutzerRepo.existsByEmail(email)) {
+            return new AuthDtos.AuthResponse(false, "E-Mail ist bereits registriert.");
+        }
+
+        String hash = encoder.encode(password);
+        benutzerRepo.save(new Benutzer(username, email, hash));
+
+        return new AuthDtos.AuthResponse(true, "Registrierung erfolgreich.");
+    }
+
+    public AuthDtos.AuthResponse login(AuthDtos.LoginRequest req) {
+        String username = (req.username == null) ? "" : req.username.trim();
+        String password = (req.password == null) ? "" : req.password;
+
+        return benutzerRepo.findByUsername(username)
+                .map(u -> encoder.matches(password, u.getPasswordHash())
+                        ? new AuthDtos.AuthResponse(true, "Login ok")
+                        : new AuthDtos.AuthResponse(false, "Falsches Passwort"))
+                .orElseGet(() -> new AuthDtos.AuthResponse(false, "User nicht gefunden"));
     }
 
     public Benutzer datenAendern(Long id, Benutzer updated) {
-        if (id == null) throw new IllegalArgumentException("ID darf nicht null sein");
+        if (id == null)
+            throw new IllegalArgumentException("ID darf nicht null sein");
 
         return benutzerRepo.findById(id).map(b -> {
-            if (updated.getUsername() != null) b.setUsername(updated.getUsername());
-            if (updated.getEmail() != null) b.setEmail(updated.getEmail());
+            if (updated.getUsername() != null)
+                b.setUsername(updated.getUsername());
+            if (updated.getEmail() != null)
+                b.setEmail(updated.getEmail());
 
             // wenn du Password ändern willst, dann nur passwordHash setzen
-            if (updated.getPasswordHash() != null) b.setPasswordHash(updated.getPasswordHash());
+            if (updated.getPasswordHash() != null)
+                b.setPasswordHash(updated.getPasswordHash());
 
             return benutzerRepo.save(b);
         }).orElse(null);
     }
 
-
     public List<Benutzer> alleBenutzer() {
         return benutzerRepo.findAll();
+    }
+
+    public Benutzer benutzerById(Long id) {
+        return benutzerRepo.findById(id).orElse(null);
     }
 }
