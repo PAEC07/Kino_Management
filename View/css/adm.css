@@ -1,6 +1,6 @@
 /* adm.css (themed) – verwendet Variablen aus css/theme.css */
 :root{--accent:var(--accent);--accent-soft:var(--accent-soft);--accent-soft-2:var(--accent-soft-2);--surface-2:var(--surface-2);--border-strong:var(--border-strong);--surface-muted:var(--surface-muted);}
-html[data-theme="dark"]{--surface-2:#242424;--border-strong:#555;--surface-muted:#1b1b1b;}
+html[data-theme="dark"]{--surface-2:#242424;--border-strong:#555;--surface-muted:#1b1b1b;--accent-soft-2:#3a3a3a;}
 
 /* Light-Mode Rahmen grün (Dark bleibt lila über --accent) */
 html:not([data-theme="dark"]) .column {
@@ -542,6 +542,8 @@ html:not([data-theme="dark"]) .topbar .btn-outline:hover {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    padding-bottom: 10px;
+    
 }
 
 .filter-row {

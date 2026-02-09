@@ -28,18 +28,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalOverlay = document.getElementById('modalOverlay');
     const modalFilm = document.getElementById('modalFilm');
     const modalVorstellung = document.getElementById('modalVorstellung');
-    const modalSitzplan = document.getElementById('modalSitzplan');
     const modalSaal = document.getElementById('modalSaal');
     const modalSaalInfo = document.getElementById('modalSaalInfo');
     const modalShowInfo = document.getElementById('modalShowInfo');
 
     const btnOpenFilmModal = document.getElementById('btnOpenFilmModal');
     const btnOpenVorstellungModal = document.getElementById('btnOpenVorstellungModal');
-    const btnOpenSitzplanModal = document.getElementById('btnOpenSitzplanModal');
     const btnOpenSaalModal = document.getElementById('btnOpenSaalModal');
     const closeFilmModal = document.getElementById('closeFilmModal');
     const closeVorstellungModal = document.getElementById('closeVorstellungModal');
-    const closeSitzplanModal = document.getElementById('closeSitzplanModal');
     const closeSaalModal = document.getElementById('closeSaalModal');
     const closeSaalInfoModal = document.getElementById('closeSaalInfoModal');
     const closeShowInfoModal = document.getElementById('closeShowInfoModal');
@@ -60,12 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const vorstellungZeitInput = document.getElementById('vorstellungZeitInput');
     const vorstellungSaalInput = document.getElementById('vorstellungSaalInput');
     const vorstellungSaveBtn = document.getElementById('vorstellungSaveBtn');
-
-    // Sitzplan-Form
-    const anzahlReihenInput = document.getElementById('anzahlReihenInput');
-    const sitzeProReiheInput = document.getElementById('sitzeProReiheInput');
-    const prozentLogeInput = document.getElementById('prozentLogeInput');
-    const sitzplanSaveBtn = document.getElementById('sitzplanSaveBtn');
 
     // Säle
     const saeleTbody = document.getElementById('saeleTbody');
@@ -150,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modalOverlay.classList.remove('hidden');
         modalFilm.classList.add('hidden');
         modalVorstellung.classList.add('hidden');
-        modalSitzplan.classList.add('hidden');
         modalSaal.classList.add('hidden');
         modalSaalInfo.classList.add('hidden');
         modalShowInfo.classList.add('hidden');
@@ -159,8 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
             modalFilm.classList.remove('hidden');
         } else if (which === 'show') {
             modalVorstellung.classList.remove('hidden');
-        } else if (which === 'sitzplan') {
-            modalSitzplan.classList.remove('hidden');
         } else if (which === 'saal') {
             modalSaal.classList.remove('hidden');
         } else if (which === 'saal-info') {
@@ -174,7 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modalOverlay.classList.add('hidden');
         modalFilm.classList.add('hidden');
         modalVorstellung.classList.add('hidden');
-        modalSitzplan.classList.add('hidden');
         modalSaal.classList.add('hidden');
         modalSaalInfo.classList.add('hidden');
         modalShowInfo.classList.add('hidden');
@@ -641,11 +628,6 @@ document.addEventListener('DOMContentLoaded', () => {
         openModal('show');
     });
 
-    btnOpenSitzplanModal?.addEventListener('click', () => {
-        loadSitzplanConfig();
-        openModal('sitzplan');
-    });
-
     btnOpenSaalModal?.addEventListener('click', () => {
         if (saalModalTitle) saalModalTitle.textContent = 'Saal hinzufügen';
         saalNameInput.value = '';
@@ -657,7 +639,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeFilmModal?.addEventListener('click', closeModal);
     closeVorstellungModal?.addEventListener('click', closeModal);
-    closeSitzplanModal?.addEventListener('click', closeModal);
     closeSaalModal?.addEventListener('click', closeModal);
     closeSaalInfoModal?.addEventListener('click', closeModal);
     saalInfoCloseBtn?.addEventListener('click', closeModal);
@@ -727,13 +708,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function loadSitzplanConfig() {
-        const config = JSON.parse(localStorage.getItem('sitzplanConfig')) || { anzahlReihen: 6, sitzeProReihe: 10, prozentLoge: 25 };
-        anzahlReihenInput.value = config.anzahlReihen;
-        sitzeProReiheInput.value = config.sitzeProReihe;
-        prozentLogeInput.value = config.prozentLoge;
-    }
-
     vorstellungSaveBtn?.addEventListener('click', () => {
         const filmIdStr = vorstellungFilmSelect.value;
         const datum = vorstellungDatumInput.value;
@@ -799,25 +773,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && filterModal && !filterModal.classList.contains('hidden')) {
             closeFilterModal();
-        }
-    });
-
-    sitzplanSaveBtn?.addEventListener('click', () => {
-        const anzahlReihen = parseInt(anzahlReihenInput.value);
-        const sitzeProReihe = parseInt(sitzeProReiheInput.value);
-        const prozentLoge = parseInt(prozentLogeInput.value);
-
-        if (anzahlReihen && sitzeProReihe && prozentLoge >= 0 && prozentLoge <= 100) {
-            const config = {
-                anzahlReihen,
-                sitzeProReihe,
-                prozentLoge
-            };
-            localStorage.setItem('sitzplanConfig', JSON.stringify(config));
-            alert('Sitzplan-Konfiguration gespeichert!');
-            closeModal();
-        } else {
-            alert('Bitte gültige Werte eingeben.');
         }
     });
 

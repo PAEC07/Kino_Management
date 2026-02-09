@@ -104,13 +104,12 @@
                 <button class="add-session-btn" type="button" id="btnOpenVorstellungModal">
                     Vorstellung hinzufügen
                 </button>
-                <button class="add-session-btn" type="button" id="btnOpenSitzplanModal">
-                    Sitzplan konfigurieren
-                </button>
+                
             </div>
 
             <!-- Toggle Vorstellungen / Kalender -->
             <div class="view-toggle">
+                
                 <button id="btnViewList" class="btn-small active-view" type="button">
                     Vorstellungen
                 </button>
@@ -290,34 +289,6 @@
 
                 <div class="film-create-details-field">
                     <button class="btn btn-green" id="vorstellungSaveBtn" type="button">Speichern</button>
-                </div>
-            </section>
-        </div>
-
-        <!-- Modal: Sitzplan konfigurieren -->
-        <div class="modal" id="modalSitzplan">
-            <button class="modal-close" id="closeSitzplanModal">&times;</button>
-            <h2>Sitzplan konfigurieren</h2>
-            <p>Hier können Sie die Anzahl der Reihen, Sitze pro Reihe und den Prozentsatz für Loge-Plätze festlegen.</p>
-
-            <section class="modal-left-column">
-                <div class="film-create-details-field">
-                    <p><strong>Anzahl Reihen</strong></p>
-                    <input class="modal-input" type="number" min="1" max="26" id="anzahlReihenInput" placeholder="z.B. 6">
-                </div>
-
-                <div class="film-create-details-field">
-                    <p><strong>Sitze pro Reihe</strong></p>
-                    <input class="modal-input" type="number" min="1" id="sitzeProReiheInput" placeholder="z.B. 10">
-                </div>
-
-                <div class="film-create-details-field">
-                    <p><strong>Prozentsatz Loge (%)</strong></p>
-                    <input class="modal-input" type="number" min="0" max="100" id="prozentLogeInput" placeholder="z.B. 25">
-                </div>
-
-                <div class="film-create-details-field">
-                    <button class="btn btn-green" id="sitzplanSaveBtn" type="button">Speichern</button>
                 </div>
             </section>
         </div>
