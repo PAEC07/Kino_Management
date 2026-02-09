@@ -13,9 +13,12 @@
   --surface-muted-2:#ededed;
   --surface-muted-3:#e8e8e8;
 
-  --brand:#3cb371;
+  --brand:#452abb;
   --danger:#c0392b;
   --accent:#452abb;
+  --accent-strong:#3b2299;
+  --accent-soft:#f2efff;
+  --accent-soft-2:#e6e1ff;
   --info:#3c6fb3;
   --info-soft:#e6f0ff;
   --info-soft-2:#f0f4ff;
@@ -28,8 +31,10 @@
   --seat-unavailable-text:#ffffff;
   --seat-selected:#000000;
 
-  --btn-bg:var(--brand);
+  --btn-bg:var(--accent);
   --btn-text:#ffffff;
+  --btn-danger-bg:var(--danger);
+  --btn-danger-text:#ffffff;
 
   --shadow:0 0 8px rgba(0,0,0,.10);
   --shadow-strong:0 0 15px rgba(0,0,0,.30);
@@ -48,9 +53,10 @@ html[data-theme="dark"]{
   --surface-muted-2:#232323;
   --surface-muted-3:#2b2b2b;
 
-  --brand:#57d18f;
+  --brand:#8a7dff;
   --danger:#ff6b5f;
   --accent:#8a7dff;
+  --accent-strong:#6f62e6;
   --info:#6e9eea;
   --info-soft:#22304a;
   --info-soft-2:#1e2a3f;
@@ -63,8 +69,10 @@ html[data-theme="dark"]{
   --seat-unavailable-text:#f3f3f3;
   --seat-selected:#ffffff;
 
-  --btn-bg:var(--brand);
+  --btn-bg:var(--accent);
   --btn-text:#0f0f0f;
+  --btn-danger-bg:var(--danger);
+  --btn-danger-text:#ffffff;
 
   --shadow:0 8px 24px rgba(0,0,0,.35);
   --shadow-strong:0 12px 34px rgba(0,0,0,.55);
@@ -74,6 +82,7 @@ html,body{
   background:var(--bg);
   color:var(--text);
 }
+
 
 /* Basis-Fonts etc. (deine Seiten setzen teils selbst font-family, das ist ok) */
 body{margin:0;}

@@ -547,7 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             `${show.uhrzeit} • ${show.saal} • ${(movie && movie.titel) || 'Unbekannt'}`;
                         ev.addEventListener('click', (e) => {
                             e.stopPropagation();
-                            openShowInfo(show);
+                            selectMovie(show.filmId);
                         });
                         td.appendChild(ev);
                     });
