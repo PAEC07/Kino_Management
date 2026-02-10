@@ -47,7 +47,7 @@ public class Film {
     private String darstellungstyp;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "FilmId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "filmId", cascade = CascadeType.ALL)
     private List<Vorstellung> vorstellungen;
 
     // Getter & Setter

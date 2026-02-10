@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Entität für Vorstellungen im Kino-System.
@@ -21,12 +22,15 @@ import jakarta.persistence.ManyToOne;
 public class Vorstellung {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "VorstellungId")
     private Long vorstellungId;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "FilmId")
     private Film filmId;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "SaalId")
     private Saal saalId;

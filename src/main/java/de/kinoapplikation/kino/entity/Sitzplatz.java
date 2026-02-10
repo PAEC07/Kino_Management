@@ -8,6 +8,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "Sitzplatz")
@@ -24,6 +25,7 @@ public class Sitzplatz {
     @Column(name = "Bereich")
     private String bereich;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "Saal_SaalId")
     private Saal saal;

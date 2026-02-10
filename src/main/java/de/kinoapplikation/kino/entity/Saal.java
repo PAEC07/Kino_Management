@@ -3,6 +3,7 @@ package de.kinoapplikation.kino.entity;
 import java.util.List;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * Entität für Säle im Kino-System.
  * Enthält Informationen über die Anzahl der Plätze pro Reihe und die maximale Anzahl der Reihen.
@@ -28,7 +29,8 @@ public class Saal {
     @Column(name = "SaalName")
     private String saalName;
 
-    @OneToMany(mappedBy = "SaalId", cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(mappedBy = "saalId", cascade = CascadeType.ALL)
     private List<Vorstellung> vorstellungen;
 
 
