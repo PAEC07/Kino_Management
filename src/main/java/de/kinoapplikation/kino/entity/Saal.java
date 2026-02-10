@@ -4,6 +4,7 @@ import java.util.List;
 
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonAlias;
 /**
  * Entität für Säle im Kino-System.
  * Enthält Informationen über die Anzahl der Plätze pro Reihe und die maximale Anzahl der Reihen.
@@ -19,13 +20,19 @@ public class Saal {
     @Column(name = "SaalId")
     private Long saalId;
 
+    @JsonAlias({"plaetzePerReihe","sitzeProReihe","plaetzeProReihe","seatsPerRow"})
     @Column(name = "PlaetzePerReihe")
     private int plaetzePerReihe;
+
+    @JsonAlias({"reihen","anzahlReihen","rows","maxReihen"})
     @Column(name = "MaxReihen")
     private int maxReihen;
     
+    @JsonAlias({"logeAnteilProzent","logeProzent","prozentLoge","logePercent"})
     @Column(name = "LogeAnteilProzent")
     private int logeAnteilProzent;
+
+    @JsonAlias({"saalname","name","bezeichnung","saalName"})
     @Column(name = "SaalName")
     private String saalName;
 
@@ -62,6 +69,9 @@ public class Saal {
         this.logeAnteilProzent = logeAnteilProzent;
     }
     public String getSaalName() {
+        if (saalName == null || saalName.trim().isEmpty()) {
+            return "Saal " + (saalId != null ? saalId : "");
+        }
         return saalName;
     } 
 

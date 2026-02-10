@@ -2,8 +2,10 @@ package de.kinoapplikation.kino.controller;
 
 import de.kinoapplikation.kino.entity.Vorstellung;
 import de.kinoapplikation.kino.service.VorstellungService;
+import de.kinoapplikation.kino.dto.VorstellungDto;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Endpoints:
@@ -23,18 +25,22 @@ public class VorstellungController {
     }
 
     @GetMapping("/list")
-    public List<Vorstellung> alleVorstellungen() {
-        return vorstellungService.alleVorstellungen();
+    public List<VorstellungDto> alleVorstellungen() {
+        return vorstellungService.alleVorstellungen()
+                .stream()
+                .map(VorstellungDto::fromEntity)
+                .collect(Collectors.toList());
     }
     
     @GetMapping("/{id}/get")
-    public Vorstellung getVorstellung(@PathVariable Long id) {
-        return vorstellungService.getVorstellung(id);
+    public VorstellungDto getVorstellung(@PathVariable Long id) {
+        return VorstellungDto.fromEntity(vorstellungService.getVorstellung(id));
     }
 
     @PostMapping("/add")
-    public Vorstellung addVorstellung(@RequestBody Vorstellung v) {
-        return vorstellungService.addVorstellung(v);
+    public VorstellungDto addVorstellung(@RequestBody Vorstellung v) {
+        Vorstellung saved = vorstellungService.addVorstellung(v);
+        return VorstellungDto.fromEntity(saved);
     }
 
     @DeleteMapping("/{id}/delete")

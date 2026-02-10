@@ -18,9 +18,17 @@ public class SaalService {
         if (saal == null) {
             throw new IllegalArgumentException("Saal cannot be null");
         }
-        // Implementierung zum Hinzufügen eines Saals
-        // Diese Methode sollte die Logik enthalten, um einen neuen Saal in der Datenbank zu speichern
-        return saalRepo.save(saal) != null; // Rückgabe true bei Erfolg, false bei Fehler
+        // Save first so we get a generated ID
+        Saal saved = saalRepo.save(saal);
+        if (saved == null) return false;
+
+        // If no name was provided, set a default name "Saal <id>" and persist
+        if (saved.getSaalName() == null || saved.getSaalName().trim().isEmpty()) {
+            saved.setSaalName("Saal " + saved.getId());
+            saalRepo.save(saved);
+        }
+
+        return true;
     }
 
     public List<Saal> listeSaele() {

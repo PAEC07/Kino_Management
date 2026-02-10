@@ -7,7 +7,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Entität für Vorstellungen im Kino-System.
@@ -25,12 +24,10 @@ public class Vorstellung {
     @Column(name = "VorstellungId")
     private Long vorstellungId;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "FilmId")
     private Film filmId;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "SaalId")
     private Saal saalId;
@@ -51,16 +48,42 @@ public class Vorstellung {
         return filmId;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public void setFilmId(Film filmId) {
         this.filmId = filmId;
+    }
+
+    // Accept numeric filmId in JSON (e.g. 5) and map to Film reference
+    @com.fasterxml.jackson.annotation.JsonProperty("filmId")
+    public void setFilmId(Long id) {
+        if (id == null) {
+            this.filmId = null;
+            return;
+        }
+        Film f = new Film();
+        f.setId(id);
+        this.filmId = f;
     }
 
     public Saal getSaalId() {
         return saalId;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public void setSaalId(Saal saalId) {
         this.saalId = saalId;
+    }
+
+    // Accept numeric saalId in JSON (e.g. 2) and map to Saal reference
+    @com.fasterxml.jackson.annotation.JsonProperty("saalId")
+    public void setSaalId(Long id) {
+        if (id == null) {
+            this.saalId = null;
+            return;
+        }
+        Saal s = new Saal();
+        s.setId(id);
+        this.saalId = s;
     }
 
     public LocalDateTime getDatum() {
