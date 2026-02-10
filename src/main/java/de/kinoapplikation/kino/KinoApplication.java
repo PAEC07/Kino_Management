@@ -8,6 +8,5 @@ public class KinoApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(KinoApplication.class, args);
-
 	}
 }

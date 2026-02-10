@@ -5,6 +5,14 @@ import de.kinoapplikation.kino.service.BuchungService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+/**
+ * Endpoints:
+ * - GET /api/buchungen/list > Alle Buchungen auflisten
+ * - GET /api/buchungen/{id}/get > Buchung mit bestimmter ID abrufen
+ * - POST /api/buchungen/add > Neue Buchung hinzufügen
+ * - DELETE /api/buchungen/{id}/delete > Buchung mit bestimmter ID löschen
+ */
+
 @RestController
 @RequestMapping("/api/buchungen")
 public class BuchungController {
@@ -23,6 +31,11 @@ public class BuchungController {
     @GetMapping("/{id}/get")
     public Buchung getBuchung(@PathVariable Long id) {
         return buchungService.getBuchung(id);
+    }
+
+    @GetMapping("/list/{id}")
+    public List<Buchung> buchungenDesBenutzers(@PathVariable Long id) {
+        return buchungService.buchungenDesBenutzers(id);
     }
 
     @PostMapping("/add")

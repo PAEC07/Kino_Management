@@ -8,6 +8,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Endpoints:
+ * - GET /api/saal/list > Alle Säle auflisten
+ * - GET /api/saal/{id}/get > Saal mit bestimmter ID abrufen
+ * - POST /api/saal/add > Neuer Saal hinzufügen
+ * - DELETE /api/saal/{id}/delete > Saal mit bestimmter ID löschen
+ */
+
 @RestController
 @RequestMapping("/api/saal")
 public class SaalController {

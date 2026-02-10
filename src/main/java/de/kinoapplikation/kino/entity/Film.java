@@ -3,12 +3,7 @@ package de.kinoapplikation.kino.entity;
 import java.time.Duration;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -20,18 +15,35 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 
 @Entity
+@Table(name = "Filme", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "Filmname" })
+})
 public class Film {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "FilmId")
     private Long filmId;
 
+    @Column(name = "Filmname", nullable = false)
     private String filmname;
+    
+    @Column(name = "Beschreibung")
     private String beschreibung;
+
+    @Column(name = "FSK")
     private int fsk;
+
+    @Column(name = "Kategorie")
     private String kategorie;
+
+    @Column(name = "Basispreis")
     private Long basispreis;
+
+    @Column(name = "Filmdauer")
     private Duration filmdauer;
+
+    @Column(name = "Darstellungstyp")
     private String darstellungstyp;
 
     @JsonIgnore

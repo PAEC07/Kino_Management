@@ -16,6 +16,15 @@ import de.kinoapplikation.kino.dto.AuthDtos;
 import de.kinoapplikation.kino.entity.Benutzer;
 import de.kinoapplikation.kino.service.BenutzerService;
 
+/**
+ * Endpoints:
+ * - GET /api/benutzer/list > Alle Benutzer auflisten
+ * - GET /api/benutzer/{id}/get > Benutzer mit bestimmter ID abrufen
+ * - PUT /api/benutzer/{id}/change > Benutzerdaten ändern
+ * - POST /api/benutzer/register > Neuen Benutzer registrieren
+ * - POST /api/benutzer/login > Benutzer anmelden
+ */
+
 @RestController
 @RequestMapping("/api/benutzer")
 public class BenutzerController {

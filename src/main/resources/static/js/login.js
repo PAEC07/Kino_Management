@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch(API_BASE + "/api/auth/login", {
+      const res = await fetch(API_BASE + "/api/benutzer/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
@@ -32,11 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // ✅ NUR den Benutzer speichern
-      localStorage.setItem("kino_user", JSON.stringify(data.user));
-
-      // Optional: Token später
-      // localStorage.setItem("kino_token", data.token);
+      // speichere nur minimalen Benutzer-Eintrag; acc.js ruft /api/benutzer/{id}/get später
+      const user = { username: username, id: data.id };
+      localStorage.setItem("kino_user", JSON.stringify(user));
 
       window.location.href = "index.html";
     } catch (e2) {

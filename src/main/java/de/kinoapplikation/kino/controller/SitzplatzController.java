@@ -7,6 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
+/**
+ * Endpoints:
+ * - GET /api/sitze/list > Alle Sitze auflisten
+ * - GET /api/sitze/status/{vorstellungId}/{saalId} > Status aller Sitze einer Vorstellung in einem Saal
+ */
+
 @RestController
 @RequestMapping("/api/sitze")
 public class SitzplatzController {

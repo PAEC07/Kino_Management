@@ -54,27 +54,29 @@ public class BenutzerService {
 
         return benutzerRepo.findByUsername(username)
                 .map(u -> encoder.matches(password, u.getPasswordHash())
-                        ? new AuthDtos.AuthResponse(true, "Login ok")
-                        : new AuthDtos.AuthResponse(false, "Falsches Passwort"))
+                ? new AuthDtos.AuthResponse(true, "Login ok", u.getId(), u.getUsername(), u.getEmail())
+                : new AuthDtos.AuthResponse(false, "Falsches Passwort", null, null, null))
                 .orElseGet(() -> new AuthDtos.AuthResponse(false, "User nicht gefunden"));
     }
 
     public Benutzer datenAendern(Long id, Benutzer updated) {
-        if (id == null)
+        if (id == null) {
             throw new IllegalArgumentException("ID darf nicht null sein");
+        }
+        
+        Benutzer benutzer = benutzerRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Benutzer nicht gefunden"));
 
-        return benutzerRepo.findById(id).map(b -> {
-            if (updated.getUsername() != null)
-                b.setUsername(updated.getUsername());
-            if (updated.getEmail() != null)
-                b.setEmail(updated.getEmail());
-
-            // wenn du Password ändern willst, dann nur passwordHash setzen
-            if (updated.getPasswordHash() != null)
-                b.setPasswordHash(updated.getPasswordHash());
-
-            return benutzerRepo.save(b);
-        }).orElse(null);
+        if (updated.getUsername() != null && !updated.getUsername().isBlank()) {
+            benutzer.setUsername(updated.getUsername());
+        }
+        if (updated.getEmail() != null && !updated.getEmail().isBlank()) {
+            benutzer.setEmail(updated.getEmail());
+        }
+        if (updated.getPasswordHash() != null && !updated.getPasswordHash().isBlank()) {
+            benutzer.setPasswordHash(encoder.encode(updated.getPasswordHash()));
+        }
+        return benutzerRepo.save(benutzer);
     }
 
     public List<Benutzer> alleBenutzer() {
@@ -82,6 +84,9 @@ public class BenutzerService {
     }
 
     public Benutzer benutzerById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null");
+        }
         return benutzerRepo.findById(id).orElse(null);
     }
 }

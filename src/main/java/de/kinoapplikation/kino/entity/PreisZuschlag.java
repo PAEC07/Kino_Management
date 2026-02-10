@@ -1,6 +1,6 @@
 package de.kinoapplikation.kino.entity;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,12 +14,16 @@ import jakarta.persistence.Id;
  */
 
 @Entity
+@Table(name = "PreisZuschlag")
 public class PreisZuschlag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "PreisZuschlagId")
     private Long preisZuschlagId;
 
+    @Column(name = "Beschreibung")
     private String beschreibung;
+    @Column(name = "AufschlagWert")
     private int aufschlagWert;
 
     // Getter & Setter

@@ -3,7 +3,7 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-kino6.db
+#kino6.db
 
 ### STS ###
 .apt_generated

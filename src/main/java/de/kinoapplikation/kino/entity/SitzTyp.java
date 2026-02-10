@@ -1,6 +1,6 @@
 package de.kinoapplikation.kino.entity;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,13 +14,18 @@ import jakarta.persistence.Id;
  */
 
 @Entity
+@Table(name = "SitzTyp")
 public class SitzTyp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
+    @Column(name = "SitzTypId")
     private Long sitzTypId;
 
+    @Column(name = "Bezeichnung")
     private String bezeichnung;
+    @Column(name = "SitzAufschlagWert")
     private Long aufschlagWert;
 
     // Getter & Setter

@@ -8,25 +8,30 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "sitzplatz")
+@Table(name = "Sitzplatz")
 public class Sitzplatz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "sitzplatz_id")
+    @Column(name = "SitzplatzId")
     private Long sitzplatzId;
 
+    @Column(name = "Reihe")
     private int reihe;
+    @Column(name = "PlatzNr")
     private int platzNr;
+    @Column(name = "Bereich")
     private String bereich;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "saal_saal_id")
+    @JoinColumn(name = "Saal_SaalId")
     private Saal saal;
 
     @ManyToOne
-    @JoinColumn(name = "sitz_typ_sitz_typ_id")
+    @JoinColumn(name = "SitzTyp_SitzTypId")
     private SitzTyp sitzTyp;
 
     // Getter & Setter

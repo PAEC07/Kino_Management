@@ -1,9 +1,6 @@
 package de.kinoapplikation.kino.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 /**
  * Generelle Entität für Preisnachlässe wie für Studenten, Kinder oder Senioren.
@@ -12,12 +9,16 @@ import jakarta.persistence.Id;
  */
 
 @Entity
+@Table(name = "Discounts")
 public class Discounts {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "DiscountId")
     private Long discountId;
 
+    @Column(name = "Beschreibung")
     private String beschreibung;
+    @Column(name = "DiscountWert")
     private Long discountWert;
 
     // Getter & Setter

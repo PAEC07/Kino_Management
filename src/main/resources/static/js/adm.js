@@ -210,46 +210,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Saal-Feldnamen robust auslesen
   function hallId(h) {
-    return h?.saalId ?? h?.id ?? null;
+    return h?.saalId;
   }
 
   function hallName(h) {
-    return h?.saalname ?? h?.name ?? h?.bezeichnung ?? null;
+      return h?.saalName ?? null;
   }
-
-  function hallRows(h) {
-    return (
-      h?.reihen ??
-      h?.anzahlReihen ??
-      h?.rowCount ??
-      h?.rows ??
-      h?.anzahlSitzreihen ??   // falls so
-      null
-    );
-  }
-
-  function hallSeatsPerRow(h) {
-    return (
-      h?.plaetzePerReihe ??     // ✅ DEIN FELD!
-      h?.sitzeProReihe ??
-      h?.plaetzeProReihe ??
-      h?.seatsPerRow ??
-      h?.seatCountPerRow ??
-      null
-    );
-  }
-
-  function hallLogePercent(h) {
-    return (
-      h?.logeAnteilProzent ??   // ✅ DEIN FELD!
-      h?.logeProzent ??
-      h?.prozentLoge ??
-      h?.logePercent ??
-      h?.premiumPercent ??
-      null
-    );
-  }
-
 
   function normalizeHallInputToId(inputText) {
     const t = String(inputText || "").trim();
@@ -260,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const low = t.toLowerCase();
     const found = halls.find((h) => String(hallName(h) || "").toLowerCase() === low);
-    return found ? hallId(found) : null;
+    return found ? found.saalId : null;
   }
 
   // ============================
@@ -508,9 +474,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const id = hallId(h);
       const name = hallName(h) || `Saal ${id ?? "?"}`;
 
-      const rows = hallRows(h);
-      const seats = hallSeatsPerRow(h);
-      const loge = hallLogePercent(h);
+      const rows = h?.maxReihen;
+      const seats = h?.plaetzePerReihe;
+      const loge = h?.logeAnteilProzent;
 
       const tr = document.createElement("tr");
 
@@ -783,31 +749,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const iso = `${datum}T${zeit}:00`;
     const saalId = normalizeHallInputToId(saalInput);
 
-    const bodies = [
-      { filmId, saalId, datum: iso },
-      { filmId: { id: filmId }, saalId: saalId != null ? { id: saalId } : null, datum: iso },
-      { filmId: { id: filmId }, saalId: saalId != null ? { saalId } : null, datum: iso },
-    ];
+    const body = { filmId: filmId, saalId: saalId, datum: iso };
 
-    let lastErr = null;
-    for (const b of bodies) {
-      try {
-        await apiPostAny(SHOW_ADD, b);
-        closeModal();
-        await reloadAll();
-        return;
-      } catch (e) {
-        lastErr = e;
-      }
+    try {
+      await apiPostAny(SHOW_ADD, body);
+      closeModal();
+      await reloadAll();
+      return;
+    } catch (lastErr) {
+      console.error(lastErr);
+      alert(
+        "Vorstellung konnte nicht gespeichert werden.\n\n" +
+        (lastErr?.message || "")
+      );
     }
-
-    console.error(lastErr);
-    alert(
-      "Vorstellung konnte nicht gespeichert werden.\n\n" +
-      "Wahrscheinlich passt das Entity-Mapping (filmId/saalId) anders.\n" +
-      "Dann bitte die Vorstellung-Entity schicken.\n\n" +
-      (lastErr?.message || "")
-    );
   });
 
   // ============================
@@ -828,29 +783,12 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Wir schicken MEHRERE Feldnamen, damit es zu deiner Entity passt
+    // Canonical payload aligned with backend Saal entity
     const body = {
-      // Name
-      saalname: name,
-      name: name,
-      bezeichnung: name,
-
-      // Reihen
-      reihen: reihen,
-      anzahlReihen: reihen,
-      rows: reihen,
-
-      // Sitze pro Reihe
-      plaetzePerReihe: sitzeProReihe,     // ✅ DEIN FELD!
-      sitzeProReihe: sitzeProReihe,
-      plaetzeProReihe: sitzeProReihe,
-      seatsPerRow: sitzeProReihe,
-
-      // Loge
-      logeAnteilProzent: logeProzent,     // ✅ DEIN FELD!
-      logeProzent: logeProzent,
-      prozentLoge: logeProzent,
-      logePercent: logeProzent
+      saalName: name,
+      maxReihen: reihen,
+      plaetzePerReihe: sitzeProReihe,
+      logeAnteilProzent: logeProzent
     };
 
     try {
