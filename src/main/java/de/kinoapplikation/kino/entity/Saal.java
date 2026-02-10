@@ -2,13 +2,7 @@ package de.kinoapplikation.kino.entity;
 
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-
+import jakarta.persistence.*;
 /**
  * Entität für Säle im Kino-System.
  * Enthält Informationen über die Anzahl der Plätze pro Reihe und die maximale Anzahl der Reihen.
@@ -16,18 +10,25 @@ import jakarta.persistence.OneToMany;
  */
 
 @Entity
+@Table(name = "Saal")
 public class Saal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "SaalId")
     private Long saalId;
 
+    @Column(name = "PlaetzePerReihe")
     private int plaetzePerReihe;
-    private int MaxReihen;
+    @Column(name = "MaxReihen")
+    private int maxReihen;
+    
+    @Column(name = "LogeAnteilProzent")
     private int logeAnteilProzent;
+    @Column(name = "SaalName")
     private String saalName;
 
-    @OneToMany(mappedBy = "saalId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "SaalId", cascade = CascadeType.ALL)
     private List<Vorstellung> vorstellungen;
 
 
@@ -45,10 +46,10 @@ public class Saal {
         this.plaetzePerReihe = plaetzePerReihe;
     }
     public int getMaxReihen() {
-        return MaxReihen;
+        return maxReihen;
     }
     public void setMaxReihen(int maxReihen) {
-        MaxReihen = maxReihen;
+        this.maxReihen = maxReihen;
     }
     
     public int getLogeAnteilProzent() {

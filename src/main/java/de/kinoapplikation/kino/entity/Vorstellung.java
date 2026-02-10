@@ -2,12 +2,11 @@ package de.kinoapplikation.kino.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Entität für Vorstellungen im Kino-System.
@@ -18,24 +17,22 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 
 @Entity
+@Table(name = "Vorstellungen")
 public class Vorstellung {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long vorstellungId;
 
     @ManyToOne
-    @JsonIgnoreProperties("vorstellungen")
+    @JoinColumn(name = "FilmId")
     private Film filmId;
 
     @ManyToOne
-    @JsonIgnoreProperties("vorstellungen")
+    @JoinColumn(name = "SaalId")
     private Saal saalId;
 
+    @Column(name = "Datum")
     private LocalDateTime datum;
-
-    // TODO: Baran bitte mal kommentar schreiben
-    // @OneToMany(mappedBy = "vorstellung", cascade = CascadeType.ALL)
-    // private List<Buchung> buchungen;
 
     // Getter & Setter
     public Long getId() {

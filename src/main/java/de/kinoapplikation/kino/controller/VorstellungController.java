@@ -5,6 +5,13 @@ import de.kinoapplikation.kino.service.VorstellungService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+/**
+ * Endpoints:
+ * - GET /api/vorstellungen/list > Alle Vorstellungen auflisten
+ * - GET /api/vorstellungen/{id}/get > Vorstellung mit bestimmter ID abrufen
+ * - POST /api/vorstellungen/add > Neue Vorstellung hinzufügen
+ * - DELETE /api/vorstellungen/{id}/delete > Vorstellung mit bestimmter ID löschen
+ */
 @RestController
 @RequestMapping("/api/vorstellungen")
 public class VorstellungController {

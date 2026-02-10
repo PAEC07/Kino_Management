@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return { ok: res.ok, status: res.status, data };
   }
 
-  // ✅ REGISTER
+  // REGISTER
   if (registerForm) {
     registerForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -45,10 +45,10 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const resp = await postJson("/api/auth/register", body);
+      const resp = await postJson("/api/benutzer/register", body);
 
       if (resp.ok && resp.data.ok) {
-        // ✅ Optional: direkt einloggen? (hier: nein → weiter zu login)
+        // Optional: direkt einloggen? (hier: nein, dann weiter zu login)
         alert(resp.data.message || "Registrierung erfolgreich!");
         window.location.href = "login.html";
       } else {
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ✅ LOGIN
+  // LOGIN
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -68,13 +68,14 @@ document.addEventListener("DOMContentLoaded", () => {
         password: (fd.get("password") || "").toString(),
       };
 
-      const resp = await postJson("/api/auth/login", body);
+      const resp = await postJson("/api/benutzer/login", body);
 
       if (resp.ok && resp.data.ok) {
-        // ✅ WICHTIG: lokal merken, dass User eingeloggt ist
+        // INFO: lokal merken, dass User eingeloggt ist
         // Da dein Backend nur {ok, message} liefert, speichern wir minimal:
         const kinoUser = {
           username: body.username,
+          id: resp.data?.id, // Optional, falls du die ID zurückgibst
           loggedInAt: new Date().toISOString(),
         };
         localStorage.setItem("kino_user", JSON.stringify(kinoUser));

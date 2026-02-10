@@ -5,31 +5,32 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "username" }),
-        @UniqueConstraint(columnNames = { "email" })
+@Table(name = "Accounts", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "Benutzername" }),
+        @UniqueConstraint(columnNames = { "Email" })
 })
 public class Benutzer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "AccountId")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "Benutzername", nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    @Column(name = "Email", nullable = false)
     private String email;
 
     // bcrypt hash (niemals im JSON ausgeben!)
     @JsonIgnore
-    @Column(nullable = false)
+    @Column(name = "Passwort", nullable = false)
     private String passwordHash;
 
-    @Column(nullable = false)
+    @Column(name = "Role", nullable = false)
     private String role = "USER";
 
-    @Column(nullable = false)
+    @Column(name = "CreatedAt", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public Benutzer() {}

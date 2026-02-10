@@ -1,20 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const API_BASE = "http://localhost:8080";
 
-  // --------------------------
-  // API ENDPOINTS (ANPASSEN!)
-  // --------------------------
-  const API_ENDPOINTS = {
-    // User laden (eigene Daten)
-    me: "/api/users/me",                 // GET
-    updateMe: "/api/users/me",           // PUT/PATCH
 
-    // Tickets des eingeloggten Users
-    myTickets: "/api/tickets/me",        // GET  -> Liste
-    cancelTicket: (ticketId) => `/api/tickets/${ticketId}/cancel`, // POST oder DELETE
-    // Alternative, falls ihr DELETE nutzt:
-    // cancelTicket: (ticketId) => `/api/tickets/${ticketId}`,
-  };
+
 
   // --------------------------
   // Auth / Storage
@@ -33,6 +21,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (token) h["Authorization"] = "Bearer " + token;
     return h;
   }
+
+  // --------------------------
+  // API ENDPOINTS
+  // --------------------------
+  const API_ENDPOINTS = {
+    // User laden (eigene Daten)
+    me: `/api/benutzer/${user?.id}/get`,                    // GET
+    updateMe: `/api/benutzer/${user?.id}/change`,           // PUT/PATCH
+
+    // Tickets des eingeloggten Users
+    myTickets: `/api/buchungen/list/${user?.id}`,         // GET  -> Liste
+    cancelTicket: (ticketId) => `/api/buchungen/${ticketId}/delete`, // POST
+  };
 
   async function apiGet(path) {
     const res = await fetch(API_BASE + path, { headers: authHeaders() });
@@ -227,9 +228,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // Speichern (damit navbar etc. aktuell bleibt)
       localStorage.setItem("kino_user", JSON.stringify(me));
 
-      if (spanName) spanName.textContent = me.username ?? "";
-      if (spanEmail) spanEmail.textContent = me.email ?? "";
-      if (spanReg) spanReg.textContent = formatDateDE(me.createdAt);
+      if (spanName) spanName.textContent = me.username ?? "USERNAME N/A";
+      if (spanEmail) spanEmail.textContent = me.email ?? "MAIL N/A";
+      if (spanReg) spanReg.textContent = formatDateDE(me.createdAt) ?? "N/A";
       if (spanPass) spanPass.textContent = "••••••••";
       return;
     } catch (e) {

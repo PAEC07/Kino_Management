@@ -26,7 +26,7 @@ public class SaalService {
     public List<Saal> listeSaele() {
         // Implementierung zum Auflisten der Säle
         // Diese Methode sollte die Logik enthalten, um alle Säle aus der Datenbank abzurufen und zurückzugeben
-        return saalRepo.findAll(); // Beispielantwort
+        return saalRepo.findAll();
     }
 
     public Saal getSaalById(Long id) {

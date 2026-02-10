@@ -10,22 +10,38 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 
 @Entity
-@Table(name = "tickets")
+@Table(name = "Tickets")
 public class Tickets {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ticket_id")
+    @Column(name = "TicketId")
     private int ticketId;
 
     @ManyToOne
-    @JoinColumn(name = "vorstellung_id_vorstellung_id")
+    @JoinColumn(name = "VorstellungId")
     private Vorstellung vorstellungId;
 
     @ManyToOne
-    @JoinColumn(name = "sitzplatz_sitzplatz_id")
+    @JoinColumn(name = "PlatzNr")
     private Sitzplatz sitzplatz;
 
+    @ManyToOne
+    @JoinColumn(name = "AccountId")
+    private Benutzer benutzerId;
+
+    // New field for buchungId
+    @JoinColumn(name = "BuchungsId")
+    private Long buchungId;
+
     // Getter & Setter
+    public Benutzer getBenutzerId() {
+        return benutzerId;
+    }
+
+    public void setBenutzerId(Benutzer benutzerId) {
+        this.benutzerId = benutzerId;
+    }
+
     public int getTicketId() {
         return ticketId;
     }
@@ -48,5 +64,14 @@ public class Tickets {
 
     public void setSitzplatz(Sitzplatz sitzplatz) {
         this.sitzplatz = sitzplatz;
+    }
+
+    // New getter for buchungId
+    public Long getBuchungId() {
+        return buchungId;
+    }
+
+    public void setBuchungId(Long buchungId) {
+        this.buchungId = buchungId;
     }
 }
