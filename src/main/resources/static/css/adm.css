@@ -1,6 +1,6 @@
 /* adm.css (themed) – verwendet Variablen aus css/theme.css */
 :root{--accent:var(--accent);--accent-soft:var(--accent-soft);--accent-soft-2:var(--accent-soft-2);--surface-2:var(--surface-2);--border-strong:var(--border-strong);--surface-muted:var(--surface-muted);}
-html[data-theme="dark"]{--surface-2:#242424;--border-strong:#555;--surface-muted:#1b1b1b;}
+html[data-theme="dark"]{--surface-2:#242424;--border-strong:#555;--surface-muted:#1b1b1b;--accent-soft-2:#3a3a3a;}
 
 /* Light-Mode Rahmen grün (Dark bleibt lila über --accent) */
 html:not([data-theme="dark"]) .column {
@@ -18,8 +18,8 @@ html:not([data-theme="dark"]) .details-table th {
 }
 
 html:not([data-theme="dark"]) .btn-small {
-    border-color: var(--brand);
-    color: var(--brand);
+    border-color: var(--btn-bg);
+    color: var(--btn-bg);
 }
 
 /* Light-Mode Rahmen sicher nach allen Basisregeln setzen */
@@ -44,9 +44,9 @@ html:not([data-theme="dark"]) .add-session-btn,
 html:not([data-theme="dark"]) .btn-add,
 html:not([data-theme="dark"]) .btn-small,
 html:not([data-theme="dark"]) .table-action-btn {
-    background: var(--brand) !important;
-    color: var(--surface) !important;
-    border-color: var(--brand) !important;
+    background: var(--btn-bg) !important;
+    color: var(--btn-text) !important;
+    border-color: var(--btn-bg) !important;
 }
 
 /* =============================
@@ -107,13 +107,7 @@ body {
 
 .btn-outline:hover {
     background: var(--accent);
-    color: var(--surface);
-}
-
-/* Light-Mode: Text in der Topbar beim Hover nicht weiß */
-html:not([data-theme="dark"]) .topbar .btn-outline:hover {
-    color: #000000;
-    background: transparent;
+    color: var(--btn-text);
 }
 
 .logo-round {
@@ -210,8 +204,8 @@ html:not([data-theme="dark"]) .topbar .btn-outline:hover {
 .add-movie-btn {
     padding: 12px;
     border: none;
-    background: var(--accent);
-    color: var(--surface);
+    background: var(--btn-bg);
+    color: var(--btn-text);
     font-size: 18px;
     border-radius: 6px;
     cursor: pointer;
@@ -221,8 +215,8 @@ html:not([data-theme="dark"]) .topbar .btn-outline:hover {
 .add-session-btn {
     padding: 12px;
     border: none;
-    background: var(--accent);
-    color: var(--surface);
+    background: var(--btn-bg);
+    color: var(--btn-text);
     font-size: 18px;
     border-radius: 6px;
     cursor: pointer;
@@ -434,9 +428,9 @@ html:not([data-theme="dark"]) .topbar .btn-outline:hover {
     font-size: 18px;
     padding: 8px 18px;
     border-radius: 6px;
-    border: 2px solid var(--accent);
+    border: 2px solid var(--btn-bg);
     background: var(--surface);
-    color: var(--accent);
+    color: var(--btn-bg);
     cursor: pointer;
 }
 
@@ -445,8 +439,8 @@ html:not([data-theme="dark"]) .topbar .btn-outline:hover {
 }
 
 .active-view {
-    background: var(--accent) !important;
-    color: var(--surface) !important;
+    background: var(--btn-bg) !important;
+    color: var(--btn-text) !important;
 }
 
 .details-row {
@@ -477,15 +471,16 @@ html:not([data-theme="dark"]) .topbar .btn-outline:hover {
     font-size: 20px;
     border-radius: 6px;
     cursor: pointer;
-    color: white;
+    color: var(--btn-text);
 }
 
 .btn-green {
-    background: var(--accent);
+    background: var(--btn-bg);
 }
 
 .btn-grey {
-    background: #777777;
+    background: var(--btn-muted-bg);
+    color: var(--btn-muted-text);
 }
 
 .buttons-row {
@@ -517,7 +512,8 @@ html:not([data-theme="dark"]) .topbar .btn-outline:hover {
     padding: 10px 22px;
     border-radius: 6px;
     border: none;
-    background: var(--field-border);
+    background: var(--btn-muted-bg);
+    color: var(--btn-muted-text);
     color: white;
     font-size: 18px;
     font-weight: 600;
@@ -542,6 +538,8 @@ html:not([data-theme="dark"]) .topbar .btn-outline:hover {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    padding-bottom: 10px;
+    
 }
 
 .filter-row {
@@ -577,8 +575,8 @@ html:not([data-theme="dark"]) .topbar .btn-outline:hover {
     padding: 10px 22px;
     border-radius: 6px;
     border: none;
-    background: var(--accent);
-    color: white;
+    background: var(--btn-bg);
+    color: var(--btn-text);
     font-size: 18px;
     white-space: normal;
     cursor: pointer;
@@ -706,7 +704,7 @@ body.no-scroll {
 /* ausgewählter Film in der Liste */
 .movie-item.selected {
     background: var(--accent-soft);
-    border-color: var(--accent);
+    border: 2px solid var(--accent);
 }
 
 /* Delete-Button in Listen und Tabellen */
@@ -714,8 +712,8 @@ body.no-scroll {
     padding: 6px 10px;
     border-radius: 4px;
     border: none;
-    background: #cc3333;
-    color: var(--surface);
+    background: var(--btn-danger-bg);
+    color: var(--btn-danger-text);
     font-size: 14px;
     cursor: pointer;
 }
@@ -802,8 +800,8 @@ body.no-scroll {
     padding: 6px 10px;
     border-radius: 4px;
     border: none;
-    background: var(--accent);
-    color: var(--surface);
+    background: var(--btn-bg);
+    color: var(--btn-text);
     font-size: 14px;
     cursor: pointer;
 }

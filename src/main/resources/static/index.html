@@ -13,18 +13,24 @@
 
     <header class="topbar">
         <div class="topbar-right">
+
             <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false"> Light</button>
             <a href="login.html" class="btn-outline" id="Login-btn-non-autenthicated">Login</a>
             <a href="Account.html" class="btn-outline" id="Login-btn-autenthicated">Konto</a>
-            <img src="img/kino_logo_whitebg.png" alt="Kino Logo" class="logo-round">
+            <img src="img/kino.png" alt="Kino Logo" class="logo-round">
         </div>
     </header>
 
+
     <main class="page">
+        <!-- LINKE SPALTE: Filter + Filmliste -->
         <section class="left-column">
             <div class="filter-launch">
             </div>
 
+            <!-- FILTER -->
+
+            <!-- FILMLISTE -->
             <aside class="liste" id="filmListe">
                 <div class="liste-header">
                     <h2>Filme</h2>
@@ -46,6 +52,7 @@
                     </li>
                 </ul>
             </aside>
+
         </section>
 
         <div class="modal hidden" id="filterModal" role="dialog" aria-modal="true" aria-labelledby="filterTitle">
@@ -64,6 +71,7 @@
                             <option value="3D">3D</option>
                         </select>
                         </div>
+
                         <div class="filter-field">
                             <label>FSK</label>
                             <select id="filterFsk">

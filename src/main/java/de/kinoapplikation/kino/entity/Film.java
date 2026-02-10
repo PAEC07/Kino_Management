@@ -40,6 +40,7 @@ public class Film {
     @Column(name = "Basispreis")
     private Long basispreis;
 
+    //TODO: Filmdauer beim hinzufügen eines Films in Minuten umwandeln und hier als Duration speichern
     @Column(name = "Filmdauer")
     private Duration filmdauer;
 

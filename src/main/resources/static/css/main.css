@@ -1,19 +1,5 @@
 /* main.css (themed) – verwendet Variablen aus css/theme.css */
 
-:root {
-    --accent: #3cb371;
-    --accent-strong: #2f9d63;
-    --accent-soft: #e6ffe6;
-    --accent-soft-2: #d4f8d4;
-    --surface-2: #f0f0f0;
-    --border-strong: #ccc;
-}
-
-html[data-theme="dark"] {
-    --surface-2: #242424;
-    --border-strong: #555;
-}
-
 
 /* Global: Breite im Griff behalten */
 
@@ -80,7 +66,7 @@ body {
 
 .btn-outline:hover {
     background: var(--accent);
-    color: var(--surface);
+    color: var(--btn-text);
 }
 
 
@@ -322,6 +308,7 @@ body.no-scroll {
 .liste li.aktiv {
     background: var(--surface-2);
     border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent) inset;
 }
 
 
@@ -463,11 +450,11 @@ body.no-scroll {
     font-size: 20px;
     border-radius: 6px;
     cursor: pointer;
-    color: white;
+    color: var(--btn-text);
 }
 
 .btn-green {
-    background: var(--accent);
+    background: var(--btn-bg);
 }
 
 .btn-grey {
@@ -555,9 +542,9 @@ body.no-scroll {
     font-size: 18px;
     padding: 8px 18px;
     border-radius: 6px;
-    border: 2px solid var(--accent);
+    border: 2px solid var(--btn-bg);
     background: var(--surface);
-    color: var(--accent);
+    color: var(--btn-bg);
     cursor: pointer;
 }
 
@@ -566,8 +553,8 @@ body.no-scroll {
 }
 
 .active-view {
-    background: var(--accent) !important;
-    color: var(--surface) !important;
+    background: var(--btn-bg) !important;
+    color: var(--btn-text) !important;
 }
 
 
@@ -600,10 +587,10 @@ body.no-scroll {
 .kalender-header button {
     padding: 10px 20px;
     border-radius: 6px;
-    border: 2px solid var(--accent);
+    border: 2px solid var(--btn-bg);
     background: var(--surface);
     cursor: pointer;
-    color: var(--accent);
+    color: var(--btn-bg);
     font-size: 18px;
 }
 
@@ -934,8 +921,8 @@ body.no-scroll {
     padding: 10px 22px;
     border-radius: 6px;
     border: none;
-    background: var(--accent);
-    color: white;
+    background: var(--btn-bg);
+    color: var(--btn-text);
     font-size: 18px;
     font-weight: 600;
     cursor: pointer;
@@ -946,6 +933,12 @@ body.no-scroll {
 
 .details-table tr.selected-show {
     background: var(--surface-2);
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+.details-table tr.selected-show td {
+    border-color: var(--accent);
 }
 
 .buchung-vorstellung-info {
