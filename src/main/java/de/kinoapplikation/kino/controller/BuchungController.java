@@ -1,17 +1,13 @@
 package de.kinoapplikation.kino.controller;
 
+import de.kinoapplikation.kino.dto.CheckoutDtos;
 import de.kinoapplikation.kino.entity.Buchung;
 import de.kinoapplikation.kino.service.BuchungService;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
-/**
- * Endpoints:
- * - GET /api/buchungen/list > Alle Buchungen auflisten
- * - GET /api/buchungen/{id}/get > Buchung mit bestimmter ID abrufen
- * - POST /api/buchungen/add > Neue Buchung hinzufügen
- * - DELETE /api/buchungen/{id}/delete > Buchung mit bestimmter ID löschen
- */
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/buchungen")
@@ -33,18 +29,20 @@ public class BuchungController {
         return buchungService.getBuchung(id);
     }
 
-    @GetMapping("/list/{id}")
-    public List<Buchung> buchungenDesBenutzers(@PathVariable Long id) {
-        return buchungService.buchungenDesBenutzers(id);
-    }
-
-    @PostMapping("/add")
-    public Buchung buchen(@RequestBody Buchung b) {
-        return buchungService.buchen(b);
-    }
-
     @DeleteMapping("/{id}/delete")
     public void stornieren(@PathVariable Long id) {
         buchungService.stornieren(id);
     }
+
+    // ✅ NEU: Checkout
+    @PostMapping("/checkout")
+    public ResponseEntity<CheckoutDtos.CheckoutResponse> checkout(@RequestBody CheckoutDtos.CheckoutRequest req) {
+        try {
+            CheckoutDtos.CheckoutResponse resp = buchungService.checkout(req);
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new CheckoutDtos.CheckoutResponse(false, e.getMessage(), null, 0));
+        }
+    }
+
 }

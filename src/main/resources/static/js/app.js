@@ -1,113 +1,120 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // ============================
+  // CONFIG
+  // ============================
   const API_BASE = "http://localhost:8080";
+
+  const API = {
+    filmeList: "/api/filme/list",
+    showsList: "/api/vorstellungen/list",
+    hallsList: "/api/saal/list",
+    seatStatus: (vorstellungId, saalId) => `/api/sitze/status/${vorstellungId}/${saalId}`,
+    checkout: "/api/buchungen/checkout",
+  };
+
+  // Backend-Logik nachbauen:
+  // - Film.basispreis in cents
+  // - Loge: +10%
+  const DISCOUNTS = {
+    NONE: 1.0,
+    STUDENT: 0.8, // -20%
+    SENIOR: 0.85, // -15%
+    CHILD: 0.7, // -30%
+  };
 
   // ============================
   // DOM
   // ============================
-  // Links: Filmliste
-  const filmListeAside = document.getElementById("filmListe");
-  const filmSuche = document.getElementById("filmSuche");
-  const suchBtn = document.getElementById("suchBtn");
-
-  // Auth Buttons (Topbar)
-  const btnLogin = document.getElementById("Login-btn-non-autenthicated");
-  const btnKonto = document.getElementById("Login-btn-autenthicated");
-
-  // Details rechts
-  const detailsWrapper = document.getElementById("detailsWrapper");
+  const filmListeEl = document.querySelector("#filmListe ul");
   const inhaltTitel = document.getElementById("inhaltTitel");
-  const inhaltText = document.getElementById("inhaltText");
+  const detailsWrapper = document.getElementById("detailsWrapper");
+
   const infoFsk = document.getElementById("infoFsk");
   const infoFormat = document.getElementById("infoFormat");
   const infoKategorie = document.getElementById("infoKategorie");
   const infoLaufzeit = document.getElementById("infoLaufzeit");
   const infoPreis = document.getElementById("infoPreis");
+  const inhaltText = document.getElementById("inhaltText");
 
-  // Vorstellungen Tabelle
   const vorstellungenTbody = document.getElementById("vorstellungenTbody");
+  const kalenderBody = document.getElementById("kalenderBody");
+  const kalMonatLabel = document.getElementById("kalMonatLabel");
+  const kalPrev = document.getElementById("kalPrev");
+  const kalNext = document.getElementById("kalNext");
 
-  // Toggle Listen/Kalender
   const btnViewList = document.getElementById("btnViewList");
   const btnViewCalendar = document.getElementById("btnViewCalendar");
   const listenView = document.getElementById("listenView");
   const kalenderView = document.getElementById("kalenderView");
 
-  // Kalender
-  const kalMonatLabel = document.getElementById("kalMonatLabel");
-  const kalPrev = document.getElementById("kalPrev");
-  const kalNext = document.getElementById("kalNext");
-  const kalenderBody = document.getElementById("kalenderBody");
-
-  // Buchung Bereich + Buttons
-  const buchenContainer = document.getElementById("buchen");
   const buchenBtn = document.getElementById("buchenBtn");
   const buchenBox = document.getElementById("buchenBox");
   const inhaltBox = document.getElementById("inhaltBox");
   const zurueckBtn = document.getElementById("zurueckBtn");
   const bezahlenBtn = document.getElementById("bezahlenBtn");
-  const buchungVorstellungInfo = document.getElementById("buchungVorstellungInfo");
 
-  // Sitzplan / Tickets (Buchungsbereich)
+  const buchungVorstellungInfo = document.getElementById("buchungVorstellungInfo");
   const sitzContainer = document.getElementById("sitzContainer");
-  const ausgewaehlteSitzeTxt = document.getElementById("ausgewaehlteSitze");
+
   const ticketsTbody = document.getElementById("ticketsTbody");
+  const ausgewaehlteSitzeEl = document.getElementById("ausgewaehlteSitze");
   const summeAnzeige = document.getElementById("summeAnzeige");
+
+  // Login/Konto Button toggling (optional)
+  const loginBtnAss = document.getElementById("Login-btn-autenthicated");
+  const loginBtnNon = document.getElementById("Login-btn-non-autenthicated");
+
+  // Modal Show Info (optional in index.html vorhanden)
+  const showInfoModal = document.getElementById("showInfoModal");
+  const showInfoFilm = document.getElementById("showInfoFilm");
+  const showInfoDate = document.getElementById("showInfoDate");
+  const showInfoTime = document.getElementById("showInfoTime");
+  const showInfoSaal = document.getElementById("showInfoSaal");
+  const showInfoRuntime = document.getElementById("showInfoRuntime");
+  const showInfoPrice = document.getElementById("showInfoPrice");
 
   // ============================
   // STATE
   // ============================
   let movies = [];
   let shows = [];
-  let currentMovieId = null;
-  let selectedShow = null;
+  let halls = [];
 
-  // Sitz-Status aus Backend
-  let seats = [];          // vom Backend
-  let selectedSeats = [];  // { sitzId, reihe, platzNr, bereich }
+  let currentMovie = null;     // Film Objekt
+  let currentShow = null;      // Vorstellung Objekt
+  let seatStatusList = [];     // Seats vom Backend
+  let selectedSeats = [];      // { sitzId, bereich, reihe, platzNr, discount, priceCents }
 
+  // Kalender State
   let currentMonth = new Date().getMonth();
   let currentYear = new Date().getFullYear();
 
   // ============================
   // HELPERS
   // ============================
+  function authHeaders() {
+    const h = { "Content-Type": "application/json" };
+    const token = localStorage.getItem("kino_token");
+    if (token) h["Authorization"] = "Bearer " + token;
+    return h;
+  }
+
   async function apiGet(path) {
-    const res = await fetch(API_BASE + path);
-    if (!res.ok) {
-      const t = await res.text().catch(() => "");
-      throw new Error(`GET ${path} fehlgeschlagen (${res.status}) ${t}`);
-    }
-    return res.json();
+    const res = await fetch(API_BASE + path, { headers: authHeaders() });
+    const text = await res.text().catch(() => "");
+    if (!res.ok) throw new Error(`GET ${path} (${res.status}) ${text}`);
+    return text ? JSON.parse(text) : null;
   }
 
-  function isLoggedIn() {
-    try {
-      const user = JSON.parse(localStorage.getItem("kino_user") || "null");
-      return !!user;
-    } catch {
-      return false;
-    }
-  }
-
-  function updateAuthButtons() {
-    const logged = isLoggedIn();
-    if (btnLogin) btnLogin.style.display = logged ? "none" : "inline-block";
-    if (btnKonto) btnKonto.style.display = logged ? "inline-block" : "none";
-  }
-
-  // ✅ Buchung: sichtbar nur wenn eingeloggt, aktiv nur wenn Vorstellung gewählt
-  function updateBuchenUI() {
-    const logged = isLoggedIn();
-    if (!buchenContainer || !buchenBtn) return;
-
-    if (!logged) {
-      buchenContainer.classList.add("hidden");
-      buchenBtn.disabled = true;
-      return;
-    }
-
-    buchenContainer.classList.remove("hidden");
-    buchenBtn.disabled = !selectedShow;
+  async function apiPost(path, body) {
+    const res = await fetch(API_BASE + path, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(body),
+    });
+    const text = await res.text().catch(() => "");
+    if (!res.ok) throw new Error(`POST ${path} (${res.status}) ${text}`);
+    return text ? JSON.parse(text) : null;
   }
 
   function formatEuroFromCents(cents) {
@@ -115,222 +122,273 @@ document.addEventListener("DOMContentLoaded", () => {
     return n.toFixed(2).replace(".", ",") + " €";
   }
 
-  function pad2(n) {
-    return String(n).padStart(2, "0");
-  }
-
-  function splitISO(iso) {
+  function splitZeit(iso) {
     if (!iso) return { datum: "", uhrzeit: "" };
-    const noOffset = String(iso).replace(/([+-]\d{2}:\d{2}|Z)$/, "");
-    const [d, t] = noOffset.split("T");
-    return { datum: d || "", uhrzeit: (t || "").slice(0, 5) };
+    const cleaned = String(iso).replace(/([+-]\d{2}:\d{2}|Z)$/, "");
+    if (!cleaned.includes("T")) return { datum: cleaned, uhrzeit: "" };
+    const [d, t] = cleaned.split("T");
+    return { datum: d, uhrzeit: (t || "").slice(0, 5) };
   }
 
-  function getMovieById(id) {
-    return movies.find(m => String(m.id) === String(id)) || null;
-  }
-
-  function getFilmname(movie) {
-    return movie?.filmname ?? movie?.titel ?? "Ohne Titel";
+  function getShowId(show) {
+    return show?.id ?? show?.vorstellungId ?? null;
   }
 
   function getShowFilmId(show) {
     if (show?.filmId?.id != null) return show.filmId.id;
-    if (show?.film?.id != null) return show.film.id;
     if (typeof show?.filmId === "number" || typeof show?.filmId === "string") return show.filmId;
+    if (show?.film?.id != null) return show.film.id;
     return null;
   }
 
-  function getShowId(show) {
-    return show?.id ?? null;
+  function getShowDatumISO(show) {
+    return String(show?.datum || "");
   }
 
   function getShowSaalId(show) {
-    if (show?.saalId?.id != null) return show.saalId.id;
-    if (typeof show?.saalId === "number" || typeof show?.saalId === "string") return show.saalId;
-    if (show?.saal?.id != null) return show.saal.id;
-    return null;
+    // je nach Backend Modell
+    return show?.saalId?.saalId ?? show?.saalId?.id ?? show?.saalId ?? null;
   }
 
-  function getShowSaalText(show) {
-    const sid = getShowSaalId(show);
-    return sid != null ? `Saal ${sid}` : "-";
+  function hallNameById(id) {
+    const h = halls.find(x => String(x?.saalId) === String(id));
+    return h?.saalName ?? (id != null ? `Saal ${id}` : "-");
   }
 
-  function getMonatsName(monthIndex) {
-    const namen = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
-    return namen[monthIndex] || "";
+  function calcSeatBasePriceCents(basisCents, bereich) {
+    let price = Number(basisCents || 0);
+    if ((bereich || "").toLowerCase().includes("loge")) {
+      price = Math.round(price * 1.10);
+    }
+    return price;
+  }
+
+  function getUser() {
+    try {
+      return JSON.parse(localStorage.getItem("kino_user") || "null");
+    } catch {
+      return null;
+    }
+  }
+
+  function updateLoginButtons() {
+    const user = getUser();
+    const loggedIn = !!user?.id;
+    if (loginBtnAss) loginBtnAss.style.display = loggedIn ? "inline-block" : "none";
+    if (loginBtnNon) loginBtnNon.style.display = loggedIn ? "none" : "inline-block";
   }
 
   // ============================
-  // RENDER: Film Liste
+  // UI VIEW TOGGLE
+  // ============================
+  function setView(mode) {
+    if (!listenView || !kalenderView) return;
+    if (mode === "list") {
+      listenView.classList.remove("hidden");
+      kalenderView.classList.add("hidden");
+      btnViewList?.classList.add("active-view");
+      btnViewCalendar?.classList.remove("active-view");
+    } else {
+      listenView.classList.add("hidden");
+      kalenderView.classList.remove("hidden");
+      btnViewList?.classList.remove("active-view");
+      btnViewCalendar?.classList.add("active-view");
+    }
+  }
+
+  btnViewList?.addEventListener("click", () => setView("list"));
+  btnViewCalendar?.addEventListener("click", () => setView("calendar"));
+
+  // ============================
+  // RENDER: FILMLISTE LINKS
   // ============================
   function renderMovieList() {
-    if (!filmListeAside) return;
+    if (!filmListeEl) return;
+    filmListeEl.innerHTML = "";
 
-    const ul = filmListeAside.querySelector("ul");
-    if (!ul) return;
-
-    ul.innerHTML = "";
-
-    const search = (filmSuche?.value || "").toLowerCase().trim();
-    const filtered = movies.filter(m => {
-      const name = String(getFilmname(m)).toLowerCase();
-      return !search || name.includes(search);
-    });
-
-    if (!filtered.length) {
+    if (!movies.length) {
       const li = document.createElement("li");
       li.textContent = "Keine Filme vorhanden.";
-      ul.appendChild(li);
+      filmListeEl.appendChild(li);
       return;
     }
 
-    filtered.forEach(movie => {
+    movies.forEach((m) => {
       const li = document.createElement("li");
-      li.textContent = getFilmname(movie);
-      li.classList.toggle("aktiv", String(movie.id) === String(currentMovieId));
-      li.addEventListener("click", () => selectMovie(movie.id));
-      ul.appendChild(li);
+      li.textContent = m.filmname ?? `Film ${m.id}`;
+      li.dataset.movieId = String(m.id);
+
+      li.addEventListener("click", () => {
+        currentMovie = m;
+        currentShow = null;
+        selectedSeats = [];
+        seatStatusList = [];
+
+        renderMovieDetails();
+        renderShowList();
+        renderCalendar();
+        resetBookingUI();
+      });
+
+      filmListeEl.appendChild(li);
     });
   }
 
   // ============================
-  // RENDER: Details rechts
+  // RENDER: FILM DETAILS RECHTS
   // ============================
-  function renderDetailsForMovie(movieId) {
-    const movie = getMovieById(movieId);
-    if (!movie) return;
-
-    if (inhaltTitel) inhaltTitel.textContent = getFilmname(movie);
-    if (inhaltText) inhaltText.textContent = movie.beschreibung || "";
-    if (infoFsk) infoFsk.textContent = movie.fsk ?? "-";
-    if (infoKategorie) infoKategorie.textContent = movie.kategorie ?? "-";
-
-    if (infoLaufzeit) {
-      const d = movie.filmdauer ?? movie.laufzeit ?? null;
-      infoLaufzeit.textContent = d ? `${d} Min` : "k.A.";
+  function renderMovieDetails() {
+    if (!currentMovie) {
+      inhaltTitel.textContent = "Bitte einen Film auswählen";
+      detailsWrapper?.classList.add("hidden");
+      return;
     }
 
-    if (infoPreis) infoPreis.textContent = formatEuroFromCents(movie.basispreis ?? 0);
-
-    if (infoFormat) {
-      // falls Backend kein format liefert -> "-"
-      infoFormat.textContent = movie.darstellungstyp ?? "-";
-    }
-
+    inhaltTitel.textContent = currentMovie.filmname ?? "Film";
     detailsWrapper?.classList.remove("hidden");
+
+    infoFsk.textContent = currentMovie.fsk ?? "-";
+    infoFormat.textContent = currentMovie.darstellungstyp ?? currentMovie.format ?? "-";
+    infoKategorie.textContent = currentMovie.kategorie ?? "-";
+    infoLaufzeit.textContent = (currentMovie.filmdauer != null) ? `${currentMovie.filmdauer} min` : "-";
+    infoPreis.textContent = formatEuroFromCents(currentMovie.basispreis ?? 0);
+    inhaltText.textContent = currentMovie.beschreibung ?? "";
   }
 
   // ============================
-  // RENDER: Vorstellungen Tabelle
+  // RENDER: VORSTELLUNGEN LISTE
   // ============================
   function renderShowList() {
     if (!vorstellungenTbody) return;
-
     vorstellungenTbody.innerHTML = "";
-    selectedShow = null;
-    updateBuchenUI();
 
-    const relevant = shows
-      .filter(s => String(getShowFilmId(s)) === String(currentMovieId))
-      .sort((a, b) => String(a.datum || "").localeCompare(String(b.datum || "")));
-
-    if (!relevant.length) {
+    if (!currentMovie) {
       const tr = document.createElement("tr");
-      const td = document.createElement("td");
-      td.colSpan = 3;
-      td.textContent = "Keine Vorstellungen vorhanden.";
-      tr.appendChild(td);
+      tr.innerHTML = `<td colspan="3">Bitte Film auswählen.</td>`;
       vorstellungenTbody.appendChild(tr);
       return;
     }
 
-    relevant.forEach(show => {
-      const { datum, uhrzeit } = splitISO(show.datum);
-      const saalText = getShowSaalText(show);
+    const filtered = shows
+      .filter(s => String(getShowFilmId(s)) === String(currentMovie.id))
+      .sort((a, b) => String(getShowDatumISO(a)).localeCompare(String(getShowDatumISO(b))));
+
+    if (!filtered.length) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="3">Keine Vorstellungen vorhanden.</td>`;
+      vorstellungenTbody.appendChild(tr);
+      return;
+    }
+
+    filtered.forEach((show) => {
+      const sid = getShowId(show);
+      const saalId = getShowSaalId(show);
+      const { datum, uhrzeit } = splitZeit(getShowDatumISO(show));
 
       const tr = document.createElement("tr");
-      const tdDatum = document.createElement("td");
-      const tdZeit = document.createElement("td");
-      const tdSaal = document.createElement("td");
+      tr.style.cursor = "pointer";
 
-      tdDatum.textContent = datum || "-";
-      tdZeit.textContent = uhrzeit || "-";
-      tdSaal.textContent = saalText;
-
-      tr.appendChild(tdDatum);
-      tr.appendChild(tdZeit);
-      tr.appendChild(tdSaal);
+      tr.innerHTML = `
+        <td>${datum || "-"}</td>
+        <td>${uhrzeit || "-"}</td>
+        <td>${hallNameById(saalId)}</td>
+      `;
 
       tr.addEventListener("click", () => {
-        [...vorstellungenTbody.querySelectorAll("tr")].forEach(x => x.classList.remove("selected-show"));
-        tr.classList.add("selected-show");
-
-        selectedShow = show;
-        updateBuchenUI();
-
-        const movie = getMovieById(currentMovieId);
-        if (buchungVorstellungInfo) {
-          buchungVorstellungInfo.textContent =
-            `Ausgewählte Vorstellung: ${getFilmname(movie)} – ${datum}, ${uhrzeit} Uhr, ${saalText}`;
-        }
+        currentShow = show;
+        selectedSeats = [];
+        seatStatusList = [];
+        renderSelectedShowInfo();
+        // optional modal info:
+        showInfoFilm && (showInfoFilm.textContent = currentMovie?.filmname || "-");
+        showInfoDate && (showInfoDate.textContent = datum || "-");
+        showInfoTime && (showInfoTime.textContent = uhrzeit || "-");
+        showInfoSaal && (showInfoSaal.textContent = hallNameById(saalId));
+        showInfoRuntime && (showInfoRuntime.textContent = (currentMovie?.filmdauer != null) ? `${currentMovie.filmdauer} min` : "-");
+        showInfoPrice && (showInfoPrice.textContent = formatEuroFromCents(currentMovie?.basispreis || 0));
       });
 
       vorstellungenTbody.appendChild(tr);
     });
   }
 
+  function renderSelectedShowInfo() {
+    if (!buchungVorstellungInfo) return;
+    if (!currentShow) {
+      buchungVorstellungInfo.textContent = "Ausgewählte Vorstellung: keine";
+      return;
+    }
+    const saalId = getShowSaalId(currentShow);
+    const { datum, uhrzeit } = splitZeit(getShowDatumISO(currentShow));
+    buchungVorstellungInfo.textContent =
+      `Ausgewählte Vorstellung: ${datum || "-"} ${uhrzeit || ""} • ${hallNameById(saalId)}`;
+  }
+
   // ============================
-  // RENDER: Kalender
+  // RENDER: KALENDER
   // ============================
+  function getMonatsName(m) {
+    const arr = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+    return arr[m] || "";
+  }
+
   function renderCalendar() {
     if (!kalenderBody || !kalMonatLabel) return;
 
     kalenderBody.innerHTML = "";
     kalMonatLabel.textContent = `${getMonatsName(currentMonth)} ${currentYear}`;
 
+    if (!currentMovie) return;
+
+    const filtered = shows.filter(s => String(getShowFilmId(s)) === String(currentMovie.id));
+
+    const map = {};
+    filtered.forEach((show) => {
+      const { datum, uhrzeit } = splitZeit(getShowDatumISO(show));
+      if (!datum) return;
+      if (!map[datum]) map[datum] = [];
+      map[datum].push({ show, uhrzeit });
+    });
+
     const firstDay = new Date(currentYear, currentMonth, 1);
     const lastDay = new Date(currentYear, currentMonth + 1, 0);
     const startWochentag = (firstDay.getDay() + 6) % 7;
     const tageImMonat = lastDay.getDate();
 
-    const relevant = shows.filter(s => String(getShowFilmId(s)) === String(currentMovieId));
-    const map = {};
-    relevant.forEach(s => {
-      const { datum, uhrzeit } = splitISO(s.datum);
-      if (!datum) return;
-      if (!map[datum]) map[datum] = [];
-      map[datum].push({ uhrzeit, show: s });
-    });
-
-    let tag = 1;
+    let dayNr = 1;
     for (let r = 0; r < 6; r++) {
       const tr = document.createElement("tr");
 
       for (let c = 0; c < 7; c++) {
         const td = document.createElement("td");
 
-        if ((r === 0 && c < startWochentag) || tag > tageImMonat) {
+        if ((r === 0 && c < startWochentag) || dayNr > tageImMonat) {
           td.classList.add("kalender-empty");
         } else {
           const daySpan = document.createElement("span");
           daySpan.classList.add("tag-nr");
-          daySpan.textContent = tag;
+          daySpan.textContent = dayNr;
           td.appendChild(daySpan);
 
-          const dateStr = `${currentYear}-${pad2(currentMonth + 1)}-${pad2(tag)}`;
-          const showsForDate = (map[dateStr] || []).sort((a, b) => String(a.uhrzeit).localeCompare(String(b.uhrzeit)));
+          const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2,"0")}-${String(dayNr).padStart(2,"0")}`;
+          const items = map[dateStr] || [];
 
-          showsForDate.forEach(({ uhrzeit, show }) => {
-            const saalText = getShowSaalText(show);
+          items.forEach(({ show, uhrzeit }) => {
             const ev = document.createElement("span");
             ev.classList.add("kal-event");
-            ev.textContent = `${uhrzeit || "--:--"} • ${saalText}`;
+            ev.textContent = `${uhrzeit || "--:--"} • ${hallNameById(getShowSaalId(show))}`;
+            ev.style.cursor = "pointer";
+            ev.addEventListener("click", () => {
+              currentShow = show;
+              selectedSeats = [];
+              seatStatusList = [];
+              renderSelectedShowInfo();
+              resetBookingTable();
+            });
             td.appendChild(ev);
           });
 
-          tag++;
+          dayNr++;
         }
 
         tr.appendChild(td);
@@ -339,217 +397,6 @@ document.addEventListener("DOMContentLoaded", () => {
       kalenderBody.appendChild(tr);
     }
   }
-
-  // ============================
-  // VIEW TOGGLE
-  // ============================
-  function setView(mode) {
-    if (!listenView || !kalenderView || !btnViewList || !btnViewCalendar) return;
-
-    if (mode === "list") {
-      listenView.classList.remove("hidden");
-      kalenderView.classList.add("hidden");
-      btnViewList.classList.add("active-view");
-      btnViewCalendar.classList.remove("active-view");
-    } else {
-      listenView.classList.add("hidden");
-      kalenderView.classList.remove("hidden");
-      btnViewList.classList.remove("active-view");
-      btnViewCalendar.classList.add("active-view");
-    }
-  }
-
-  // ============================
-  // SELECT FILM
-  // ============================
-  function selectMovie(movieId) {
-    currentMovieId = movieId;
-    selectedShow = null;
-
-    renderMovieList();
-    renderDetailsForMovie(movieId);
-    renderShowList();
-    renderCalendar();
-    setView("list");
-
-    updateBuchenUI();
-  }
-
-  // ============================
-  // SITZPLAN: Laden + Rendern
-  // ============================
-  async function loadSeatStatusForSelectedShow() {
-    const vorstellungId = getShowId(selectedShow);
-    const saalId = getShowSaalId(selectedShow);
-
-    if (!vorstellungId || !saalId) {
-      throw new Error("Vorstellung oder Saal-ID fehlt (selectedShow.id / selectedShow.saalId.id)");
-    }
-
-    const data = await apiGet(`/api/sitze/status/${vorstellungId}/${saalId}`);
-    seats = Array.isArray(data) ? data : [];
-    selectedSeats = [];
-  }
-
-  function renderSelectedSeatsText() {
-    if (!ausgewaehlteSitzeTxt) return;
-    if (!selectedSeats.length) {
-      ausgewaehlteSitzeTxt.textContent = "keine";
-      return;
-    }
-    ausgewaehlteSitzeTxt.textContent = selectedSeats
-      .map(s => `${s.reihe}${s.platzNr} (${s.bereich})`)
-      .join(", ");
-  }
-
-  function renderTicketsTable() {
-    if (!ticketsTbody) return;
-    ticketsTbody.innerHTML = "";
-
-    if (!selectedSeats.length) {
-      const tr = document.createElement("tr");
-      const td = document.createElement("td");
-      td.colSpan = 4;
-      td.textContent = "Keine Plätze ausgewählt.";
-      tr.appendChild(td);
-      ticketsTbody.appendChild(tr);
-      return;
-    }
-
-    selectedSeats.forEach(seat => {
-      const tr = document.createElement("tr");
-
-      const tdPlatz = document.createElement("td");
-      tdPlatz.textContent = `${seat.reihe}${seat.platzNr}`;
-
-      const tdBereich = document.createElement("td");
-      tdBereich.textContent = seat.bereich || "-";
-
-      const tdErm = document.createElement("td");
-      tdErm.textContent = "-";
-
-      const tdPreis = document.createElement("td");
-      tdPreis.textContent = "-";
-
-      tr.appendChild(tdPlatz);
-      tr.appendChild(tdBereich);
-      tr.appendChild(tdErm);
-      tr.appendChild(tdPreis);
-
-      ticketsTbody.appendChild(tr);
-    });
-  }
-
-  function toggleSeat(seatObj, btn) {
-    const key = seatObj.sitzId ?? seatObj.id ?? `${seatObj.reihe}-${seatObj.platzNr}`;
-    const idx = selectedSeats.findIndex(x => (x.sitzId ?? x.id) === key);
-
-    if (idx >= 0) {
-      selectedSeats.splice(idx, 1);
-      btn.classList.remove("gewaehlt");
-    } else {
-      selectedSeats.push({
-        sitzId: key,
-        reihe: seatObj.reihe,
-        platzNr: seatObj.platzNr,
-        bereich: seatObj.bereich
-      });
-      btn.classList.add("gewaehlt");
-    }
-
-    renderSelectedSeatsText();
-    renderTicketsTable();
-  }
-
-  function renderSeatPlan() {
-    if (!sitzContainer) return;
-
-    sitzContainer.innerHTML = "";
-
-    if (!seats.length) {
-      sitzContainer.textContent = "Keine Sitzplätze gefunden.";
-      renderSelectedSeatsText();
-      renderTicketsTable();
-      return;
-    }
-
-    // Gruppieren nach Reihe
-    const map = {};
-    seats.forEach(s => {
-      const row = s.reihe || "?";
-      if (!map[row]) map[row] = [];
-      map[row].push(s);
-    });
-
-    const rows = Object.keys(map).sort((a, b) => a.localeCompare(b));
-
-    rows.forEach(rowName => {
-      const rowDiv = document.createElement("div");
-      rowDiv.classList.add("sitzreihe");
-
-      const label = document.createElement("span");
-      label.classList.add("sitzreihe-label");
-      label.textContent = rowName;
-      rowDiv.appendChild(label);
-
-      map[rowName]
-        .sort((a, b) => (a.platzNr ?? 0) - (b.platzNr ?? 0))
-        .forEach(seatObj => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.classList.add("sitz");
-
-          const bereich = String(seatObj.bereich || "").toLowerCase();
-          if (bereich.includes("loge")) btn.classList.add("premium");
-          else btn.classList.add("standard");
-
-          btn.textContent = seatObj.platzNr ?? "?";
-
-          if (seatObj.belegt) {
-            btn.classList.add("belegt");
-            btn.disabled = true;
-          } else {
-            btn.addEventListener("click", () => toggleSeat(seatObj, btn));
-          }
-
-          rowDiv.appendChild(btn);
-        });
-
-      sitzContainer.appendChild(rowDiv);
-    });
-
-    renderSelectedSeatsText();
-    renderTicketsTable();
-  }
-
-  // ============================
-  // LOAD DATA
-  // ============================
-  async function reloadAll() {
-    movies = await apiGet("/api/filme/list");
-    shows = await apiGet("/api/vorstellungen/list");
-
-    renderMovieList();
-
-    if (movies.length && currentMovieId == null) {
-      selectMovie(movies[0].id);
-    } else if (currentMovieId != null) {
-      selectMovie(currentMovieId);
-    } else {
-      detailsWrapper?.classList.add("hidden");
-      selectedShow = null;
-      updateBuchenUI();
-    }
-  }
-
-  // ============================
-  // EVENTS
-  // ============================
-  btnViewList?.addEventListener("click", () => setView("list"));
-  btnViewCalendar?.addEventListener("click", () => {
-    setView("calendar");
-    renderCalendar();
-  });
 
   kalPrev?.addEventListener("click", () => {
     currentMonth--;
@@ -563,78 +410,285 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCalendar();
   });
 
-  suchBtn?.addEventListener("click", renderMovieList);
-  filmSuche?.addEventListener("keyup", (e) => {
-    if (e.key === "Enter") renderMovieList();
-  });
+  // ============================
+  // BOOKING FLOW
+  // ============================
+  function resetBookingTable() {
+    selectedSeats = [];
+    seatStatusList = [];
+    if (ticketsTbody) ticketsTbody.innerHTML = "";
+    if (ausgewaehlteSitzeEl) ausgewaehlteSitzeEl.textContent = "keine";
+    if (summeAnzeige) summeAnzeige.textContent = "0,00 €";
+    if (sitzContainer) sitzContainer.innerHTML = "";
+  }
 
-  // ✅ Buchen: lädt Sitzplan aus Backend
+  function resetBookingUI() {
+    // zurück in normalansicht
+    buchenBox?.classList.add("hidden");
+    inhaltBox?.classList.remove("hidden");
+    resetBookingTable();
+    renderSelectedShowInfo();
+  }
+
   buchenBtn?.addEventListener("click", async () => {
-    if (!isLoggedIn()) {
-      alert("Bitte zuerst einloggen.");
+    const user = getUser();
+    if (!user?.id) {
+      alert("Bitte zuerst einloggen, um zu buchen.");
+      window.location.href = "login.html";
       return;
     }
-    if (!selectedShow) {
-      alert("Bitte zuerst eine Vorstellung auswählen.");
-      return;
-    }
+
+    if (!currentMovie) return alert("Bitte zuerst einen Film auswählen.");
+    if (!currentShow) return alert("Bitte zuerst eine Vorstellung auswählen (Datum/Uhrzeit/Saal).");
+
+    // UI switch
+    inhaltBox?.classList.add("hidden");
+    buchenBox?.classList.remove("hidden");
+
+    renderSelectedShowInfo();
+    resetBookingTable();
 
     try {
-      await loadSeatStatusForSelectedShow();
-      renderSeatPlan();
-
-      inhaltBox?.classList.add("hidden");
-      buchenBox?.classList.remove("hidden");
+      await loadSeatPlan();
     } catch (e) {
       console.error(e);
-      alert("Sitzplan konnte nicht geladen werden: " + (e.message || e));
+      alert("Sitzplan konnte nicht geladen werden.\n\n" + e.message);
+      resetBookingUI();
     }
   });
 
   zurueckBtn?.addEventListener("click", () => {
-    buchenBox?.classList.add("hidden");
-    inhaltBox?.classList.remove("hidden");
+    resetBookingUI();
   });
 
-  bezahlenBtn?.addEventListener("click", () => {
-    alert("Buchung übernommen (Demo).");
-    selectedSeats = [];
-    renderSelectedSeatsText();
+  async function loadSeatPlan() {
+    const sid = getShowId(currentShow);
+    const saalId = getShowSaalId(currentShow);
+
+    if (sid == null || saalId == null) {
+      throw new Error("VorstellungId oder SaalId fehlt in den Daten.");
+    }
+
+    seatStatusList = await apiGet(API.seatStatus(sid, saalId));
+    // seatStatusList: [{sitzId, reihe, platzNr, bereich, belegt}]
+    renderSeatGrid(seatStatusList);
+  }
+
+  function renderSeatGrid(list) {
+    if (!sitzContainer) return;
+    sitzContainer.innerHTML = "";
+
+    if (!Array.isArray(list) || !list.length) {
+      sitzContainer.textContent = "Keine Sitzdaten vorhanden.";
+      return;
+    }
+
+    // gruppiere nach Reihe
+    const rows = new Map();
+    list.forEach(s => {
+      const r = Number(s.reihe || 0);
+      if (!rows.has(r)) rows.set(r, []);
+      rows.get(r).push(s);
+    });
+
+    const sortedRowNumbers = Array.from(rows.keys()).sort((a, b) => a - b);
+
+    sortedRowNumbers.forEach((r) => {
+      const rowDiv = document.createElement("div");
+      rowDiv.classList.add("sitzreihe");
+
+      const seats = rows.get(r).sort((a, b) => Number(a.platzNr) - Number(b.platzNr));
+
+      seats.forEach((seat) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.classList.add("sitz");
+
+        const isLoge = (seat.bereich || "").toLowerCase().includes("loge");
+        if (seat.belegt) btn.classList.add("belegt");
+        else btn.classList.add(isLoge ? "premium" : "standard");
+
+        btn.textContent = String(seat.platzNr ?? "");
+        btn.title = `Reihe ${seat.reihe} Platz ${seat.platzNr} (${seat.bereich})`;
+
+        if (seat.belegt) {
+          btn.disabled = true;
+        } else {
+          btn.addEventListener("click", () => {
+            toggleSeat(seat);
+          });
+        }
+
+        rowDiv.appendChild(btn);
+      });
+
+      sitzContainer.appendChild(rowDiv);
+    });
+  }
+
+  function toggleSeat(seat) {
+    const id = seat.sitzId ?? seat.id;
+    if (id == null) return;
+
+    const idx = selectedSeats.findIndex(s => String(s.sitzId) === String(id));
+    if (idx >= 0) {
+      selectedSeats.splice(idx, 1);
+    } else {
+      selectedSeats.push({
+        sitzId: id,
+        reihe: seat.reihe,
+        platzNr: seat.platzNr,
+        bereich: seat.bereich,
+        discount: "NONE",
+        priceCents: 0,
+      });
+    }
+
     renderTicketsTable();
-    if (summeAnzeige) summeAnzeige.textContent = "0,00 €";
-  });
+  }
 
-  // Wenn localStorage in anderem Tab geändert wird
-  window.addEventListener("storage", () => {
-    updateAuthButtons();
-    updateBuchenUI();
+  function renderTicketsTable() {
+    if (!ticketsTbody) return;
+    ticketsTbody.innerHTML = "";
+
+    if (!selectedSeats.length) {
+      if (ausgewaehlteSitzeEl) ausgewaehlteSitzeEl.textContent = "keine";
+      if (summeAnzeige) summeAnzeige.textContent = "0,00 €";
+      return;
+    }
+
+    // Anzeige: ausgewählte Plätze
+    if (ausgewaehlteSitzeEl) {
+      const txt = selectedSeats
+        .map(s => `R${s.reihe}-P${s.platzNr}`)
+        .join(", ");
+      ausgewaehlteSitzeEl.textContent = txt || "keine";
+    }
+
+    const base = Number(currentMovie?.basispreis || 0);
+
+    selectedSeats.forEach((s) => {
+      const tr = document.createElement("tr");
+
+      const tdPlatz = document.createElement("td");
+      tdPlatz.textContent = String(s.sitzId);
+
+      const tdBereich = document.createElement("td");
+      tdBereich.textContent = s.bereich || "-";
+
+      const tdDiscount = document.createElement("td");
+      const sel = document.createElement("select");
+      sel.innerHTML = `
+        <option value="NONE">-</option>
+        <option value="STUDENT">Student (-20%)</option>
+        <option value="SENIOR">Senior (-15%)</option>
+        <option value="CHILD">Kind (-30%)</option>
+      `;
+      sel.value = s.discount || "NONE";
+      tdDiscount.appendChild(sel);
+
+      const tdPreis = document.createElement("td");
+
+      function updatePrice() {
+        const key = sel.value || "NONE";
+        s.discount = key;
+
+        const seatBase = calcSeatBasePriceCents(base, s.bereich);
+        const factor = DISCOUNTS[key] ?? 1.0;
+        s.priceCents = Math.round(seatBase * factor);
+
+        tdPreis.textContent = formatEuroFromCents(s.priceCents);
+        renderSum();
+      }
+
+      sel.addEventListener("change", updatePrice);
+
+      // initial
+      updatePrice();
+
+      tr.appendChild(tdPlatz);
+      tr.appendChild(tdBereich);
+      tr.appendChild(tdDiscount);
+      tr.appendChild(tdPreis);
+
+      ticketsTbody.appendChild(tr);
+    });
+
+    renderSum();
+  }
+
+  function renderSum() {
+    const total = selectedSeats.reduce((acc, s) => acc + Number(s.priceCents || 0), 0);
+    if (summeAnzeige) summeAnzeige.textContent = formatEuroFromCents(total);
+  }
+
+  // ============================
+  // CHECKOUT
+  // ============================
+  bezahlenBtn?.addEventListener("click", async () => {
+    const user = getUser();
+    if (!user?.id) return alert("Bitte einloggen.");
+
+    const sid = getShowId(currentShow);
+    const seatIds = selectedSeats.map(s => s.sitzId).filter(Boolean);
+
+    if (!sid) return alert("Vorstellung fehlt.");
+    if (!seatIds.length) return alert("Bitte mindestens einen Sitz auswählen.");
+
+    const body = {
+      benutzerId: user.id,
+      vorstellungId: sid,
+      sitzplatzIds: seatIds,
+    };
+
+    try {
+      const resp = await apiPost(API.checkout, body);
+      if (!resp?.ok) {
+        alert("Checkout fehlgeschlagen: " + (resp?.message || "Unbekannter Fehler"));
+        return;
+      }
+
+      alert(
+        `Buchung gespeichert!\n\nBuchungs-ID: ${resp.buchungId}\nSumme: ${formatEuroFromCents(resp.totalCents)}`
+      );
+
+      // danach Sitzplan neu laden (damit belegt aktualisiert)
+      await loadSeatPlan();
+      resetBookingTable();
+      renderSelectedShowInfo();
+      resetBookingUI();
+    } catch (e) {
+      console.error(e);
+      alert("Checkout fehlgeschlagen.\n\n" + e.message);
+    }
   });
 
   // ============================
-  // INIT
+  // INIT LOAD
   // ============================
-  detailsWrapper?.classList.add("hidden");
-  setView("list");
-  updateAuthButtons();
-  updateBuchenUI();
+  async function reloadAll() {
+    updateLoginButtons();
 
-  // Default Tickets Table leer
-  renderSelectedSeatsText();
-  renderTicketsTable();
+    movies = await apiGet(API.filmeList);
+    shows = await apiGet(API.showsList);
+    halls = await apiGet(API.hallsList);
 
+    renderMovieList();
+    renderMovieDetails();
+    renderShowList();
+    renderCalendar();
+    renderSelectedShowInfo();
+
+    setView("list");
+  }
+
+  // Start
   (async () => {
     try {
       await reloadAll();
     } catch (e) {
       console.error(e);
-      alert(
-        "Konnte Daten nicht laden.\n\n" +
-        "Backend erreichbar? " + API_BASE + "\n" +
-        "Erwartete Endpoints:\n" +
-        "- /api/filme/list\n" +
-        "- /api/vorstellungen/list\n" +
-        "- /api/sitze/status/{vorstellungId}/{saalId}"
-      );
+      alert("Konnte Daten nicht laden.\n\nBackend erreichbar? " + API_BASE + "\n\n" + e.message);
     }
   })();
 });

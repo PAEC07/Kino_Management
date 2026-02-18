@@ -368,3 +368,13 @@ document.addEventListener("DOMContentLoaded", () => {
   loadAccount();
   loadTickets();
 });
+// Account Logout
+document.getElementById("logoutBtn")?.addEventListener("click", () => {
+  localStorage.removeItem("kino_token");
+  localStorage.removeItem("kino_user");
+
+  // optional: alles weg
+  // localStorage.clear();
+
+  window.location.href = "/login.html";
+});

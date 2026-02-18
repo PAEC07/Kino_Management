@@ -4,22 +4,15 @@ import de.kinoapplikation.kino.entity.Saal;
 import de.kinoapplikation.kino.service.SaalService;
 
 import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Endpoints:
- * - GET /api/saal/list > Alle Säle auflisten
- * - GET /api/saal/{id}/get > Saal mit bestimmter ID abrufen
- * - POST /api/saal/add > Neuer Saal hinzufügen
- * - DELETE /api/saal/{id}/delete > Saal mit bestimmter ID löschen
- */
-
 @RestController
 @RequestMapping("/api/saal")
 public class SaalController {
-    
+
     private final SaalService saalService;
 
     public SaalController(SaalService saalService) {
@@ -28,11 +21,13 @@ public class SaalController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addSaal(@RequestBody Saal saal) {
-        boolean addSaalPart = saalService.addSaal(saal);
-        if (addSaalPart) {
-            return ResponseEntity.ok("Saal erfolgreich hinzugefügt.");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Fehler beim Hinzufügen des Saals.");
+        try {
+            boolean ok = saalService.addSaal(saal);
+            return ok
+                    ? ResponseEntity.ok("Saal erfolgreich hinzugefügt (inkl. Sitze).")
+                    : ResponseEntity.badRequest().body("Fehler beim Hinzufügen des Saals.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Fehler: " + e.getMessage());
         }
     }
 
@@ -43,10 +38,9 @@ public class SaalController {
 
     @GetMapping("/{id}/get")
     public ResponseEntity<Saal> getSaalById(@PathVariable Long id) {
-        Saal saal = saalService.getSaalById(id);
-        if (saal != null) {
-            return ResponseEntity.ok(saal);
-        } else {
+        try {
+            return ResponseEntity.ok(saalService.getSaalById(id));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }

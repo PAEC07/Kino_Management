@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const form = document.getElementById("registerForm");
   const err = document.getElementById("regError");
-
   if (!form) return;
 
   form.addEventListener("submit", async (e) => {
@@ -19,35 +18,27 @@ document.addEventListener("DOMContentLoaded", () => {
       err.textContent = "Bitte alle Felder ausfüllen.";
       return;
     }
-
     if (password !== passwordConfirm) {
       err.textContent = "Passwörter stimmen nicht überein.";
       return;
     }
 
     try {
-      const res = await fetch(API_BASE + "/api/auth/register", {
+      const res = await fetch(API_BASE + "/api/benutzer/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-          passwordConfirm
-        })
+        body: JSON.stringify({ username, email, password, passwordConfirm }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => null);
 
-      if (!res.ok || !data.ok) {
-        err.textContent = data.message || "Registrierung fehlgeschlagen.";
+      if (!res.ok || !data?.ok) {
+        err.textContent = data?.message || "Registrierung fehlgeschlagen.";
         return;
       }
 
-      // ✅ Automatisch einloggen nach Registrierung
-      localStorage.setItem("kino_user", JSON.stringify(data.user));
-
-      window.location.href = "index.html";
+      alert(data.message || "Registrierung erfolgreich!");
+      window.location.href = "login.html";
     } catch (e2) {
       console.error(e2);
       err.textContent = "Server nicht erreichbar.";

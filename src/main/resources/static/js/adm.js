@@ -1,3 +1,5 @@
+
+
 document.addEventListener("DOMContentLoaded", () => {
   // ============================
   // KONFIG
@@ -105,8 +107,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================
   // API helpers (POST kann Text ODER JSON)
   // ============================
+  function authHeaders() {
+    const h = { "Content-Type": "application/json" };
+    const token = localStorage.getItem("kino_token");
+    if (token) h["Authorization"] = "Bearer " + token;
+    return h;
+  }
+
+
+
+
   async function apiGet(path) {
-    const res = await fetch(API_BASE + path);
+    const res = await fetch(API_BASE + path, { headers: authHeaders() });
     if (!res.ok) {
       const txt = await res.text().catch(() => "");
       throw new Error(`GET ${path} fehlgeschlagen (${res.status}) ${txt}`);
@@ -114,31 +126,38 @@ document.addEventListener("DOMContentLoaded", () => {
     return res.json();
   }
 
-  async function apiPostAny(path, body) {
-    const res = await fetch(API_BASE + path, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
 
-    const text = await res.text().catch(() => "");
-    if (!res.ok) {
-      throw new Error(`POST ${path} fehlgeschlagen (${res.status}) ${text}`);
-    }
+ async function apiPostAny(path, body) {
+   const res = await fetch(API_BASE + path, {
+     method: "POST",
+     headers: authHeaders(),
+     body: JSON.stringify(body),
+   });
 
-    try {
-      return text ? JSON.parse(text) : { ok: true };
-    } catch {
-      return { ok: true, message: text };
-    }
-  }
+   const text = await res.text().catch(() => "");
+   if (!res.ok) throw new Error(`POST ${path} fehlgeschlagen (${res.status}) ${text}`);
 
-  async function apiDelete(path) {
-    const res = await fetch(API_BASE + path, { method: "DELETE" });
-    const txt = await res.text().catch(() => "");
-    if (!res.ok) throw new Error(`DELETE ${path} fehlgeschlagen (${res.status}) ${txt}`);
-    return txt;
-  }
+   try { return text ? JSON.parse(text) : { ok: true }; }
+   catch { return { ok: true, message: text }; }
+ }
+
+
+
+
+ async function apiDelete(path) {
+   const res = await fetch(API_BASE + path, {
+     method: "DELETE",
+     headers: authHeaders(),
+   });
+
+   const txt = await res.text().catch(() => "");
+   if (!res.ok) throw new Error(`DELETE ${path} fehlgeschlagen (${res.status}) ${txt}`);
+   return txt;
+ }
+
+
+
+
 
   // ============================
   // Modal helpers

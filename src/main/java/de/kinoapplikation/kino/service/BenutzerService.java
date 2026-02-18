@@ -8,16 +8,19 @@ import org.springframework.stereotype.Service;
 import de.kinoapplikation.kino.dto.AuthDtos;
 import de.kinoapplikation.kino.entity.Benutzer;
 import de.kinoapplikation.kino.repository.BenutzerRepository;
+import de.kinoapplikation.kino.security.JwtUtil;
 
 @Service
 public class BenutzerService {
 
     private final BenutzerRepository benutzerRepo;
     private final BCryptPasswordEncoder encoder;
+    private final JwtUtil jwtUtil;
 
-    public BenutzerService(BenutzerRepository benutzerRepo, BCryptPasswordEncoder encoder) {
+    public BenutzerService(BenutzerRepository benutzerRepo, BCryptPasswordEncoder encoder, JwtUtil jwtUtil) {
         this.benutzerRepo = benutzerRepo;
         this.encoder = encoder;
+        this.jwtUtil = jwtUtil;
     }
 
     public AuthDtos.AuthResponse register(AuthDtos.RegisterRequest req) {
@@ -43,7 +46,11 @@ public class BenutzerService {
         }
 
         String hash = encoder.encode(password);
-        benutzerRepo.save(new Benutzer(username, email, hash));
+        Benutzer saved = benutzerRepo.save(new Benutzer(username, email, hash));
+
+        // Standard USER
+        saved.setRole("USER");
+        benutzerRepo.save(saved);
 
         return new AuthDtos.AuthResponse(true, "Registrierung erfolgreich.");
     }
@@ -53,17 +60,29 @@ public class BenutzerService {
         String password = (req.password == null) ? "" : req.password;
 
         return benutzerRepo.findByUsername(username)
-                .map(u -> encoder.matches(password, u.getPasswordHash())
-                ? new AuthDtos.AuthResponse(true, "Login ok", u.getId(), u.getUsername(), u.getEmail())
-                : new AuthDtos.AuthResponse(false, "Falsches Passwort", null, null, null))
+                .map(u -> {
+                    boolean ok = encoder.matches(password, u.getPasswordHash());
+                    if (!ok) return new AuthDtos.AuthResponse(false, "Falsches Passwort");
+
+                    String role = (u.getRole() == null || u.getRole().isBlank()) ? "USER" : u.getRole().trim().toUpperCase();
+                    String token = jwtUtil.generateToken(u.getId(), u.getUsername(), role);
+
+                    return new AuthDtos.AuthResponse(
+                            true,
+                            "Login ok",
+                            u.getId(),
+                            u.getUsername(),
+                            u.getEmail(),
+                            role,
+                            token
+                    );
+                })
                 .orElseGet(() -> new AuthDtos.AuthResponse(false, "User nicht gefunden"));
     }
 
     public Benutzer datenAendern(Long id, Benutzer updated) {
-        if (id == null) {
-            throw new IllegalArgumentException("ID darf nicht null sein");
-        }
-        
+        if (id == null) throw new IllegalArgumentException("ID darf nicht null sein");
+
         Benutzer benutzer = benutzerRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Benutzer nicht gefunden"));
 
@@ -84,9 +103,7 @@ public class BenutzerService {
     }
 
     public Benutzer benutzerById(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("ID cannot be null");
-        }
+        if (id == null) throw new IllegalArgumentException("ID cannot be null");
         return benutzerRepo.findById(id).orElse(null);
     }
 }

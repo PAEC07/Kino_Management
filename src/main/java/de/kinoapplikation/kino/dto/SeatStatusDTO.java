@@ -1,20 +1,19 @@
 package de.kinoapplikation.kino.dto;
 
-import de.kinoapplikation.kino.entity.Sitzplatz;
-
 public class SeatStatusDTO {
-    private Sitzplatz sitzplatz;
-    private boolean belegt;
+    public Long sitzId;
+    public int reihe;
+    public int platzNr;
+    public String bereich;
+    public boolean belegt;
 
-    public SeatStatusDTO(Sitzplatz sitzplatz, boolean belegt) {
-        this.sitzplatz = sitzplatz;
+    public SeatStatusDTO() {}
+
+    public SeatStatusDTO(Long sitzId, int reihe, int platzNr, String bereich, boolean belegt) {
+        this.sitzId = sitzId;
+        this.reihe = reihe;
+        this.platzNr = platzNr;
+        this.bereich = bereich;
         this.belegt = belegt;
     }
-
-    // Getter
-    public Sitzplatz getSitzplatz() { return sitzplatz; }
-    public boolean isBelegt() { return belegt; }
-
-    public void setSitzplatz(Sitzplatz sitzplatz) { this.sitzplatz = sitzplatz; }
-    public void setBelegt(boolean belegt) { this.belegt = belegt; }
 }
