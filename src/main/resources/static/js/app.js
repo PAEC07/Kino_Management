@@ -96,13 +96,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // HELPERS
   // ============================
 
+  function formatDateDE(iso) {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return String(iso);
+    return d.toLocaleDateString("de-DE");
+  }
+
   function formatDuration(minutes) {
     if (minutes == null || minutes === "") return "-";
 
     // Debug helper: log raw value/type to console for troubleshooting
     try {
       console.debug("formatDuration input:", minutes, typeof minutes);
-    } catch (e) {}
+    } catch (e) { }
 
     // Handle ISO-8601 Duration strings from Java's Duration (e.g. "PT1H30M", "PT90M", "PT30S")
     if (typeof minutes === "string" && minutes.toUpperCase().startsWith("PT")) {
@@ -381,7 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tr.style.cursor = "pointer";
 
       tr.innerHTML = `
-        <td>${datum || "-"}</td>
+        <td>${formatDateDE(datum) || "-"}</td>
         <td>${uhrzeit || "-"}</td>
         <td>${hallNameById(saalId)}</td>
       `;
@@ -397,7 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // optional modal info:
         showInfoFilm && (showInfoFilm.textContent = currentMovie?.filmname || "-");
-        showInfoDate && (showInfoDate.textContent = datum || "-");
+        showInfoDate && (showInfoDate.textContent = formatDateDE(datum) || "-");
         showInfoTime && (showInfoTime.textContent = uhrzeit || "-");
         showInfoSaal && (showInfoSaal.textContent = hallNameById(saalId));
         showInfoRuntime && (showInfoRuntime.textContent = (currentMovie?.filmdauer != null) ? formatDuration(currentMovie?.filmdauer) : "-");
@@ -417,14 +424,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const saalId = getShowSaalId(currentShow);
     const { datum, uhrzeit } = splitZeit(getShowDatumISO(currentShow));
     buchungVorstellungInfo.textContent =
-      `Ausgewählte Vorstellung: ${datum || "-"} ${uhrzeit || ""} • ${hallNameById(saalId)}`;
+      `Ausgewählte Vorstellung: ${formatDateDE(datum) || "-"} ${uhrzeit || ""} • ${hallNameById(saalId)}`;
   }
 
   // ============================
   // RENDER: KALENDER
   // ============================
   function getMonatsName(m) {
-    const arr = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+    const arr = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
     return arr[m] || "";
   }
 
@@ -466,7 +473,7 @@ document.addEventListener("DOMContentLoaded", () => {
           daySpan.textContent = dayNr;
           td.appendChild(daySpan);
 
-          const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2,"0")}-${String(dayNr).padStart(2,"0")}`;
+          const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(dayNr).padStart(2, "0")}`;
           const items = map[dateStr] || [];
 
           items.forEach(({ show, uhrzeit }) => {

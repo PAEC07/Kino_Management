@@ -1,6 +1,19 @@
 /* adm.css (themed) – verwendet Variablen aus css/theme.css */
-:root{--accent:var(--accent);--accent-soft:var(--accent-soft);--accent-soft-2:var(--accent-soft-2);--surface-2:var(--surface-2);--border-strong:var(--border-strong);--surface-muted:var(--surface-muted);}
-html[data-theme="dark"]{--surface-2:#242424;--border-strong:#555;--surface-muted:#1b1b1b;--accent-soft-2:#3a3a3a;}
+:root {
+    --accent: var(--accent);
+    --accent-soft: var(--accent-soft);
+    --accent-soft-2: var(--accent-soft-2);
+    --surface-2: var(--surface-2);
+    --border-strong: var(--border-strong);
+    --surface-muted: var(--surface-muted);
+}
+
+html[data-theme="dark"] {
+    --surface-2: #242424;
+    --border-strong: #555;
+    --surface-muted: #1b1b1b;
+    --accent-soft-2: #3a3a3a;
+}
 
 /* Light-Mode Rahmen grün (Dark bleibt lila über --accent) */
 html:not([data-theme="dark"]) .column {
@@ -223,7 +236,7 @@ body {
     align-self: flex-end;
 }
 
-.film-vorstellung-btns{
+.film-vorstellung-btns {
     display: flex;
     gap: 10px;
 }
@@ -379,30 +392,30 @@ body {
 ============================= */
 
 .details-table-wrapper {
-   border: 2px solid var(--accent);
-   border-radius: 6px;
-   padding: 10px 12px;
-   background: var(--surface);
-   box-sizing: border-box;
-   margin-bottom: 20px;
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    padding: 10px 12px;
+    background: var(--surface);
+    box-sizing: border-box;
+    margin-bottom: 20px;
 }
 
 /* Tabelle selber */
 .details-table {
-   width: 100%;
-   border-collapse: collapse;
-   font-size: 16px;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
 }
 
 .details-table th,
 .details-table td {
-   border: 1px solid var(--border-strong);
-   padding: 6px 8px;
-   text-align: left;
+    border: 1px solid var(--border-strong);
+    padding: 6px 8px;
+    text-align: left;
 }
 
 .details-table th {
-   background: var(--surface-2);
+    background: var(--surface-2);
 }
 
 .details-table th:last-child,
@@ -444,23 +457,23 @@ body {
 }
 
 .details-row {
-   display: flex;
-   gap: 20px;
-   margin-top: 10px;
-   margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 /* beide Kästen oben */
 .details-left,
 .details-right {
-   flex: 1;
-   border: 4px solid var(--accent);
-   border-radius: 6px;
-   padding: 10px 12px;
-   background: var(--surface);
-   box-sizing: border-box;
-   font-size: 20px;
-   line-height: 1.7;
+    flex: 1;
+    border: 4px solid var(--accent);
+    border-radius: 6px;
+    padding: 10px 12px;
+    background: var(--surface);
+    box-sizing: border-box;
+    font-size: 20px;
+    line-height: 1.7;
 }
 
 /* Allgemeine Buttons */
@@ -501,7 +514,7 @@ body {
     padding: 0px 5px;
 }
 
-.search{
+.search {
     border-radius: 15px;
     border: 1px solid var(--field-border);
     padding: 10px;
@@ -525,7 +538,7 @@ body {
     padding: 20px;
     border-radius: 8px;
     border-left: 5px solid var(--field-border);
-    box-shadow: 0 0 6px rgba(0,0,0,0.12);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
     width: 100%;
 }
 
@@ -539,7 +552,7 @@ body {
     justify-content: space-between;
     gap: 12px;
     padding-bottom: 10px;
-    
+
 }
 
 .filter-row {
@@ -570,7 +583,7 @@ body {
     align-items: center;
 }
 
-.btn-add{
+.btn-add {
     display: flex;
     padding: 10px 22px;
     border-radius: 6px;
@@ -656,7 +669,7 @@ body.no-scroll {
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0, 0, 0, 0.4);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -673,7 +686,7 @@ body.no-scroll {
     padding: 20px;
     min-width: 320px;
     max-width: 500px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.25);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
     position: relative;
 }
 
@@ -701,6 +714,7 @@ body.no-scroll {
     font-size: 24px;
     cursor: pointer;
 }
+
 /* ausgewählter Film in der Liste */
 .movie-item.selected {
     background: var(--accent-soft);
