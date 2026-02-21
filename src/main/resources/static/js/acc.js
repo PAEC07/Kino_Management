@@ -152,10 +152,14 @@ document.addEventListener("DOMContentLoaded", () => {
     ticketList.innerHTML = "";
 
     if (!tickets || tickets.length === 0) {
-      setNoTickets(true);
+      const emptyMsg = document.createElement("li");
+      emptyMsg.style.textAlign = "center";
+      emptyMsg.style.padding = "20px";
+      emptyMsg.style.color = "#999";
+      emptyMsg.textContent = "Keine Tickets vorhanden";
+      ticketList.appendChild(emptyMsg);
       return;
     }
-    setNoTickets(false);
 
     tickets.forEach(t => {
       const li = document.createElement("li");
@@ -259,6 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadTickets() {
     try {
       const tickets = await apiGet(API_ENDPOINTS.myTickets);
+      console.log("Tickets geladen:", tickets);
       renderTickets(tickets);
     } catch (e) {
       console.error("Tickets laden fehlgeschlagen:", e.message);

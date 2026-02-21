@@ -37,6 +37,10 @@ public class BuchungService {
         return buchungRepo.findAll();
     }
 
+    public List<Buchung> alleBuchungenByBenutzer(Long benutzerId) {
+        return buchungRepo.findByBenutzerId(benutzerId);
+    }
+
     public Buchung getBuchung(Long id) {
         return buchungRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Buchung not found"));
     }

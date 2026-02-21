@@ -80,20 +80,20 @@ public class BenutzerService {
                 .orElseGet(() -> new AuthDtos.AuthResponse(false, "User nicht gefunden"));
     }
 
-    public Benutzer datenAendern(Long id, Benutzer updated) {
+    public Benutzer datenAendern(Long id, AuthDtos.UpdateRequest req) {
         if (id == null) throw new IllegalArgumentException("ID darf nicht null sein");
 
         Benutzer benutzer = benutzerRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Benutzer nicht gefunden"));
 
-        if (updated.getUsername() != null && !updated.getUsername().isBlank()) {
-            benutzer.setUsername(updated.getUsername());
+        if (req.username != null && !req.username.isBlank()) {
+            benutzer.setUsername(req.username);
         }
-        if (updated.getEmail() != null && !updated.getEmail().isBlank()) {
-            benutzer.setEmail(updated.getEmail());
+        if (req.email != null && !req.email.isBlank()) {
+            benutzer.setEmail(req.email);
         }
-        if (updated.getPasswordHash() != null && !updated.getPasswordHash().isBlank()) {
-            benutzer.setPasswordHash(encoder.encode(updated.getPasswordHash()));
+        if (req.password != null && !req.password.isBlank()) {
+            benutzer.setPasswordHash(encoder.encode(req.password));
         }
         return benutzerRepo.save(benutzer);
     }

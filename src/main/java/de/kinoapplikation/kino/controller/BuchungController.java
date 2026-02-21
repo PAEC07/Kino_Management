@@ -24,6 +24,11 @@ public class BuchungController {
         return buchungService.alleBuchungen();
     }
 
+        @GetMapping("/list/{id}")
+    public List<Buchung> alleBuchungen(@PathVariable Long id) {
+        return buchungService.alleBuchungenByBenutzer(id);
+    }
+
     @GetMapping("/{id}/get")
     public Buchung getBuchung(@PathVariable Long id) {
         return buchungService.getBuchung(id);

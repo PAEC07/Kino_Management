@@ -41,8 +41,13 @@ public class BenutzerController {
     }
 
     @PutMapping("/{id}/change")
-    public Benutzer datenAendern(@PathVariable Long id, @RequestBody Benutzer b) {
-        return benutzerService.datenAendern(id, b);
+    public ResponseEntity<Benutzer> datenAendern(@PathVariable Long id, @RequestBody AuthDtos.UpdateRequest req) {
+        try {
+            Benutzer updated = benutzerService.datenAendern(id, req);
+            return ResponseEntity.ok(updated);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/{id}/get")
