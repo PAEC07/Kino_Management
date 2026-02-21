@@ -60,6 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const ausgewaehlteSitzeEl = document.getElementById("ausgewaehlteSitze");
   const summeAnzeige = document.getElementById("summeAnzeige");
 
+  // ✅ NEU: Preis (Erwachsene) Anzeige im Buchungsbereich
+  const preisErwachsene = document.getElementById("preisErwachsene");
+
   // Login/Konto Button toggling (optional)
   const loginBtnAss = document.getElementById("Login-btn-autenthicated");
   const loginBtnNon = document.getElementById("Login-btn-non-autenthicated");
@@ -146,7 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function getShowSaalId(show) {
-    // je nach Backend Modell
     return show?.saalId?.saalId ?? show?.saalId?.id ?? show?.saalId ?? null;
   }
 
@@ -176,6 +178,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const loggedIn = !!user?.id;
     if (loginBtnAss) loginBtnAss.style.display = loggedIn ? "inline-block" : "none";
     if (loginBtnNon) loginBtnNon.style.display = loggedIn ? "none" : "inline-block";
+  }
+
+  // ✅ NEU: Erwachsenen-Einzelpreis setzen (ohne Rabatt)
+  // - ohne Sitz-Auswahl: Parkett/Basispreis
+  // - mit Sitz-Auswahl: Preis passend zum Bereich des zuletzt ausgewählten Sitzes
+  function updateErwachsenenPreis() {
+    if (!preisErwachsene) return;
+
+    const base = Number(currentMovie?.basispreis || 0);
+    if (!currentMovie) {
+      preisErwachsene.textContent = "0,00 €";
+      return;
+    }
+
+    let bereich = "Parkett";
+    if (selectedSeats.length) {
+      bereich = selectedSeats[selectedSeats.length - 1].bereich || bereich;
+    }
+
+    const seatBase = calcSeatBasePriceCents(base, bereich);
+    preisErwachsene.textContent = formatEuroFromCents(seatBase);
   }
 
   // ============================
@@ -228,6 +251,9 @@ document.addEventListener("DOMContentLoaded", () => {
         renderShowList();
         renderCalendar();
         resetBookingUI();
+
+        // ✅ Preis aktualisieren wenn Film gewechselt
+        updateErwachsenenPreis();
       });
 
       filmListeEl.appendChild(li);
@@ -241,6 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!currentMovie) {
       inhaltTitel.textContent = "Bitte einen Film auswählen";
       detailsWrapper?.classList.add("hidden");
+      updateErwachsenenPreis();
       return;
     }
 
@@ -253,6 +280,9 @@ document.addEventListener("DOMContentLoaded", () => {
     infoLaufzeit.textContent = (currentMovie.filmdauer != null) ? `${currentMovie.filmdauer} min` : "-";
     infoPreis.textContent = formatEuroFromCents(currentMovie.basispreis ?? 0);
     inhaltText.textContent = currentMovie.beschreibung ?? "";
+
+    // ✅ Preis aktualisieren
+    updateErwachsenenPreis();
   }
 
   // ============================
@@ -299,6 +329,10 @@ document.addEventListener("DOMContentLoaded", () => {
         selectedSeats = [];
         seatStatusList = [];
         renderSelectedShowInfo();
+
+        // ✅ wenn Show gewählt: Erwachsene wieder "Parkett" anzeigen, da noch kein Sitz gewählt
+        updateErwachsenenPreis();
+
         // optional modal info:
         showInfoFilm && (showInfoFilm.textContent = currentMovie?.filmname || "-");
         showInfoDate && (showInfoDate.textContent = datum || "-");
@@ -384,6 +418,9 @@ document.addEventListener("DOMContentLoaded", () => {
               seatStatusList = [];
               renderSelectedShowInfo();
               resetBookingTable();
+
+              // ✅ Erwachsene Preis zurück auf Parkett (weil keine Seats gewählt)
+              updateErwachsenenPreis();
             });
             td.appendChild(ev);
           });
@@ -420,10 +457,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (ausgewaehlteSitzeEl) ausgewaehlteSitzeEl.textContent = "keine";
     if (summeAnzeige) summeAnzeige.textContent = "0,00 €";
     if (sitzContainer) sitzContainer.innerHTML = "";
+
+    // ✅ Erwachsene Preis (Parkett) setzen
+    updateErwachsenenPreis();
   }
 
   function resetBookingUI() {
-    // zurück in normalansicht
     buchenBox?.classList.add("hidden");
     inhaltBox?.classList.remove("hidden");
     resetBookingTable();
@@ -450,6 +489,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       await loadSeatPlan();
+      // ✅ Nach Laden: Erwachsene Preis nochmal setzen (Parkett default)
+      updateErwachsenenPreis();
     } catch (e) {
       console.error(e);
       alert("Sitzplan konnte nicht geladen werden.\n\n" + e.message);
@@ -470,7 +511,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     seatStatusList = await apiGet(API.seatStatus(sid, saalId));
-    // seatStatusList: [{sitzId, reihe, platzNr, bereich, belegt}]
     renderSeatGrid(seatStatusList);
   }
 
@@ -544,6 +584,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // ✅ Erwachsene Preis aktualisieren (je nach letztem Bereich)
+    updateErwachsenenPreis();
+
     renderTicketsTable();
   }
 
@@ -554,6 +597,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!selectedSeats.length) {
       if (ausgewaehlteSitzeEl) ausgewaehlteSitzeEl.textContent = "keine";
       if (summeAnzeige) summeAnzeige.textContent = "0,00 €";
+
+      // ✅ Wenn keine Seats: Parkett/Einzelpreis anzeigen
+      updateErwachsenenPreis();
       return;
     }
 
@@ -599,6 +645,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         tdPreis.textContent = formatEuroFromCents(s.priceCents);
         renderSum();
+
+        // ✅ optional: Erwachsene Preis aktuell halten
+        updateErwachsenenPreis();
       }
 
       sel.addEventListener("change", updatePrice);
@@ -615,6 +664,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     renderSum();
+    updateErwachsenenPreis();
   }
 
   function renderSum() {
@@ -680,6 +730,9 @@ document.addEventListener("DOMContentLoaded", () => {
     renderSelectedShowInfo();
 
     setView("list");
+
+    // ✅ initial setzen
+    updateErwachsenenPreis();
   }
 
   // Start

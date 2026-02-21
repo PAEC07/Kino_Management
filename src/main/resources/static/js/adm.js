@@ -115,8 +115,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-
-
   async function apiGet(path) {
     const res = await fetch(API_BASE + path, { headers: authHeaders() });
     if (!res.ok) {

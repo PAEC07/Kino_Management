@@ -26,7 +26,6 @@ public class Tickets {
     @JoinColumn(name = "AccountId")
     private Benutzer benutzerId;
 
-    // ✅ Korrekt: buchungId als Column (kein JoinColumn)
     @Column(name = "BuchungsId")
     private Long buchungId;
 

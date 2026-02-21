@@ -42,6 +42,14 @@ public class BuchungService {
     }
 
     public void stornieren(Long id) {
+        if (id == null) throw new IllegalArgumentException("ID cannot be null");
+
+        // ✅ erst Tickets der Buchung löschen
+        ticketsRepo.findAll().stream()
+                .filter(t -> t.getBuchungId() != null && t.getBuchungId().equals(id))
+                .forEach(t -> ticketsRepo.deleteById(t.getTicketId()));
+
+        // ✅ dann Buchung löschen
         buchungRepo.deleteById(id);
     }
 

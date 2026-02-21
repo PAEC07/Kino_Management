@@ -42,7 +42,6 @@ public class SecurityConfig {
                         // Auth
                         .requestMatchers("/api/benutzer/login", "/api/benutzer/register").permitAll()
 
-                        // ✅ ADMIN endpoints: nur ROLE_ADMIN
                         .requestMatchers("/api/saal/add").hasRole("ADMIN")
                         .requestMatchers("/api/saal/*/delete").hasRole("ADMIN")
 
@@ -58,7 +57,6 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                 );
 
-        // ✅ JWT Filter aktivieren
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
