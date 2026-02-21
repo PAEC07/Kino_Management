@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
   const API_BASE = "http://localhost:8080";
 
+
+
+
   // --------------------------
   // Storage / Auth
   // --------------------------
@@ -85,15 +88,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const saveBtn = document.getElementById("Save");
   const openProfileBtn = document.getElementById("btnändern");
 
+  // Anzeige Account
   const spanName = document.getElementById("inhaltBenutzername");
   const spanEmail = document.getElementById("inhaltEmail");
   const spanReg = document.getElementById("inhaltRegistrierungsdatum");
   const spanPass = document.getElementById("inhaltPasswort");
 
+  // Eingaben Modal
   const inputName = document.getElementById("ModelinhaltBenutzername");
   const inputEmail = document.getElementById("ModelinhaltEmail");
   const inputPass = document.getElementById("ModelinhaltPasswort");
 
+  // Film-/Ticket-Info Modal
   const infoTitel = document.getElementById("Titel");
   const infoText = document.getElementById("Beschreibung");
   const infoKategorie = document.getElementById("Kategorie");
@@ -102,6 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const infoPreis = document.getElementById("Preis");
   const infoDate = document.getElementById("Date");
   const infoTime = document.getElementById("Time");
+  const infoLaufzeit = document.getElementById("Laufzeit");
 
   const infoSaal = document.getElementById("Saal");
   const infoSitz = document.getElementById("Sitz");
@@ -109,6 +116,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const ticketList = document.getElementById("ticketList");
   const noTicketsHint = document.getElementById("noTicketsHint");
 
+  // --------------------------
+  // UI helper
+  // --------------------------
+  function formatEuro(val) {
+    const num = isNaN(val) ? 0 : Number(val);
+    return num.toFixed(2).replace(".", ",") + " €";
+  }
 
   function showOverlay(which) {
     overlay?.classList.add("active");
@@ -204,6 +218,67 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // --------------------------
+  // Ticket Info Modal füllen
+  // --------------------------
+  function openTicketInfoModal(ticket) {
+    if (!ticket) return;
+
+    if (infoTitel) infoTitel.textContent = ticket.filmTitel || "";
+    if (infoText) infoText.textContent = ticket.beschreibung || "";
+    if (infoFsk) infoFsk.textContent = ticket.fsk ?? "";
+    if (infoFormat) infoFormat.textContent = ticket.format || "";
+    if (infoKategorie) infoKategorie.textContent = ticket.kategorie || "";
+    if (infoLaufzeit) infoLaufzeit.textContent = ticket.laufzeit ? (ticket.laufzeit + " min") : "";
+
+    if (infoPreis) infoPreis.textContent = formatEuro(ticket.preis || 0);
+    if (infoDate) infoDate.textContent = ticket.datum || "";
+    if (infoTime) infoTime.textContent = ticket.uhrzeit ? (ticket.uhrzeit + " Uhr") : "";
+
+    showOverlay("info");
+  }
+
+  // --------------------------
+  // Account laden & anzeigen
+  // Erwartetes User-Objekt:
+  // { username, email, createdAt }
+  // --------------------------
+  async function loadAccount() {
+    // Versuch 1: /me
+    try {
+      const me = await apiGet(API_ENDPOINTS.me);
+
+      // Speichern (damit navbar etc. aktuell bleibt)
+      localStorage.setItem("kino_user", JSON.stringify(me));
+
+      if (spanName) spanName.textContent = me.username ?? "USERNAME N/A";
+      if (spanEmail) spanEmail.textContent = me.email ?? "MAIL N/A";
+      if (spanReg) spanReg.textContent = formatDateDE(me.createdAt) ?? "N/A";
+      if (spanPass) spanPass.textContent = "••••••••";
+      return;
+    } catch (e) {
+      // Fallback: wenn backend /me nicht hat, nutzt localStorage
+      if (user) {
+        if (spanName) spanName.textContent = user.username ?? "";
+        if (spanEmail) spanEmail.textContent = user.email ?? "";
+        if (spanReg) spanReg.textContent = formatDateDE(user.createdAt);
+        if (spanPass) spanPass.textContent = "••••••••";
+      }
+      console.warn("Konnte /me nicht laden:", e.message);
+    }
+  }
+
+  function formatDateDE(iso) {
+    if (!iso) return "";
+    // iso kann "2025-01-01" oder "2025-01-01T..." sein
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString("de-DE");
+  }
+
+  // --------------------------
+  // Tickets laden
+  // --------------------------
   async function loadTickets() {
     try {
       const tickets = await apiGet(API.myTickets);
@@ -252,7 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const body = {
       username: newUsername,
       email: newEmail,
-      passwordHash: newPassword && newPassword.length > 0 ? newPassword : null
+      password: newPassword && newPassword.length > 0 ? newPassword : null
     };
 
     const updated = await apiSend("PUT", API.updateMe, body);
@@ -261,6 +336,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (spanEmail) spanEmail.textContent = updated.email ?? newEmail ?? "-";
     if (spanPass) spanPass.textContent = "••••••••";
 
+    // localStorage aktualisieren
     const old = safeJsonParse(localStorage.getItem("kino_user")) || {};
     localStorage.setItem("kino_user", JSON.stringify({ ...old, ...updated }));
 
@@ -303,9 +379,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Escape") hideOverlay();
   });
 
+  // Ticket Buttons (delegation)
   document.addEventListener("click", (e) => {
     const infoBtn = e.target.closest(".ticket-info-btn");
     const cancelBtn = e.target.closest(".ticket-cancel-btn");
+
     if (!infoBtn && !cancelBtn) return;
 
     const li = e.target.closest("li");
@@ -325,6 +403,8 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "login.html";
   });
 
+  // optional: alles weg
+  // localStorage.clear();
 
   loadAccount();
   loadTickets();
