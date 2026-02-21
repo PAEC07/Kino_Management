@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.warn("Account konnte nicht geladen werden:", e.message);
       if (spanName) spanName.textContent = user?.username ?? "-";
       if (spanEmail) spanEmail.textContent = user?.email ?? "-";
-      if (spanReg) spanReg.textContent = formatDateDE(user?.createdAt);
+      if (spanReg) spanReg.textContent = formatDateDE(user.createdAt);
       if (spanPass) spanPass.textContent = "••••••••";
     }
   }
@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (infoFsk) infoFsk.textContent = ticket.fsk ?? "";
     if (infoFormat) infoFormat.textContent = ticket.format || "";
     if (infoKategorie) infoKategorie.textContent = ticket.kategorie || "";
-    if (infoLaufzeit) infoLaufzeit.textContent = ticket.laufzeit ? (ticket.laufzeit + " min") : "";
+    if (infoLaufzeit) infoLaufzeit.textContent = ticket.laufzeit ? (ticket.laufzeit) : "";
 
     if (infoPreis) infoPreis.textContent = formatEuro(ticket.preis || 0);
     if (infoDate) infoDate.textContent = ticket.datum || "";
@@ -246,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadAccount() {
     // Versuch 1: /me
     try {
-      const me = await apiGet(API_ENDPOINTS.me);
+      const me = await apiGet(API.me);
 
       // Speichern (damit navbar etc. aktuell bleibt)
       localStorage.setItem("kino_user", JSON.stringify(me));
@@ -267,6 +267,16 @@ document.addEventListener("DOMContentLoaded", () => {
       console.warn("Konnte /me nicht laden:", e.message);
     }
   }
+
+  function formatDuration(minutes) {
+      if (minutes == null || minutes === "") return "-";
+      const m = Number(minutes);
+      if (isNaN(m) || m < 0) return String(minutes);
+      if (m < 60) return `${m} min`;
+      const h = Math.floor(m / 60);
+      const rem = m % 60;
+      return rem === 0 ? `${h}h` : `${h}h ${rem}min`;
+    }
 
   function formatDateDE(iso) {
     if (!iso) return "";

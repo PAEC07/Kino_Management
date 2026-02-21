@@ -95,6 +95,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================
   // HELPERS
   // ============================
+
+  function formatDuration(minutes) {
+    if (minutes == null || minutes === "") return "-";
+    const m = Number(minutes);
+    if (isNaN(m) || m < 0) return String(minutes);
+    if (m < 60) return `${m} min`;
+    const h = Math.floor(m / 60);
+    const rem = m % 60;
+    return rem === 0 ? `${h}h` : `${h}h ${rem}min`;
+  }
+
   function authHeaders() {
     const h = { "Content-Type": "application/json" };
     const token = localStorage.getItem("kino_token");
@@ -277,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
     infoFsk.textContent = currentMovie.fsk ?? "-";
     infoFormat.textContent = currentMovie.darstellungstyp ?? currentMovie.format ?? "-";
     infoKategorie.textContent = currentMovie.kategorie ?? "-";
-    infoLaufzeit.textContent = (currentMovie.filmdauer != null) ? `${currentMovie.filmdauer} min` : "-";
+    infoLaufzeit.textContent = (currentMovie?.filmdauer != null) ? formatDuration(currentMovie.filmdauer) : "-";
     infoPreis.textContent = formatEuroFromCents(currentMovie.basispreis ?? 0);
     inhaltText.textContent = currentMovie.beschreibung ?? "";
 
@@ -338,7 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
         showInfoDate && (showInfoDate.textContent = datum || "-");
         showInfoTime && (showInfoTime.textContent = uhrzeit || "-");
         showInfoSaal && (showInfoSaal.textContent = hallNameById(saalId));
-        showInfoRuntime && (showInfoRuntime.textContent = (currentMovie?.filmdauer != null) ? `${currentMovie.filmdauer} min` : "-");
+        showInfoRuntime && (showInfoRuntime.textContent = (currentMovie?.filmdauer != null) ? formatDuration(currentMovie?.filmdauer) : "-");
         showInfoPrice && (showInfoPrice.textContent = formatEuroFromCents(currentMovie?.basispreis || 0));
       });
 
