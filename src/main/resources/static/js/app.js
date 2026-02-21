@@ -98,11 +98,62 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function formatDuration(minutes) {
     if (minutes == null || minutes === "") return "-";
+
+    // Debug helper: log raw value/type to console for troubleshooting
+    try {
+      console.debug("formatDuration input:", minutes, typeof minutes);
+    } catch (e) {}
+
+    // Handle ISO-8601 Duration strings from Java's Duration (e.g. "PT1H30M", "PT90M", "PT30S")
+    if (typeof minutes === "string" && minutes.toUpperCase().startsWith("PT")) {
+      const iso = minutes.toUpperCase();
+      const hMatch = iso.match(/(\d+)H/);
+      const mMatch = iso.match(/(\d+)M/);
+      const sMatch = iso.match(/(\d+)S/);
+
+      const hours = hMatch ? parseInt(hMatch[1], 10) : 0;
+      const mins = mMatch ? parseInt(mMatch[1], 10) : 0;
+      const secs = sMatch ? parseInt(sMatch[1], 10) : 0;
+
+      const totalSeconds = hours * 3600 + mins * 60 + secs;
+      if (totalSeconds === 0) return iso;
+
+      // If duration is less than a minute, show seconds
+      if (totalSeconds < 60) return `${totalSeconds}s`;
+
+      // otherwise convert to rounded minutes for display
+      const minutesValue = Math.round(totalSeconds / 60);
+      if (minutesValue < 60) return `${minutesValue} min`;
+      const h = Math.floor(minutesValue / 60);
+      const rem = minutesValue % 60;
+      return rem === 0 ? `${h}h` : `${h}h ${rem}min`;
+    }
+
+    // Handle objects like { seconds: 5400 } (Java Duration serialized)
+    if (typeof minutes === "object") {
+      const obj = minutes;
+      if (obj == null) return "-";
+      if (typeof obj.seconds === "number") {
+        const totalSeconds = Math.round(obj.seconds);
+        if (totalSeconds < 60) return `${totalSeconds}s`;
+        return formatDuration(Math.round(totalSeconds / 60));
+      }
+      // try other common numeric fields
+      if (typeof obj.totalSeconds === "number") {
+        const totalSeconds = Math.round(obj.totalSeconds);
+        if (totalSeconds < 60) return `${totalSeconds}s`;
+        return formatDuration(Math.round(totalSeconds / 60));
+      }
+      return String(minutes);
+    }
+
+    // Numeric values: could be minutes or seconds. If value is large (>1000), assume seconds.
     const m = Number(minutes);
     if (isNaN(m) || m < 0) return String(minutes);
-    if (m < 60) return `${m} min`;
-    const h = Math.floor(m / 60);
-    const rem = m % 60;
+    const minutesValue = m > 1000 ? Math.round(m / 60) : m;
+    if (minutesValue < 60) return `${minutesValue} min`;
+    const h = Math.floor(minutesValue / 60);
+    const rem = minutesValue % 60;
     return rem === 0 ? `${h}h` : `${h}h ${rem}min`;
   }
 

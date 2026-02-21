@@ -28,10 +28,10 @@ document.addEventListener("DOMContentLoaded", () => {
     me: `/api/benutzer/${user?.id}/get`,
     updateMe: `/api/benutzer/${user?.id}/change`,
 
-    // ✅ Tickets für Account-Seite
+    //Tickets für Account-Seite
     myTickets: `/api/tickets/user/${user?.id}`,
 
-    // ✅ Storno: Buchung löschen
+    //Storno: Buchung löschen
     cancelBooking: (buchungId) => `/api/buchungen/${buchungId}/delete`,
   };
 

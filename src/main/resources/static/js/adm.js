@@ -695,7 +695,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const beschreibung = filmBeschreibungInput.value.trim();
     const fsk = parseInt(filmFskInput.value, 10);
     const kategorie = filmKategorieInput.value.trim() || "Allgemein";
-    const filmdauer = filmLaufzeitInput.value ? parseInt(filmLaufzeitInput.value, 10) : null;
+    const filmdauerMinutes = filmLaufzeitInput.value ? parseInt(filmLaufzeitInput.value, 10) : null;
+    const filmdauer = (filmdauerMinutes != null && !isNaN(filmdauerMinutes)) ? filmdauerMinutes * 60 : null; // convert minutes -> seconds
     const preisEuro = parseFloat((filmPreisInput.value || "").replace(",", "."));
 
     if (!filmname || isNaN(fsk) || isNaN(preisEuro)) {
