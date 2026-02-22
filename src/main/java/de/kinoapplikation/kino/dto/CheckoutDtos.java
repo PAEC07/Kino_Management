@@ -16,7 +16,8 @@ public class CheckoutDtos {
         public Long buchungId;
         public long totalCents;
 
-        public CheckoutResponse() {}
+        public CheckoutResponse() {
+        }
 
         public CheckoutResponse(boolean ok, String message, Long buchungId, long totalCents) {
             this.ok = ok;

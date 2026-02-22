@@ -7,6 +7,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST-Controller für Sitzplatz-Verwaltung und Verfügbarkeitsprüfung.
+ * 
+ * Provides endpoints for:
+ * - GET /api/sitze/status/{vorstellungId}/{saalId} - Sitzplan mit Verfügbarkeitsstatus
+ * - GET /api/sitze/list - Alle Sitzplätze im System auflisten 
+ * Der Haupt-Endpoint ist /status, der den aktuellen Belegungsstatus
+ * für eine bestimmte Vorstellung + Saal-Kombination zurückgibt.
+ * Dies ist zentral für die Buchungs-UI (interaktiver Sitzplan).
+ */
 @RestController
 @RequestMapping("/api/sitze")
 public class SitzplatzController {

@@ -1,21 +1,30 @@
-/* main.css (themed) – verwendet Variablen aus css/theme.css */
+/**
+ * MAIN CSS - Hauptlayout und Styling für Kino-Management
+ * 
+ * Verwendet CSS-Variablen aus theme.css für Light/Dark-Mode
+ * Responsive Design mit Flex-Layout
+ * Mobile-First Ansatz
+ */
 
+/* ====================================
+   GLOBALE EINSTELLUNGEN
+   ==================================== */
 
-/* Global: Breite im Griff behalten */
-
+/* CSS-Variablen überall verfügbar machen */
 * {
     box-sizing: border-box;
 }
 
+/* Verhindere horizontales Scrollen */
 html,
 body {
     max-width: 100%;
     overflow-x: hidden;
-    /* horizontales Scrollen unterbinden */
 }
 
-
-/* Grundlayout */
+/* ====================================
+   BODY STYLING
+   ==================================== */
 
 body {
     margin: 0;

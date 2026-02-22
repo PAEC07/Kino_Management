@@ -32,7 +32,8 @@ public class Benutzer {
     @Column(name = "CreatedAt", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public Benutzer() {}
+    public Benutzer() {
+    }
 
     public Benutzer(String username, String email, String passwordHash) {
         this.username = username;
@@ -40,18 +41,51 @@ public class Benutzer {
         this.passwordHash = passwordHash;
     }
 
-    public Long getId() { return id; }
-    public String getUsername() { return username; }
-    public String getEmail() { return email; }
-    public String getRole() { return role; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public Long getId() {
+        return id;
+    }
 
-    public void setId(Long id) { this.id = id; }
-    public void setUsername(String username) { this.username = username; }
-    public void setEmail(String email) { this.email = email; }
-    public void setRole(String role) { this.role = role; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public String getUsername() {
+        return username;
+    }
 
-    public String getPasswordHash() { return passwordHash; }
-    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public String getEmail() {
+        return email;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
 }

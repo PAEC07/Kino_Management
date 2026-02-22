@@ -22,7 +22,8 @@ public class AdminSeeder {
             boolean adminExists = repo.findAll().stream()
                     .anyMatch(u -> u.getRole() != null && u.getRole().equalsIgnoreCase("ADMIN"));
 
-            if (adminExists) return;
+            if (adminExists)
+                return;
 
             // Wenn "admin" schon existiert -> auf ADMIN hochstufen
             var existing = repo.findByUsername(adminUser);
@@ -30,7 +31,7 @@ public class AdminSeeder {
                 Benutzer u = existing.get();
                 u.setRole("ADMIN");
                 repo.save(u);
-                System.out.println("✅ Existing user 'admin' promoted to ADMIN");
+                System.out.println("Existing user 'admin' promoted to ADMIN");
                 return;
             }
 
@@ -38,7 +39,7 @@ public class AdminSeeder {
             u.setRole("ADMIN");
             repo.save(u);
 
-            System.out.println("✅ Admin seeded: username=admin password=" + adminPass);
+            System.out.println("Admin seeded: username=admin password=" + adminPass);
         };
     }
 }

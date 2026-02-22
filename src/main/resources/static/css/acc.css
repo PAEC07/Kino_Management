@@ -332,6 +332,14 @@ body {
 .hidden {
     display: none;
 }
+
 /* Theme-Fixes für Dark Mode */
-.modal-close{ color: var(--text); }
-.modal-input{ background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.modal-close {
+    color: var(--text);
+}
+
+.modal-input {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+}

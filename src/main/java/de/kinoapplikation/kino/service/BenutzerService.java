@@ -10,6 +10,21 @@ import de.kinoapplikation.kino.entity.Benutzer;
 import de.kinoapplikation.kino.repository.BenutzerRepository;
 import de.kinoapplikation.kino.security.JwtUtil;
 
+/**
+ * Service-Layer für Benutzer-Management und Authentifizierung.
+ * 
+ * Zentrale Verantwortlichkeiten:
+ * - Benutzer-Registrierung mit Validierung
+ * - Benutzer-Authentifizierung (Login)
+ * - Passwort-Hashing via BCrypt
+ * - JWT-Token-Generierung
+ * - Benutzerdaten-Verwaltung
+ * Diese Klasse ist kritisch für die Sicherheit der Anwendung!
+ * Alle Passwörter werden mit BCrypt gehasht (salt + hash).
+ * 
+ * @see JwtUtil für Token-Generierung
+ * @see BCryptPasswordEncoder für sichere Passwort-Verarbeitung
+ */
 @Service
 public class BenutzerService {
 
@@ -62,9 +77,11 @@ public class BenutzerService {
         return benutzerRepo.findByUsername(username)
                 .map(u -> {
                     boolean ok = encoder.matches(password, u.getPasswordHash());
-                    if (!ok) return new AuthDtos.AuthResponse(false, "Falsches Passwort");
+                    if (!ok)
+                        return new AuthDtos.AuthResponse(false, "Falsches Passwort");
 
-                    String role = (u.getRole() == null || u.getRole().isBlank()) ? "USER" : u.getRole().trim().toUpperCase();
+                    String role = (u.getRole() == null || u.getRole().isBlank()) ? "USER"
+                            : u.getRole().trim().toUpperCase();
                     String token = jwtUtil.generateToken(u.getId(), u.getUsername(), role);
 
                     return new AuthDtos.AuthResponse(
@@ -74,14 +91,14 @@ public class BenutzerService {
                             u.getUsername(),
                             u.getEmail(),
                             role,
-                            token
-                    );
+                            token);
                 })
                 .orElseGet(() -> new AuthDtos.AuthResponse(false, "User nicht gefunden"));
     }
 
     public Benutzer datenAendern(Long id, AuthDtos.UpdateRequest req) {
-        if (id == null) throw new IllegalArgumentException("ID darf nicht null sein");
+        if (id == null)
+            throw new IllegalArgumentException("ID darf nicht null sein");
 
         Benutzer benutzer = benutzerRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Benutzer nicht gefunden"));
@@ -103,7 +120,8 @@ public class BenutzerService {
     }
 
     public Benutzer benutzerById(Long id) {
-        if (id == null) throw new IllegalArgumentException("ID cannot be null");
+        if (id == null)
+            throw new IllegalArgumentException("ID cannot be null");
         return benutzerRepo.findById(id).orElse(null);
     }
 }

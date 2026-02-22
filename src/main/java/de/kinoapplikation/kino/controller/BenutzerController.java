@@ -17,14 +17,22 @@ import de.kinoapplikation.kino.entity.Benutzer;
 import de.kinoapplikation.kino.service.BenutzerService;
 
 /**
- * Endpoints:
- * - GET /api/benutzer/list > Alle Benutzer auflisten
- * - GET /api/benutzer/{id}/get > Benutzer mit bestimmter ID abrufen
- * - PUT /api/benutzer/{id}/change > Benutzerdaten ändern
- * - POST /api/benutzer/register > Neuen Benutzer registrieren
- * - POST /api/benutzer/login > Benutzer anmelden
+ * REST-Controller für Benutzer-Management und Authentifizierung.
+ * 
+ * Provides endpoints for:
+ * - GET /api/benutzer/list - Alle Benutzer auflisten (ADMIN)
+ * - GET /api/benutzer/{id}/get - Einzelnen Benutzer abrufen
+ * - PUT /api/benutzer/{id}/change - Benutzerdaten aktualisieren
+ * - POST /api/benutzer/register - Neue Benutzer registrieren
+ * - POST /api/benutzer/login - Benutzer authentifizieren & JWT erhalten
+ * 
+ * Die Authentifizierung erfolgt via JWT-Tokens, die über JwtUtil generiert werden.
+ * Tokens werden vom Frontend in localStorage gespeichert und bei jeder Anfrage mitgesendet.
+ * 
+ * @author Niklas
+ * @see BenutzerService für Business-Logik
+ * @see JwtUtil für Token-Handling
  */
-
 @RestController
 @RequestMapping("/api/benutzer")
 public class BenutzerController {

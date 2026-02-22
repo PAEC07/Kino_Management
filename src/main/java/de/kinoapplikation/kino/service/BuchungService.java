@@ -10,6 +10,27 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Service-Layer für Buchungs-Management und den Checkout-Prozess.
+ * 
+ * Zentrale Verantwortlichkeiten:
+ * - Sitzplatz-Verfügbarkeitsprüfung
+ * - Validierung von Buchungs-Eingaben
+ * - Preisberechnung (Basis, Sitztyp-Zuschlag, Rabatte)
+ * - Transaktionale Buchungs-Erstellung mit Tickets
+ * - Buchungs-Stornierung mit Cleanup
+ * 
+ * Der Checkout-Prozess ist die Kernfunktion dieser Klasse:
+ * 1. Validiere Input (Benutzer, Vorstellung, Sitze)
+ * 2. Prüfe Verfügbarkeit jedes Sitzes
+ * 3. Erstelle Buchung
+ * 4. Erstelle Tickets für jede Sitzplatz
+ * 5. Berechne Gesamtpreis
+ * 6. Gib Response mit Buchungs-ID zurück
+ * WICHTIG: Diese Methode ist @Transactional um Konsistenz zu garantieren!
+ * 
+ * @see CheckoutDtos für Request/Response-Formate
+ * @see Transactional für Datenbankintegral*/
 @Service
 public class BuchungService {
 
@@ -24,8 +45,7 @@ public class BuchungService {
             TicketsRepository ticketsRepo,
             BenutzerRepository benutzerRepo,
             VorstellungRepository vorstellungRepo,
-            SitzplatzRepository sitzplatzRepo
-    ) {
+            SitzplatzRepository sitzplatzRepo) {
         this.buchungRepo = buchungRepo;
         this.ticketsRepo = ticketsRepo;
         this.benutzerRepo = benutzerRepo;
@@ -46,21 +66,24 @@ public class BuchungService {
     }
 
     public void stornieren(Long id) {
-        if (id == null) throw new IllegalArgumentException("ID cannot be null");
+        if (id == null)
+            throw new IllegalArgumentException("ID cannot be null");
 
-        // ✅ erst Tickets der Buchung löschen
+        // erst Tickets der Buchung löschen
         ticketsRepo.findAll().stream()
                 .filter(t -> t.getBuchungId() != null && t.getBuchungId().equals(id))
                 .forEach(t -> ticketsRepo.deleteById(t.getTicketId()));
 
-        // ✅ dann Buchung löschen
+        // dann Buchung löschen
         buchungRepo.deleteById(id);
     }
 
     @Transactional
     public CheckoutDtos.CheckoutResponse checkout(CheckoutDtos.CheckoutRequest req) {
-        if (req == null || req.benutzerId == null || req.vorstellungId == null || req.sitzplatzIds == null || req.sitzplatzIds.isEmpty()) {
-            return new CheckoutDtos.CheckoutResponse(false, "benutzerId, vorstellungId und sitzplatzIds sind Pflicht", null, 0);
+        if (req == null || req.benutzerId == null || req.vorstellungId == null || req.sitzplatzIds == null
+                || req.sitzplatzIds.isEmpty()) {
+            return new CheckoutDtos.CheckoutResponse(false, "benutzerId, vorstellungId und sitzplatzIds sind Pflicht",
+                    null, 0);
         }
 
         Benutzer user = benutzerRepo.findById(req.benutzerId)
@@ -90,7 +113,8 @@ public class BuchungService {
             // Check: Seat belegt?
             long already = sitzplatzRepo.countTicketForSeatAndShow(req.vorstellungId, seatId);
             if (already > 0) {
-                throw new IllegalArgumentException("Sitz ist bereits belegt: Reihe " + seat.getReihe() + " Platz " + seat.getPlatzNr());
+                throw new IllegalArgumentException(
+                        "Sitz ist bereits belegt: Reihe " + seat.getReihe() + " Platz " + seat.getPlatzNr());
             }
 
             long seatPrice = base;

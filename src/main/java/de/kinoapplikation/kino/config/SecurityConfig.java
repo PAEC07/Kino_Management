@@ -11,6 +11,17 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Sicherheits-Konfiguration für Spring Security mit JWT-basierter Authentifizierung.
+ * 
+ * Definiert:
+ * - Welche Endpoints öffentlich sind (ohne Authentifizierung)
+ * - Welche Endpoints Admin-Rollen benötigen
+ * - JWT-Filter-Reihenfolge in der Filter-Chain
+ * - CSRF/CORS-Eigenschaften
+ * 
+ * @author Deria
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -36,8 +47,8 @@ public class SecurityConfig {
                                 "/", "/index.html",
                                 "/login.html", "/register.html",
                                 "/Admin.html", "/Account.html",
-                                "/css/**", "/js/**", "/img/**"
-                        ).permitAll()
+                                "/css/**", "/js/**", "/img/**")
+                        .permitAll()
 
                         // Auth
                         .requestMatchers("/api/benutzer/login", "/api/benutzer/register").permitAll()
@@ -54,8 +65,7 @@ public class SecurityConfig {
                         // Rest API frei (oder später absichern)
                         .requestMatchers("/api/**").permitAll()
 
-                        .anyRequest().permitAll()
-                );
+                        .anyRequest().permitAll());
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

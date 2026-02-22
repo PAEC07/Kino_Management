@@ -29,18 +29,43 @@ public class Tickets {
     @Column(name = "BuchungsId")
     private Long buchungId;
 
-    public int getTicketId() { return ticketId; }
-    public void setTicketId(int ticketId) { this.ticketId = ticketId; }
+    public int getTicketId() {
+        return ticketId;
+    }
 
-    public Vorstellung getVorstellungId() { return vorstellungId; }
-    public void setVorstellungId(Vorstellung vorstellungId) { this.vorstellungId = vorstellungId; }
+    public void setTicketId(int ticketId) {
+        this.ticketId = ticketId;
+    }
 
-    public Sitzplatz getSitzplatz() { return sitzplatz; }
-    public void setSitzplatz(Sitzplatz sitzplatz) { this.sitzplatz = sitzplatz; }
+    public Vorstellung getVorstellungId() {
+        return vorstellungId;
+    }
 
-    public Benutzer getBenutzerId() { return benutzerId; }
-    public void setBenutzerId(Benutzer benutzerId) { this.benutzerId = benutzerId; }
+    public void setVorstellungId(Vorstellung vorstellungId) {
+        this.vorstellungId = vorstellungId;
+    }
 
-    public Long getBuchungId() { return buchungId; }
-    public void setBuchungId(Long buchungId) { this.buchungId = buchungId; }
+    public Sitzplatz getSitzplatz() {
+        return sitzplatz;
+    }
+
+    public void setSitzplatz(Sitzplatz sitzplatz) {
+        this.sitzplatz = sitzplatz;
+    }
+
+    public Benutzer getBenutzerId() {
+        return benutzerId;
+    }
+
+    public void setBenutzerId(Benutzer benutzerId) {
+        this.benutzerId = benutzerId;
+    }
+
+    public Long getBuchungId() {
+        return buchungId;
+    }
+
+    public void setBuchungId(Long buchungId) {
+        this.buchungId = buchungId;
+    }
 }

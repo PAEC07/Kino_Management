@@ -32,10 +32,10 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // ✅ Token speichern
+      // Token speichern
       localStorage.setItem("kino_token", data.token);
 
-      // ✅ User speichern (inkl. role)
+      // User speichern (inkl. role)
       const user = { id: data.id, username: data.username, email: data.email, role: data.role };
       localStorage.setItem("kino_user", JSON.stringify(user));
 

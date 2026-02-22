@@ -19,7 +19,7 @@ public class SitzTyp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
+
     @Column(name = "SitzTypId")
     private Long sitzTypId;
 

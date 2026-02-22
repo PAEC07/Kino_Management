@@ -1,9 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // ====================================
+  // AUTHENTIFICATION FORMS HANDLER
+  // ====================================
+  // Diese Datei behandelt Registrierungs- und Login-Formulare
+  // und speichert JWT-Tokens für später Verwendung
+  
   const API_BASE = "http://localhost:8080";
 
-  const registerForm = document.querySelector('form[data-auth="register"]');
-  const loginForm = document.querySelector('form[data-auth="login"]');
-
+  // Helper: Sende JSON an API
   async function postJson(path, body) {
     const res = await fetch(API_BASE + path, {
       method: "POST",
@@ -11,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
       body: JSON.stringify(body),
     });
 
+    // Parse Response (könnte HTML bei Fehler sein)
     const text = await res.text();
     let data;
     try {
@@ -22,7 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
     return { ok: res.ok, status: res.status, data };
   }
 
-  // REGISTER
+  // ====================================
+  // REGISTRIERUNGS-FORM HANDLER
+  // ====================================
+  // Registriert neue Benutzer (Username, Email, Passwort)
+  const registerForm = document.querySelector('form[data-auth="register"]');
   if (registerForm) {
     registerForm.addEventListener("submit", async (e) => {
       e.preventDefault();

@@ -9,7 +9,8 @@ public class VorstellungDto {
     public Long filmId;
     public Long saalId;
 
-    public VorstellungDto() {}
+    public VorstellungDto() {
+    }
 
     public VorstellungDto(Long id, LocalDateTime datum, Long filmId, Long saalId) {
         this.id = id;
@@ -19,7 +20,8 @@ public class VorstellungDto {
     }
 
     public static VorstellungDto fromEntity(Vorstellung v) {
-        if (v == null) return null;
+        if (v == null)
+            return null;
         Long fId = v.getFilmId() != null ? v.getFilmId().getId() : null;
         Long sId = v.getSaalId() != null ? v.getSaalId().getId() : null;
         return new VorstellungDto(v.getId(), v.getDatum(), fId, sId);

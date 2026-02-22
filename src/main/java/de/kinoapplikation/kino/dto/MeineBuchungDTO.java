@@ -12,5 +12,6 @@ public class MeineBuchungDTO {
 
     public long totalCents;
 
-    public MeineBuchungDTO() {}
+    public MeineBuchungDTO() {
+    }
 }

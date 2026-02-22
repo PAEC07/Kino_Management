@@ -7,7 +7,8 @@ public class SeatStatusDTO {
     public String bereich;
     public boolean belegt;
 
-    public SeatStatusDTO() {}
+    public SeatStatusDTO() {
+    }
 
     public SeatStatusDTO(Long sitzId, int reihe, int platzNr, String bereich, boolean belegt) {
         this.sitzId = sitzId;

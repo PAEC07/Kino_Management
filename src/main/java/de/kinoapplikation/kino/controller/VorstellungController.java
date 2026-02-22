@@ -8,11 +8,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Endpoints:
- * - GET /api/vorstellungen/list > Alle Vorstellungen auflisten
- * - GET /api/vorstellungen/{id}/get > Vorstellung mit bestimmter ID abrufen
- * - POST /api/vorstellungen/add > Neue Vorstellung hinzufügen
- * - DELETE /api/vorstellungen/{id}/delete > Vorstellung mit bestimmter ID löschen
+ * REST-Controller für Vorstellungs-Management.
+ * 
+ * Provides endpoints for:
+ * - GET /api/vorstellungen/list - Alle geplanten Filmvorstellungen
+ * - GET /api/vorstellungen/{id}/get - Einzelne Vorstellung abrufen
+ * - POST /api/vorstellungen/add - Neue Vorstellung planen (ADMIN)
+ * - DELETE /api/vorstellungen/{id}/delete - Vorstellung löschen (ADMIN)
+ * 
+ * Vorstellungen sind zentral: Sie verbinden Film + Saal + Zeitpunkt.
+ * Sie bilden die Basis für den Buchungsprozess.
+ * 
+ * @author Niklas
+ * @see VorstellungService für Business-Logik
  */
 @RestController
 @RequestMapping("/api/vorstellungen")

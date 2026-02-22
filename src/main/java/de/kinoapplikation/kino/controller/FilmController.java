@@ -6,13 +6,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Endpoints:
- * - GET /api/filme/list > Alle Filme auflisten
- * - GET /api/filme/{id}/get > Film mit bestimmter ID abrufen
- * - POST /api/filme/add > Neuer Film hinzufügen
- * - DELETE /api/filme/{id}/delete > Film mit bestimmter ID löschen
+ * REST-Controller für Film-Management.
+ * 
+ * Provides endpoints for:
+ * - GET /api/filme/list - Alle verfügbaren Filme auflisten
+ * - GET /api/filme/{id}/get - Einzelnen Film abrufen
+ * - GET /api/filme/filter?genre=X - Filme nach Genre filtern
+ * - POST /api/filme/add - Neuen Film hinzufügen (ADMIN)
+ * - DELETE /api/filme/{id}/delete - Film löschen (ADMIN)
+ * 
+ * @author Niklas
+ * @see FilmService für Business-Logik
  */
-
 @RestController
 @RequestMapping("/api/filme")
 public class FilmController {

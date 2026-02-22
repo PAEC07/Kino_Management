@@ -7,13 +7,25 @@ import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * Entität für Filme im Kino-System.
- * Enthält Informationen über Filme wie Name, Beschreibung, FSK, Kategorie und
- * Basispreis.
+ * Entität (Entity) für Filme im Kino-Management-System.
+ * 
+ * Speichert alle relevanten Informationen über einen Film:
+ * - Filmname (eindeutig in der Datenbank)
+ * - Beschreibung und Content-Details (FSK, Kategorie, Format)
+ * - Basispreis in Cents (z.B. 1000 = €10,00)
+ * - Filmdauer und Darstellungsformat (2D/3D)
+ * 
+ * Der Basispreis wird als Basis für alle Ticketpreise verwendet.
+ * Die tatsächliche Buchung berechnet Finanzierung berücksichtigt:
+ * - Sitztyp-Zuschläge (z.B. +10% für Loge)
+ * - Vorstellungs-Zuschläge
+ * - Rabatte (Student, Senior, Kind, etc.)
+ * KNOWN ISSUE: Filmdauer sollte bei der Eingabe von Minuten (z.B. \"180\") 
+ * in Duration konvertiert werden. Derzeit manuelle Eingabe erforderlich.
  * 
  * @author Niklas
+ * @see Vorstellung für die Verbindung zu Aufführungen
  */
-
 @Entity
 @Table(name = "Filme", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "Filmname" })
@@ -27,7 +39,7 @@ public class Film {
 
     @Column(name = "Filmname", nullable = false)
     private String filmname;
-    
+
     @Column(name = "Beschreibung")
     private String beschreibung;
 
@@ -40,7 +52,8 @@ public class Film {
     @Column(name = "Basispreis")
     private Long basispreis;
 
-    //TODO: Filmdauer beim hinzufügen eines Films in Minuten umwandeln und hier als Duration speichern
+    // TODO: Filmdauer beim hinzufügen eines Films in Minuten umwandeln und hier als
+    // Duration speichern
     @Column(name = "Filmdauer")
     private Duration filmdauer;
 

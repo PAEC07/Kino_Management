@@ -23,7 +23,7 @@ public class AuthDtos {
         public String email;
         public String role;
 
-        // ✅ JWT Token
+        //JWT Token
         public String token;
 
         public AuthResponse() {}

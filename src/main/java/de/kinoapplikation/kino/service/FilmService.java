@@ -7,6 +7,16 @@ import org.springframework.stereotype.Service;
 import de.kinoapplikation.kino.entity.Film;
 import de.kinoapplikation.kino.repository.FilmRepository;
 
+/**
+ * Service-Layer für Film-Management.
+ * 
+ * Behandelt alle Business-Logik bezüglich Filme:
+ * - Validierung von Film-Daten vor dem Speichern
+ * - CRUD-Operationen (Create, Read, Update, Delete)
+ * - Filterung und Suche nach Genre/Kategorie
+ * 
+ * @see FilmRepository für Datenbankzugriff
+ */
 @Service
 public class FilmService {
 

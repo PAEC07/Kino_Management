@@ -17,7 +17,8 @@ public class TicketsService {
     }
 
     public List<TicketViewDto> ticketsFuerUser(Long userId) {
-        if (userId == null) throw new IllegalArgumentException("userId darf nicht null sein");
+        if (userId == null)
+            throw new IllegalArgumentException("userId darf nicht null sein");
 
         return ticketsRepo.findByBenutzerId_Id(userId).stream()
                 .map(this::toDto)

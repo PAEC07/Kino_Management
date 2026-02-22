@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 /**
  * Generelle Entität für Preisnachlässe wie für Studenten, Kinder oder Senioren.
  * Kein direkter Bezug zu PreisZuschlag oder SitzTyp.
+ * 
  * @author Niklas
  */
 
@@ -25,18 +26,23 @@ public class Discounts {
     public Long getId() {
         return discountId;
     }
+
     public void setId(Long discountId) {
         this.discountId = discountId;
     }
+
     public String getBeschreibung() {
         return beschreibung;
     }
+
     public void setBeschreibung(String beschreibung) {
         this.beschreibung = beschreibung;
     }
+
     public Long getDiscountWert() {
         return discountWert;
     }
+
     public void setDiscountWert(Long discountWert) {
         this.discountWert = discountWert;
     }

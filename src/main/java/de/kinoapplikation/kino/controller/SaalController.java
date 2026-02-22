@@ -9,6 +9,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST-Controller für Kinosaal-Management.
+ * Provides endpoints for:
+ * - POST /api/saal/add - Neuen Saal erstellen (ADMIN)
+ * - GET /api/saal/list - Alle Säle auflisten
+ * - DELETE /api/saal/{id}/delete - Saal löschen (ADMIN)
+ * Ein Saal enthält mehrere Sitzplätze und kann mehrere Vorstellungen pro Tag haben.
+ * 
+ * @author Niklas
+ * @see SaalService für Business-Logik
+ */
 @RestController
 @RequestMapping("/api/saal")
 public class SaalController {
