@@ -125,33 +125,33 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
- async function apiPostAny(path, body) {
-   const res = await fetch(API_BASE + path, {
-     method: "POST",
-     headers: authHeaders(),
-     body: JSON.stringify(body),
-   });
+  async function apiPostAny(path, body) {
+    const res = await fetch(API_BASE + path, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(body),
+    });
 
-   const text = await res.text().catch(() => "");
-   if (!res.ok) throw new Error(`POST ${path} fehlgeschlagen (${res.status}) ${text}`);
+    const text = await res.text().catch(() => "");
+    if (!res.ok) throw new Error(`POST ${path} fehlgeschlagen (${res.status}) ${text}`);
 
-   try { return text ? JSON.parse(text) : { ok: true }; }
-   catch { return { ok: true, message: text }; }
- }
-
-
+    try { return text ? JSON.parse(text) : { ok: true }; }
+    catch { return { ok: true, message: text }; }
+  }
 
 
- async function apiDelete(path) {
-   const res = await fetch(API_BASE + path, {
-     method: "DELETE",
-     headers: authHeaders(),
-   });
 
-   const txt = await res.text().catch(() => "");
-   if (!res.ok) throw new Error(`DELETE ${path} fehlgeschlagen (${res.status}) ${txt}`);
-   return txt;
- }
+
+  async function apiDelete(path) {
+    const res = await fetch(API_BASE + path, {
+      method: "DELETE",
+      headers: authHeaders(),
+    });
+
+    const txt = await res.text().catch(() => "");
+    if (!res.ok) throw new Error(`DELETE ${path} fehlgeschlagen (${res.status}) ${txt}`);
+    return txt;
+  }
 
 
 
@@ -193,6 +193,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================
   // Utils
   // ============================
+
+  function formatDateDE(iso) {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return String(iso);
+    return d.toLocaleDateString("de-DE");
+  }
+
   function formatEuroFromCents(cents) {
     const n = Number(cents || 0) / 100;
     return n.toFixed(2).replace(".", ",") + " €";
@@ -231,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function hallName(h) {
-      return h?.saalName ?? null;
+    return h?.saalName ?? null;
   }
 
   function normalizeHallInputToId(inputText) {
@@ -437,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const tdSaal = document.createElement("td");
         const tdAktion = document.createElement("td");
 
-        tdDatum.textContent = datum || "-";
+        tdDatum.textContent = formatDateDE(datum) || "-";
         tdFilm.textContent = movie ? movie.filmname : (filmId ? `Film ID ${filmId}` : "Unbekannt");
         tdZeit.textContent = uhrzeit || "-";
         tdSaal.textContent = saalText;
@@ -544,7 +552,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentYear = new Date().getFullYear();
 
   function getMonatsName(m) {
-    const arr = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+    const arr = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
     return arr[m] || "";
   }
 
@@ -587,7 +595,7 @@ document.addEventListener("DOMContentLoaded", () => {
           daySpan.textContent = dayNr;
           td.appendChild(daySpan);
 
-          const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2,"0")}-${String(dayNr).padStart(2,"0")}`;
+          const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(dayNr).padStart(2, "0")}`;
           const items = map[dateStr] || [];
 
           items.forEach(({ show, uhrzeit }) => {
