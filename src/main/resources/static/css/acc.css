@@ -38,6 +38,18 @@ body {
     gap: 20px;
 }
 
+/* Ensure topbar outline buttons match accent in both themes */
+.topbar .btn-outline {
+    background: transparent;
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.topbar .btn-outline:hover {
+    background: var(--accent);
+    color: var(--btn-text);
+}
+
 .btn-outline {
     padding: 10px 22px;
     border-radius: 6px;

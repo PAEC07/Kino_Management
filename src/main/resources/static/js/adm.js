@@ -48,6 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnFilterApply = document.getElementById("btnFilterApply");
   const filmSuche = document.getElementById("filmSuche");
   const suchBtn = document.getElementById("suchBtn");
+  const btnFilterOpen = document.getElementById("btnFilterOpen");
+  const filterModal = document.getElementById("filterModal");
+  const filterCloseEls = document.querySelectorAll("[data-filter-close]");
 
   // Modals
   const modalOverlay = document.getElementById("modalOverlay");
@@ -189,6 +192,15 @@ document.addEventListener("DOMContentLoaded", () => {
   closeVorstellungModal?.addEventListener("click", closeModal);
   closeSaalModal?.addEventListener("click", closeModal);
   closeSitzplanModal?.addEventListener("click", closeModal);
+
+  // Open/close filter modal (admin page)
+  btnFilterOpen?.addEventListener("click", () => {
+    filterModal?.classList.remove("hidden");
+  });
+
+  filterCloseEls?.forEach(el => el.addEventListener("click", () => {
+    filterModal?.classList.add("hidden");
+  }));
 
   // ============================
   // Utils

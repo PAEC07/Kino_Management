@@ -102,6 +102,18 @@ body {
     gap: 20px;
 }
 
+/* Ensure topbar outline buttons match accent in both themes */
+.topbar .btn-outline {
+    background: transparent;
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.topbar .btn-outline:hover {
+    background: var(--accent);
+    color: var(--btn-text);
+}
+
 .topbar-left {
     display: flex;
     align-items: left;
@@ -153,6 +165,23 @@ body {
     border: 1px solid var(--border);
     border-radius: 8px;
     background: var(--surface);
+}
+
+/* Highlight selected show row in admin */
+.details-table tr.selected-show td {
+    background: var(--surface-muted-2);
+    border-left: 6px solid var(--accent);
+    transition: background 0.18s ease, border-left 0.18s ease;
+}
+
+.details-table tr.selected-show {
+    background: var(--surface-2);
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+.details-table tr.selected-show td {
+    border-color: var(--accent);
 }
 
 .btn {

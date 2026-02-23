@@ -68,6 +68,36 @@ document.addEventListener("DOMContentLoaded", () => {
   // Login/Konto Button toggling (optional)
   const loginBtnAss = document.getElementById("Login-btn-autenthicated");
   const loginBtnNon = document.getElementById("Login-btn-non-autenthicated");
+  // Filter inputs (index.html)
+  const filmSuche = document.getElementById("filmSuche");
+  const filterFormat = document.getElementById("filterFormat");
+  const filterFsk = document.getElementById("filterFsk");
+  const filterBereich = document.getElementById("filterBereich");
+  const filterDatum = document.getElementById("FilterDatum");
+  const btnFilterApply = document.getElementById("btnFilterApply");
+  const suchBtn = document.getElementById("suchBtn");
+
+  // Filter modal (index.html)
+  const btnFilterOpen = document.getElementById("btnFilterOpen");
+  const filterModal = document.getElementById("filterModal");
+  const modalCloseEls = document.querySelectorAll("[data-modal-close]");
+
+  btnFilterOpen?.addEventListener("click", () => {
+    filterModal?.classList.remove("hidden");
+  });
+
+  modalCloseEls?.forEach(el => el.addEventListener("click", () => {
+    filterModal?.classList.add("hidden");
+  }));
+
+  function applyFilter() {
+    renderMovieList();
+    filterModal?.classList.add("hidden");
+  }
+
+  btnFilterApply?.addEventListener("click", applyFilter);
+  suchBtn?.addEventListener("click", applyFilter);
+  filmSuche?.addEventListener("keyup", (e) => { if (e.key === "Enter") applyFilter(); });
 
   // Modal Show Info (optional in index.html vorhanden)
   const showInfoModal = document.getElementById("showInfoModal");
@@ -307,7 +337,37 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    const searchText = (filmSuche?.value || "").toLowerCase().trim();
+    const wantFormat = (filterFormat?.value || "").toUpperCase();
+    const wantFsk = (filterFsk?.value || "").toString();
+    const wantBereich = (filterBereich?.value || "").toLowerCase();
+    const wantDatum = (filterDatum?.value || "").toString();
+
     movies.forEach((m) => {
+      let visible = true;
+
+      const filmname = String(m.filmname ?? "").toLowerCase();
+      const kategorie = String(m.kategorie ?? "").toLowerCase();
+      const fskStr = String(m.fsk ?? "");
+
+      if (wantFsk && fskStr !== wantFsk) visible = false;
+      if (searchText && !filmname.includes(searchText)) visible = false;
+      if (wantFormat) {
+        const mf = String(m.format ?? m.darstellungstyp ?? "").toUpperCase();
+        if (!mf.includes(wantFormat)) visible = false;
+      }
+      if (wantBereich) {
+        // check if any show for this movie has that bereich
+        const hasBereich = shows.some(s => String(getShowFilmId(s)) === String(m.id) && String((s.bereich||s.bereichName||"").toLowerCase()).includes(wantBereich));
+        if (!hasBereich) visible = false;
+      }
+      if (wantDatum) {
+        // only show movies that have at least one show on the selected date
+        const hasDate = shows.some(s => String(getShowFilmId(s)) === String(m.id) && splitZeit(getShowDatumISO(s)).datum === wantDatum);
+        if (!hasDate) visible = false;
+      }
+
+      if (!visible) return;
       const li = document.createElement("li");
       li.textContent = m.filmname ?? `Film ${m.id}`;
       li.dataset.movieId = String(m.id);
@@ -396,6 +456,12 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
 
       tr.addEventListener("click", () => {
+        // Visually mark the clicked row and unmark others
+        try {
+          vorstellungenTbody.querySelectorAll("tr").forEach(r => r.classList.remove("selected-show"));
+        } catch (e) {}
+        tr.classList.add("selected-show");
+
         currentShow = show;
         selectedSeats = [];
         seatStatusList = [];

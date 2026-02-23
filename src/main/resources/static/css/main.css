@@ -60,6 +60,18 @@ body {
     gap: 25px;
 }
 
+/* Ensure topbar outline buttons match accent in both themes */
+.topbar .btn-outline {
+    background: transparent;
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.topbar .btn-outline:hover {
+    background: var(--accent);
+    color: var(--btn-text);
+}
+
 
 /* Login-Button oben rechts */
 
@@ -101,6 +113,23 @@ body {
     box-sizing: border-box;
     min-height: calc(100vh - 110px);
 }
+
+    /* Highlight selected show row */
+    .details-table tr.selected-show td {
+        background: var(--surface-muted-2);
+        border-left: 6px solid var(--accent);
+        transition: background 0.18s ease, border-left 0.18s ease;
+    }
+
+    .details-table tr.selected-show {
+        background: var(--surface-2);
+        outline: 2px solid var(--accent);
+        outline-offset: -2px;
+    }
+
+    .details-table tr.selected-show td {
+        border-color: var(--accent);
+    }
 
 
 /* linke Spalte: Filter + Filmliste untereinander */
