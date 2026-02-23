@@ -862,7 +862,10 @@ body.no-scroll {
 }
 
 .sitz.gewaehlt {
-    box-shadow: 0 0 0 2px var(--seat-selected) inset;
+    background: var(--seat-selected);
+    color: var(--btn-text);
+    border-color: var(--seat-selected);
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.35) inset;
 }
 
 .auswahl-info {

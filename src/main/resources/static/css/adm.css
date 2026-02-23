@@ -863,8 +863,10 @@ body.no-scroll {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
+    background: var(--seat-selected);
+    color: var(--btn-text);
+    border-color: var(--seat-selected);
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.35) inset;
 .leinwand {
     text-align: center;
     font-weight: 600;

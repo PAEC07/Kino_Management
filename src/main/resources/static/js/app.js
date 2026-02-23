@@ -279,6 +279,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const loggedIn = !!user?.id;
     if (loginBtnAss) loginBtnAss.style.display = loggedIn ? "inline-block" : "none";
     if (loginBtnNon) loginBtnNon.style.display = loggedIn ? "none" : "inline-block";
+    // hide or show the main booking button for unauthenticated users
+    try {
+      if (buchenBtn) buchenBtn.style.display = loggedIn ? "inline-block" : "none";
+    } catch (e) {}
   }
 
   // NEU: Erwachsenen-Einzelpreis setzen (ohne Rabatt)
@@ -670,16 +674,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const sortedRowNumbers = Array.from(rows.keys()).sort((a, b) => a - b);
 
-    sortedRowNumbers.forEach((r) => {
+    sortedRowNumbers.forEach((r, rowIndex) => {
       const rowDiv = document.createElement("div");
       rowDiv.classList.add("sitzreihe");
 
       const seats = rows.get(r).sort((a, b) => Number(a.platzNr) - Number(b.platzNr));
 
+      // label: Reihe als Buchstabe (A, B, C, ... AA, AB) + belegte/gesamt
+      const labelDiv = document.createElement("div");
+      labelDiv.classList.add("sitzreihe-label");
+      const bookedCount = seats.filter(s => !!s.belegt).length;
+      // convert 0-based rowIndex to letters (A, B, ..., Z, AA, AB...)
+      function indexToLetters(i) {
+        let n = i + 1;
+        let out = "";
+        while (n > 0) {
+          const rem = (n - 1) % 26;
+          out = String.fromCharCode(65 + rem) + out;
+          n = Math.floor((n - 1) / 26);
+        }
+        return out;
+      }
+      const letter = indexToLetters(rowIndex);
+      labelDiv.textContent = letter;
+      // If you prefer only the letter label (e.g. "A"), do not show booked/total here.
+      rowDiv.appendChild(labelDiv);
+
       seats.forEach((seat) => {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.classList.add("sitz");
+        // data attribute for easy lookup when toggling
+        const sid = seat.sitzId ?? seat.id;
+        if (sid != null) btn.dataset.sitzId = String(sid);
 
         const isLoge = (seat.bereich || "").toLowerCase().includes("loge");
         if (seat.belegt) btn.classList.add("belegt");
@@ -693,6 +720,12 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           btn.addEventListener("click", () => {
             toggleSeat(seat);
+            // toggle visual class immediately
+            try {
+              const id = seat.sitzId ?? seat.id;
+              const el = sitzContainer.querySelector(`button.sitz[data-sitz-id="${id}"]`);
+              if (el) el.classList.toggle('gewaehlt');
+            } catch (e) {}
           });
         }
 
