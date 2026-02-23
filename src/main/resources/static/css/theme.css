@@ -1,211 +1,143 @@
-/**
- * THEME SYSTEM - Zentrale Light/Dark-Mode CSS-Variablen
- * 
- * Dieses Stylesheet definiert alle CSS Custom Properties (CSS-Variablen)
- * für das Light/Dark-Mode-System. Dadurch können wir einfach zwischen 
- * Light- und Dark-Mode wechseln, indem das data-theme Attribut 
- * auf dem html-Element geändert wird.
- * 
- * Light Mode (Standard): :root
- * Dark Mode: html[data-theme="dark"]
- * 
- * Alle anderen Stylesheets verwenden diese Variablen!
- */
+/* theme.css - zentraler Light/Dark-Mode via CSS-Variablen */
 
-/* ====================================
-   LIGHT MODE (Default)
-   ==================================== */
-:root {
-  /* Backgrounds */
-  --bg: #f5f5f5;                      /* Haupt-Hintergrund */
-  --surface: #ffffff;                 /* Oberflächen (Cards, etc.) */
-  --surface-2: #fafafa;               /* Sekundäre Oberflächen */
-  
-  /* Text */
-  --text: #212529;                    /* Haupt-Text */
-  --muted: #555555;                   /* Grauer Text */
-  
-  /* Borders */
-  --border: #dddddd;                  /* Standard-Border */
-  --field-border: #cccccc;            /* Input/Field-Border */
-  
-  /* Surface Variations */
-  --surface-muted: #f2f2f2;
-  --surface-muted-2: #ededed;
-  --surface-muted-3: #e8e8e8;
+:root{
+  --bg:#f5f5f5;
+  --surface:#ffffff;
+  --surface-2:#fafafa;
+  --text:#212529;
+  --muted:#555555;
+  --border:#dddddd;
+  --field-border:#cccccc;
 
-  /* Brand & Accents */
-  --brand: #452abb;                   /* Haupt-Farbe (Lila) */
-  --danger: #c0392b;                  /* Fehler-Farbe (Rot) */
-  --accent: #452abb;                  /* Accent-Farbe */
-  --accent-strong: #3b2299;           /* Dunkler Accent */
-  --accent-soft: #f2efff;             /* Heller Accent */
-  --accent-soft-2: #e6e1ff;           /* Noch hellerer Accent */
-  --info: #3c6fb3;                    /* Info-Farbe (Blau) */
-  --info-soft: #e6f0ff;
-  --info-soft-2: #f0f4ff;
+  --surface-muted:#f2f2f2;
+  --surface-muted-2:#ededed;
+  --surface-muted-3:#e8e8e8;
 
-  /* Buttons */
-  --btn-muted-bg: #777777;
-  --btn-muted-text: #ffffff;
+  --brand:#452abb;
+  --danger:#c0392b;
+  --accent:#452abb;
+  --accent-strong:#3b2299;
+  --accent-soft:#f2efff;
+  --accent-soft-2:#e6e1ff;
+  --info:#3c6fb3;
+  --info-soft:#e6f0ff;
+  --info-soft-2:#f0f4ff;
 
-  /* Sitze (Buchungs-UI) */
-  --seat-unavailable-bg: #b3b3b3;
-  --seat-unavailable-border: #777777;
-  --seat-unavailable-text: #ffffff;
-  --seat-selected: #000000;
+  --btn-muted-bg:#777777;
+  --btn-muted-text:#ffffff;
 
-  /* Button Colors */
-  --btn-bg: var(--accent);
-  --btn-text: #ffffff;
-  --btn-danger-bg: var(--danger);
-  --btn-danger-text: #ffffff;
+  --seat-unavailable-bg:#b3b3b3;
+  --seat-unavailable-border:#777777;
+  --seat-unavailable-text:#ffffff;
+  --seat-selected:#000000;
 
-  /* Shadows */
-  --shadow: 0 0 8px rgba(0, 0, 0, .10);
-  --shadow-strong: 0 0 15px rgba(0, 0, 0, .30);
+  --btn-bg:var(--accent);
+  --btn-text:#ffffff;
+  --btn-danger-bg:var(--danger);
+  --btn-danger-text:#ffffff;
+
+  --shadow:0 0 8px rgba(0,0,0,.10);
+  --shadow-strong:0 0 15px rgba(0,0,0,.30);
 }
 
-/* ====================================
-   DARK MODE
-   ==================================== */
-html[data-theme="dark"] {
-  /* Backgrounds - Dunklere Varianten */
-  --bg: #141414;
-  --surface: #1f1f1f;
-  --surface-2: #262626;
-  
-  /* Text - Hellere für Kontrast */
-  --text: #f3f3f3;
-  --muted: #b9b9b9;
-  
-  /* Borders - Hellere für Sichtbarkeit */
-  --border: #3f3f3f;
-  --field-border: #555555;
+html[data-theme="dark"]{
+  --bg:#141414;
+  --surface:#1f1f1f;
+  --surface-2:#262626;
+  --text:#f3f3f3;
+  --muted:#b9b9b9;
+  --border:#3f3f3f;
+  --field-border:#555555;
 
-  /* Surface Variations */
-  --surface-muted: #1d1d1d;
-  --surface-muted-2: #232323;
-  --surface-muted-3: #2b2b2b;
+  --surface-muted:#1d1d1d;
+  --surface-muted-2:#232323;
+  --surface-muted-3:#2b2b2b;
 
-  /* Brand & Accents - Heller für Dark Mode */
-  --brand: #8a7dff;
-  --danger: #ff6b5f;
-  --accent: #8a7dff;
-  --accent-strong: #6f62e6;
-  --info: #6e9eea;
-  --info-soft: #22304a;
-  --info-soft-2: #1e2a3f;
+  --brand:#8a7dff;
+  --danger:#ff6b5f;
+  --accent:#8a7dff;
+  --accent-strong:#6f62e6;
+  --info:#6e9eea;
+  --info-soft:#22304a;
+  --info-soft-2:#1e2a3f;
 
-  /* Buttons */
-  --btn-muted-bg: #4a4a4a;
-  --btn-muted-text: #f3f3f3;
+  --btn-muted-bg:#4a4a4a;
+  --btn-muted-text:#f3f3f3;
 
-  /* Sitze (Buchungs-UI) */
-  --seat-unavailable-bg: #4a4a4a;
-  --seat-unavailable-border: #3a3a3a;
-  --seat-unavailable-text: #f3f3f3;
-  --seat-selected: #ffffff;
+  --seat-unavailable-bg:#4a4a4a;
+  --seat-unavailable-border:#3a3a3a;
+  --seat-unavailable-text:#f3f3f3;
+  --seat-selected:#ffffff;
 
-  /* Button Colors */
-  --btn-bg: var(--accent);
-  --btn-text: #0f0f0f;
-  --btn-danger-bg: var(--danger);
-  --btn-danger-text: #ffffff;
+  --btn-bg:var(--accent);
+  --btn-text:#0f0f0f;
+  --btn-danger-bg:var(--danger);
+  --btn-danger-text:#ffffff;
 
-  /* Shadows - Stärker für Tiefe in Dark Mode */
-  --shadow: 0 8px 24px rgba(0, 0, 0, .35);
-  --shadow-strong: 0 12px 34px rgba(0, 0, 0, .55);
+  --shadow:0 8px 24px rgba(0,0,0,.35);
+  --shadow-strong:0 12px 34px rgba(0,0,0,.55);
 }
 
-/* ====================================
-   GLOBALE STYLES (verwenden Variablen)
-   ==================================== */
-
-html,
-body {
-  background: var(--bg);
-  color: var(--text);
+html,body{
+  background:var(--bg);
+  color:var(--text);
 }
 
-/* Standard-Body */
-body {
-  margin: 0;
+
+/* Basis-Fonts etc. (deine Seiten setzen teils selbst font-family, das ist ok) */
+body{margin:0;}
+
+/* Allgemeine Elemente */
+a{color:inherit;}
+
+input,select,textarea{
+  background:var(--surface);
+  color:var(--text);
+  border:1px solid var(--border);
 }
 
-/* Links - Erbe Textfarbe */
-a {
-  color: inherit;
+input::placeholder, textarea::placeholder{color:var(--muted);}
+
+/* Topbar (falls nicht in Page-CSS überschrieben) */
+.topbar{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
 }
 
-/* Form-Elemente */
-input,
-select,
-textarea {
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--border);
+.logo-round{
+  background:var(--surface);
+  box-shadow:var(--shadow);
 }
 
-input::placeholder,
-textarea::placeholder {
-  color: var(--muted);
-}
-
-/* ====================================
-   KOMPONENTEN-STYLING
-   ==================================== */
-
-/* Navigation/Topbar */
-.topbar {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-}
-
-/* Logo (rund) */
-.logo-round {
-  background: var(--surface);
-  box-shadow: var(--shadow);
-}
-
-/* Cards/Panels */
+/* Panels / Cards (falls vorhanden) */
 .liste,
 .Acc-DetailsWrapper,
 .login-card,
 .filter,
 .inhalt,
 .buchen-box,
-.details-table-wrapper {
-  background: var(--surface);
-  border-color: var(--border);
-  box-shadow: var(--shadow);
+.details-table-wrapper{
+  background:var(--surface);
+  border-color:var(--border);
+  box-shadow:var(--shadow);
 }
 
-/* Modal Dialoge */
-.modal {
-  background: var(--surface);
-  box-shadow: var(--shadow-strong);
-}
+/* Modal */
+.modal{background:var(--surface); box-shadow:var(--shadow-strong);}
+.modal-overlay{background:rgba(0,0,0,.55);} /* im Dark gut, im Light auch ok */
 
-.modal-overlay {
-  background: rgba(0, 0, 0, .55);
+/* Kleine Theme-Toggle UI */
+.theme-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  color:var(--text);
+  text-decoration:none;
+  cursor:pointer;
+  font-weight:600;
 }
-
-/* Theme Toggle Button */
-.theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  color: var(--text);
-  text-decoration: none;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.theme-toggle:hover {
-  filter: brightness(1.05);
-}
+.theme-toggle:hover{filter:brightness(1.05);} 

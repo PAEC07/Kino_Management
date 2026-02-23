@@ -8,13 +8,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    err.textContent = "";
+    if (err) err.textContent = "";
 
     const username = document.getElementById("loginUsername")?.value.trim();
     const password = document.getElementById("loginPassword")?.value;
 
     if (!username || !password) {
-      err.textContent = "Bitte Benutzername und Passwort eingeben.";
+      if (err) err.textContent = "Bitte Benutzername und Passwort eingeben.";
       return;
     }
 
@@ -28,27 +28,40 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json().catch(() => null);
 
       if (!res.ok || !data?.ok) {
-        err.textContent = data?.message || "Login fehlgeschlagen.";
+        if (err) err.textContent = data?.message || "Login fehlgeschlagen.";
         return;
       }
 
-      // Token speichern
-      localStorage.setItem("kino_token", data.token);
+      // ✅ Token speichern
+      localStorage.setItem("kino_token", data.token || "");
 
-      // User speichern (inkl. role)
-      const user = { id: data.id, username: data.username, email: data.email, role: data.role };
+      // ✅ User speichern (inkl. role)
+      const user = {
+        id: data.id,
+        username: data.username,
+        email: data.email,
+        role: data.role // "ADMIN" oder "USER"
+      };
       localStorage.setItem("kino_user", JSON.stringify(user));
 
-      window.location.href = "index.html";
+      // ✅ Redirect abhängig von role
+      const role = (data.role || "").toUpperCase();
+      if (role === "ADMIN") {
+        window.location.href = "Admin.html";
+      } else {
+        window.location.href = "index.html";
+      }
     } catch (e2) {
       console.error(e2);
-      err.textContent = "Server nicht erreichbar.";
+      if (err) err.textContent = "Server nicht erreichbar.";
     }
   });
-});
-document.getElementById("guestBtn")?.addEventListener("click", (e) => {
-  e.preventDefault();
-  localStorage.removeItem("kino_token");
-  localStorage.removeItem("kino_user");
-  window.location.href = "/index.html";
+
+  // ✅ Gastbutton
+  document.getElementById("guestBtn")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.removeItem("kino_token");
+    localStorage.removeItem("kino_user");
+    window.location.href = "index.html";
+  });
 });
