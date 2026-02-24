@@ -1,19 +1,27 @@
 package de.kinoapplikation.kino.service;
 
-import de.kinoapplikation.kino.dto.TicketViewDto;
-import de.kinoapplikation.kino.entity.*;
-import de.kinoapplikation.kino.repository.TicketsRepository;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import de.kinoapplikation.kino.dto.TicketViewDto;
+import de.kinoapplikation.kino.entity.Film;
+import de.kinoapplikation.kino.entity.Saal;
+import de.kinoapplikation.kino.entity.Sitzplatz;
+import de.kinoapplikation.kino.entity.Tickets;
+import de.kinoapplikation.kino.entity.Vorstellung;
+import de.kinoapplikation.kino.repository.BuchungRepository;
+import de.kinoapplikation.kino.repository.TicketsRepository;
 
 @Service
 public class TicketsService {
 
     private final TicketsRepository ticketsRepo;
+    private final BuchungRepository buchungRepo;
 
-    public TicketsService(TicketsRepository ticketsRepo) {
+    public TicketsService(TicketsRepository ticketsRepo, BuchungRepository buchungRepo) {
         this.ticketsRepo = ticketsRepo;
+        this.buchungRepo = buchungRepo;
     }
 
     public List<TicketViewDto> ticketsFuerUser(Long userId) {
@@ -61,5 +69,22 @@ public class TicketsService {
         }
 
         return dto;
+    }
+
+    public void deleteTicketById(Integer ticketId) {
+        if (ticketId == null) throw new IllegalArgumentException("ticketId darf nicht null sein");
+
+        Tickets t = ticketsRepo.findById(ticketId).orElseThrow(() -> new IllegalArgumentException("Ticket nicht gefunden: " + ticketId));
+        Long buchungId = t.getBuchungId();
+
+        ticketsRepo.deleteById(ticketId);
+
+        // Falls Buchung keine Tickets mehr hat, Buchung löschen
+        if (buchungId != null) {
+            var remaining = ticketsRepo.findByBuchungId(buchungId);
+            if (remaining == null || remaining.isEmpty()) {
+                try { buchungRepo.deleteById(buchungId); } catch (Exception ignored) {}
+            }
+        }
     }
 }

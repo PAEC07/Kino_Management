@@ -30,9 +30,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //Tickets für Account-Seite
     myTickets: `/api/tickets/user/${user?.id}`,
-
     //Storno: Buchung löschen
     cancelBooking: (buchungId) => `/api/buchungen/${buchungId}/delete`,
+    // Einzelnes Ticket stornieren
+    deleteTicket: (ticketId) => `/api/tickets/${ticketId}`,
   };
 
   async function apiGet(path) {
@@ -356,18 +357,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   async function cancelTicket(ticket) {
-    const ok = confirm("Diese Buchung wirklich stornieren? (Alle Tickets der Buchung werden gelöscht)");
+    const ok = confirm("Dieses Ticket wirklich stornieren? (Nur dieses Ticket wird gelöscht)");
     if (!ok) return;
 
-    if (!ticket?.buchungId) {
-      alert("Keine BuchungsId vorhanden – kann nicht stornieren.");
+    if (!ticket?.ticketId) {
+      alert("Keine TicketId vorhanden – kann nicht stornieren.");
       return;
     }
 
     try {
-      await apiSend("DELETE", API.cancelBooking(ticket.buchungId));
+      await apiSend("DELETE", API.deleteTicket(ticket.ticketId));
       await loadTickets();
-      alert("Buchung storniert.");
+      alert("Ticket storniert.");
     } catch (e) {
       alert("Stornieren fehlgeschlagen: " + e.message);
     }

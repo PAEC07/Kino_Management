@@ -1,11 +1,19 @@
 package de.kinoapplikation.kino.controller;
 
-import de.kinoapplikation.kino.entity.Vorstellung;
-import de.kinoapplikation.kino.service.VorstellungService;
-import de.kinoapplikation.kino.dto.VorstellungDto;
-import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import de.kinoapplikation.kino.dto.VorstellungDto;
+import de.kinoapplikation.kino.entity.Vorstellung;
+import de.kinoapplikation.kino.service.VorstellungService;
 
 /**
  * REST-Controller für Vorstellungs-Management.
@@ -46,9 +54,13 @@ public class VorstellungController {
     }
 
     @PostMapping("/add")
-    public VorstellungDto addVorstellung(@RequestBody Vorstellung v) {
-        Vorstellung saved = vorstellungService.addVorstellung(v);
-        return VorstellungDto.fromEntity(saved);
+    public org.springframework.http.ResponseEntity<?> addVorstellung(@RequestBody Vorstellung v) {
+        try {
+            Vorstellung saved = vorstellungService.addVorstellung(v);
+            return org.springframework.http.ResponseEntity.ok(VorstellungDto.fromEntity(saved));
+        } catch (IllegalArgumentException e) {
+            return org.springframework.http.ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}/delete")

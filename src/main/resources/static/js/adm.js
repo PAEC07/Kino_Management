@@ -85,6 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const vorstellungZeitInput = document.getElementById("vorstellungZeitInput");
   const vorstellungSaalInput = document.getElementById("vorstellungSaalInput");
   const vorstellungSaveBtn = document.getElementById("vorstellungSaveBtn");
+  const vorstellungError = document.getElementById("vorstellungError");
 
   // Saal Form
   const saalNameInput = document.getElementById("saalNameInput");
@@ -679,6 +680,7 @@ document.addEventListener("DOMContentLoaded", () => {
     vorstellungDatumInput.value = "";
     vorstellungZeitInput.value = "";
     vorstellungSaalInput.value = "";
+    if (vorstellungError) { vorstellungError.textContent = ""; vorstellungError.classList.add('hidden'); }
     openModal("show");
   });
 
@@ -790,16 +792,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const body = { filmId: filmId, saalId: saalId, datum: iso };
 
     try {
+      if (vorstellungError) { vorstellungError.textContent = ""; vorstellungError.classList.add('hidden'); }
       await apiPostAny(SHOW_ADD, body);
       closeModal();
       await reloadAll();
       return;
     } catch (lastErr) {
       console.error(lastErr);
-      alert(
-        "Vorstellung konnte nicht gespeichert werden.\n\n" +
-        (lastErr?.message || "")
-      );
+      // Friendly message: try to show backend text if available, otherwise generic
+      const raw = String(lastErr?.message || lastErr || "Fehler beim Speichern");
+      // Attempt to clean up verbose prefix like "POST /api/... fehlgeschlagen (400) "
+      const parts = raw.split(')');
+      const cleaned = parts.length > 1 ? parts.slice(1).join(')').trim() : raw;
+      const friendly = cleaned || "Vorstellung konnte nicht gespeichert werden.";
+      if (vorstellungError) {
+        vorstellungError.textContent = friendly;
+        vorstellungError.classList.remove('hidden');
+      } else {
+        alert(friendly);
+      }
     }
   });
 

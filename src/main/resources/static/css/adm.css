@@ -734,6 +734,18 @@ body.no-scroll {
     box-sizing: border-box;
 }
 
+/* Inline form error message */
+.form-error {
+    background: rgba(220, 38, 38, 0.08);
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.18);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-top: 6px;
+}
+.form-error.hidden { display: none; }
+
 .modal-close {
     position: absolute;
     right: 10px;
