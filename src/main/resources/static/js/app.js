@@ -1,62 +1,224 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // ====================================
+  // CONFIGURATION SECTION
+  // ====================================
+  // API Base URL - ändern für Production!
   const API_BASE = "http://localhost:8080";
 
-  // DOM
-  const movieListEl = document.getElementById("movieList");
+  // API Endpoints
+  const API = {
+    filmeList: "/api/filme/list",
+    showsList: "/api/vorstellungen/list",
+    hallsList: "/api/saal/list",
+    seatStatus: (vorstellungId, saalId) => `/api/sitze/status/${vorstellungId}/${saalId}`,
+    checkout: "/api/buchungen/checkout",
+  };
+
+  // Rabatt-Klassen mit Multiplikatoren (z.B. Student = 20% Rabatt)
+  const DISCOUNTS = {
+    NONE: 1.0,
+    STUDENT: 0.8, // -20%
+    SENIOR: 0.85, // -15%
+    CHILD: 0.7, // -30%
+  };
+
+  // ====================================
+  // DOM ELEMENT REFERENCES
+  // ====================================
+  // Diese Sektion cached alle häufig verwendeten DOM-Elemente
+  // Dadurch werden Repeated DOM-Queries vermieden (Performance)
+  const filmListeEl = document.querySelector("#filmListe ul");
+  const inhaltTitel = document.getElementById("inhaltTitel");
   const detailsWrapper = document.getElementById("detailsWrapper");
 
-  const inhaltTitel = document.getElementById("inhaltTitel");
-  const inhaltText = document.getElementById("inhaltText");
   const infoFsk = document.getElementById("infoFsk");
-  const infoFormat = document.getElementById("infoFormat"); // optional (Backend hat ggf. kein format)
+  const infoFormat = document.getElementById("infoFormat");
   const infoKategorie = document.getElementById("infoKategorie");
+  const infoLaufzeit = document.getElementById("infoLaufzeit");
   const infoPreis = document.getElementById("infoPreis");
+  const inhaltText = document.getElementById("inhaltText");
 
   const vorstellungenTbody = document.getElementById("vorstellungenTbody");
+  const kalenderBody = document.getElementById("kalenderBody");
+  const kalMonatLabel = document.getElementById("kalMonatLabel");
+  const kalPrev = document.getElementById("kalPrev");
+  const kalNext = document.getElementById("kalNext");
 
-  // Toggle
   const btnViewList = document.getElementById("btnViewList");
   const btnViewCalendar = document.getElementById("btnViewCalendar");
   const listenView = document.getElementById("listenView");
   const kalenderView = document.getElementById("kalenderView");
 
-  // Kalender
-  const kalMonatLabel = document.getElementById("kalMonatLabel");
-  const kalPrev = document.getElementById("kalPrev");
-  const kalNext = document.getElementById("kalNext");
-  const kalenderBody = document.getElementById("kalenderBody");
-
-  // Buchung
-  const buchenContainer = document.getElementById("buchen");
   const buchenBtn = document.getElementById("buchenBtn");
   const buchenBox = document.getElementById("buchenBox");
   const inhaltBox = document.getElementById("inhaltBox");
   const zurueckBtn = document.getElementById("zurueckBtn");
   const bezahlenBtn = document.getElementById("bezahlenBtn");
-  const buchungVorstellungInfo = document.getElementById("buchungVorstellungInfo");
 
-  // Sitz/Preis (dein bestehender Code kann bleiben – hier nur minimal belassen)
+  const buchungVorstellungInfo = document.getElementById("buchungVorstellungInfo");
+  const sitzContainer = document.getElementById("sitzContainer");
+
+  const ticketsTbody = document.getElementById("ticketsTbody");
+  const ausgewaehlteSitzeEl = document.getElementById("ausgewaehlteSitze");
   const summeAnzeige = document.getElementById("summeAnzeige");
 
-  // Filter UI (optional: später)
-  const filmSuche = document.getElementById("filmSuche");
-  const suchBtn = document.getElementById("suchBtn");
-  const btnFilterApply = document.getElementById("btnFilterApply");
+  // NEU: Preis (Erwachsene) Anzeige im Buchungsbereich
+  const preisErwachsene = document.getElementById("preisErwachsene");
 
+  // Login/Konto Button toggling (optional)
+  const loginBtnAss = document.getElementById("Login-btn-autenthicated");
+  const loginBtnNon = document.getElementById("Login-btn-non-autenthicated");
+  // Filter inputs (index.html)
+  const filmSuche = document.getElementById("filmSuche");
+  const filterFormat = document.getElementById("filterFormat");
+  const filterFsk = document.getElementById("filterFsk");
+  const filterBereich = document.getElementById("filterBereich");
+  const filterDatum = document.getElementById("FilterDatum");
+  const btnFilterApply = document.getElementById("btnFilterApply");
+  const suchBtn = document.getElementById("suchBtn");
+
+  // Filter modal (index.html)
+  const btnFilterOpen = document.getElementById("btnFilterOpen");
+  const filterModal = document.getElementById("filterModal");
+  const modalCloseEls = document.querySelectorAll("[data-modal-close]");
+
+  btnFilterOpen?.addEventListener("click", () => {
+    filterModal?.classList.remove("hidden");
+  });
+
+  modalCloseEls?.forEach(el => el.addEventListener("click", () => {
+    filterModal?.classList.add("hidden");
+  }));
+
+  function applyFilter() {
+    renderMovieList();
+    filterModal?.classList.add("hidden");
+  }
+
+  btnFilterApply?.addEventListener("click", applyFilter);
+  suchBtn?.addEventListener("click", applyFilter);
+  filmSuche?.addEventListener("keyup", (e) => { if (e.key === "Enter") applyFilter(); });
+
+  // Modal Show Info (optional in index.html vorhanden)
+  const showInfoModal = document.getElementById("showInfoModal");
+  const showInfoFilm = document.getElementById("showInfoFilm");
+  const showInfoDate = document.getElementById("showInfoDate");
+  const showInfoTime = document.getElementById("showInfoTime");
+  const showInfoSaal = document.getElementById("showInfoSaal");
+  const showInfoRuntime = document.getElementById("showInfoRuntime");
+  const showInfoPrice = document.getElementById("showInfoPrice");
+
+  // ============================
   // STATE
+  // ============================
   let movies = [];
   let shows = [];
-  let currentMovieId = null;
-  let ausgewaehlteVorstellung = null;
+  let halls = [];
 
+  let currentMovie = null;     // Film Objekt
+  let currentShow = null;      // Vorstellung Objekt
+  let seatStatusList = [];     // Seats vom Backend
+  let selectedSeats = [];      // { sitzId, bereich, reihe, platzNr, discount, priceCents }
+
+  // Kalender State
   let currentMonth = new Date().getMonth();
   let currentYear = new Date().getFullYear();
 
-  // --- Helpers ---
+  // ============================
+  // HELPERS
+  // ============================
+
+  function formatDateDE(iso) {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return String(iso);
+    return d.toLocaleDateString("de-DE");
+  }
+
+  function formatDuration(minutes) {
+    if (minutes == null || minutes === "") return "-";
+
+    // Debug helper: log raw value/type to console for troubleshooting
+    try {
+      console.debug("formatDuration input:", minutes, typeof minutes);
+    } catch (e) { }
+
+    // Handle ISO-8601 Duration strings from Java's Duration (e.g. "PT1H30M", "PT90M", "PT30S")
+    if (typeof minutes === "string" && minutes.toUpperCase().startsWith("PT")) {
+      const iso = minutes.toUpperCase();
+      const hMatch = iso.match(/(\d+)H/);
+      const mMatch = iso.match(/(\d+)M/);
+      const sMatch = iso.match(/(\d+)S/);
+
+      const hours = hMatch ? parseInt(hMatch[1], 10) : 0;
+      const mins = mMatch ? parseInt(mMatch[1], 10) : 0;
+      const secs = sMatch ? parseInt(sMatch[1], 10) : 0;
+
+      const totalSeconds = hours * 3600 + mins * 60 + secs;
+      if (totalSeconds === 0) return iso;
+
+      // If duration is less than a minute, show seconds
+      if (totalSeconds < 60) return `${totalSeconds}s`;
+
+      // otherwise convert to rounded minutes for display
+      const minutesValue = Math.round(totalSeconds / 60);
+      if (minutesValue < 60) return `${minutesValue} min`;
+      const h = Math.floor(minutesValue / 60);
+      const rem = minutesValue % 60;
+      return rem === 0 ? `${h}h` : `${h}h ${rem}min`;
+    }
+
+    // Handle objects like { seconds: 5400 } (Java Duration serialized)
+    if (typeof minutes === "object") {
+      const obj = minutes;
+      if (obj == null) return "-";
+      if (typeof obj.seconds === "number") {
+        const totalSeconds = Math.round(obj.seconds);
+        if (totalSeconds < 60) return `${totalSeconds}s`;
+        return formatDuration(Math.round(totalSeconds / 60));
+      }
+      // try other common numeric fields
+      if (typeof obj.totalSeconds === "number") {
+        const totalSeconds = Math.round(obj.totalSeconds);
+        if (totalSeconds < 60) return `${totalSeconds}s`;
+        return formatDuration(Math.round(totalSeconds / 60));
+      }
+      return String(minutes);
+    }
+
+    // Numeric values: could be minutes or seconds. If value is large (>1000), assume seconds.
+    const m = Number(minutes);
+    if (isNaN(m) || m < 0) return String(minutes);
+    const minutesValue = m > 1000 ? Math.round(m / 60) : m;
+    if (minutesValue < 60) return `${minutesValue} min`;
+    const h = Math.floor(minutesValue / 60);
+    const rem = minutesValue % 60;
+    return rem === 0 ? `${h}h` : `${h}h ${rem}min`;
+  }
+
+  function authHeaders() {
+    const h = { "Content-Type": "application/json" };
+    const token = localStorage.getItem("kino_token");
+    if (token) h["Authorization"] = "Bearer " + token;
+    return h;
+  }
+
   async function apiGet(path) {
-    const res = await fetch(API_BASE + path);
-    if (!res.ok) throw new Error(`GET ${path} failed: ${res.status}`);
-    return res.json();
+    const res = await fetch(API_BASE + path, { headers: authHeaders() });
+    const text = await res.text().catch(() => "");
+    if (!res.ok) throw new Error(`GET ${path} (${res.status}) ${text}`);
+    return text ? JSON.parse(text) : null;
+  }
+
+  async function apiPost(path, body) {
+    const res = await fetch(API_BASE + path, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(body),
+    });
+    const text = await res.text().catch(() => "");
+    if (!res.ok) throw new Error(`POST ${path} (${res.status}) ${text}`);
+    return text ? JSON.parse(text) : null;
   }
 
   function formatEuroFromCents(cents) {
@@ -64,137 +226,285 @@ document.addEventListener("DOMContentLoaded", () => {
     return n.toFixed(2).replace(".", ",") + " €";
   }
 
-  function pad2(n) {
-    return String(n).padStart(2, "0");
+  function splitZeit(iso) {
+    if (!iso) return { datum: "", uhrzeit: "" };
+    const cleaned = String(iso).replace(/([+-]\d{2}:\d{2}|Z)$/, "");
+    if (!cleaned.includes("T")) return { datum: cleaned, uhrzeit: "" };
+    const [d, t] = cleaned.split("T");
+    return { datum: d, uhrzeit: (t || "").slice(0, 5) };
   }
 
-  function splitISO(iso) {
-    if (!iso) return { datum: "", uhrzeit: "" };
-    const noOffset = String(iso).replace(/([+-]\d{2}:\d{2}|Z)$/, "");
-    const [d, t] = noOffset.split("T");
-    return { datum: d || "", uhrzeit: (t || "").slice(0, 5) };
+  function getShowId(show) {
+    return show?.id ?? show?.vorstellungId ?? null;
   }
 
   function getShowFilmId(show) {
-    // Backend liefert bei dir: filmId: { id: 1, ... } ODER filmId null
     if (show?.filmId?.id != null) return show.filmId.id;
+    if (typeof show?.filmId === "number" || typeof show?.filmId === "string") return show.filmId;
     if (show?.film?.id != null) return show.film.id;
-    if (show?.filmId != null && (typeof show.filmId === "number" || typeof show.filmId === "string")) return show.filmId;
     return null;
   }
 
-  function getMovieById(id) {
-    return movies.find(m => String(m.id) === String(id)) || null;
+  function getShowDatumISO(show) {
+    return String(show?.datum || "");
   }
 
-  function getMonatsName(monthIndex) {
-    const namen = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
-    return namen[monthIndex] || "";
+  function getShowSaalId(show) {
+    return show?.saalId?.saalId ?? show?.saalId?.id ?? show?.saalId ?? null;
   }
 
-  // --- Rendering ---
-  function renderMovieList() {
-    if (!movieListEl) return;
-    movieListEl.innerHTML = "";
+  function hallNameById(id) {
+    const h = halls.find(x => String(x?.saalId) === String(id));
+    return h?.saalName ?? (id != null ? `Saal ${id}` : "-");
+  }
 
-    const search = (filmSuche?.value || "").toLowerCase().trim();
+  function calcSeatBasePriceCents(basisCents, bereich) {
+    let price = Number(basisCents || 0);
+    if ((bereich || "").toLowerCase().includes("loge")) {
+      price = Math.round(price * 1.10);
+    }
+    return price;
+  }
 
-    const filtered = movies.filter(m => {
-      const name = String(m.filmname || "").toLowerCase();
-      return !search || name.includes(search);
-    });
+  function getUser() {
+    try {
+      return JSON.parse(localStorage.getItem("kino_user") || "null");
+    } catch {
+      return null;
+    }
+  }
 
-    if (!filtered.length) {
-      const li = document.createElement("li");
-      li.textContent = "Keine Filme vorhanden.";
-      movieListEl.appendChild(li);
+  function updateLoginButtons() {
+    const user = getUser();
+    const loggedIn = !!user?.id;
+    if (loginBtnAss) loginBtnAss.style.display = loggedIn ? "inline-block" : "none";
+    if (loginBtnNon) loginBtnNon.style.display = loggedIn ? "none" : "inline-block";
+    // hide or show the main booking button for unauthenticated users
+    try {
+      if (buchenBtn) buchenBtn.style.display = loggedIn ? "inline-block" : "none";
+    } catch (e) {}
+  }
+
+  // NEU: Erwachsenen-Einzelpreis setzen (ohne Rabatt)
+  // - ohne Sitz-Auswahl: Parkett/Basispreis
+  // - mit Sitz-Auswahl: Preis passend zum Bereich des zuletzt ausgewählten Sitzes
+  function updateErwachsenenPreis() {
+    if (!preisErwachsene) return;
+
+    const base = Number(currentMovie?.basispreis || 0);
+    if (!currentMovie) {
+      preisErwachsene.textContent = "0,00 €";
       return;
     }
 
-    filtered.forEach(movie => {
+    let bereich = "Parkett";
+    if (selectedSeats.length) {
+      bereich = selectedSeats[selectedSeats.length - 1].bereich || bereich;
+    }
+
+    const seatBase = calcSeatBasePriceCents(base, bereich);
+    preisErwachsene.textContent = formatEuroFromCents(seatBase);
+  }
+
+  // ============================
+  // UI VIEW TOGGLE
+  // ============================
+  function setView(mode) {
+    if (!listenView || !kalenderView) return;
+    if (mode === "list") {
+      listenView.classList.remove("hidden");
+      kalenderView.classList.add("hidden");
+      btnViewList?.classList.add("active-view");
+      btnViewCalendar?.classList.remove("active-view");
+    } else {
+      listenView.classList.add("hidden");
+      kalenderView.classList.remove("hidden");
+      btnViewList?.classList.remove("active-view");
+      btnViewCalendar?.classList.add("active-view");
+    }
+  }
+
+  btnViewList?.addEventListener("click", () => setView("list"));
+  btnViewCalendar?.addEventListener("click", () => setView("calendar"));
+
+  // ============================
+  // RENDER: FILMLISTE LINKS
+  // ============================
+  function renderMovieList() {
+    if (!filmListeEl) return;
+    filmListeEl.innerHTML = "";
+
+    if (!movies.length) {
       const li = document.createElement("li");
-      li.textContent = movie.filmname || "Ohne Titel";
-      li.classList.toggle("aktiv", String(movie.id) === String(currentMovieId));
-      li.addEventListener("click", () => selectMovie(movie.id));
-      movieListEl.appendChild(li);
+      li.textContent = "Keine Filme vorhanden.";
+      filmListeEl.appendChild(li);
+      return;
+    }
+
+    const searchText = (filmSuche?.value || "").toLowerCase().trim();
+    const wantFormat = (filterFormat?.value || "").toUpperCase();
+    const wantFsk = (filterFsk?.value || "").toString();
+    const wantBereich = (filterBereich?.value || "").toLowerCase();
+    const wantDatum = (filterDatum?.value || "").toString();
+
+    movies.forEach((m) => {
+      let visible = true;
+
+      const filmname = String(m.filmname ?? "").toLowerCase();
+      const kategorie = String(m.kategorie ?? "").toLowerCase();
+      const fskStr = String(m.fsk ?? "");
+
+      if (wantFsk && fskStr !== wantFsk) visible = false;
+      if (searchText && !filmname.includes(searchText)) visible = false;
+      if (wantFormat) {
+        const mf = String(m.format ?? m.darstellungstyp ?? "").toUpperCase();
+        if (!mf.includes(wantFormat)) visible = false;
+      }
+      if (wantBereich) {
+        // check if any show for this movie has that bereich
+        const hasBereich = shows.some(s => String(getShowFilmId(s)) === String(m.id) && String((s.bereich||s.bereichName||"").toLowerCase()).includes(wantBereich));
+        if (!hasBereich) visible = false;
+      }
+      if (wantDatum) {
+        // only show movies that have at least one show on the selected date
+        const hasDate = shows.some(s => String(getShowFilmId(s)) === String(m.id) && splitZeit(getShowDatumISO(s)).datum === wantDatum);
+        if (!hasDate) visible = false;
+      }
+
+      if (!visible) return;
+      const li = document.createElement("li");
+      li.textContent = m.filmname ?? `Film ${m.id}`;
+      li.dataset.movieId = String(m.id);
+
+      li.addEventListener("click", () => {
+        currentMovie = m;
+        currentShow = null;
+        selectedSeats = [];
+        seatStatusList = [];
+
+        renderMovieDetails();
+        renderShowList();
+        renderCalendar();
+        resetBookingUI();
+
+        // Preis aktualisieren wenn Film gewechselt
+        updateErwachsenenPreis();
+      });
+
+      filmListeEl.appendChild(li);
     });
   }
 
-  function renderDetailsForMovie(movieId) {
-    const movie = getMovieById(movieId);
-    if (!movie) return;
+  // ============================
+  // RENDER: FILM DETAILS RECHTS
+  // ============================
+  function renderMovieDetails() {
+    if (!currentMovie) {
+      inhaltTitel.textContent = "Bitte einen Film auswählen";
+      detailsWrapper?.classList.add("hidden");
+      updateErwachsenenPreis();
+      return;
+    }
 
-    if (inhaltTitel) inhaltTitel.textContent = movie.filmname || "Film";
-    if (inhaltText) inhaltText.textContent = movie.beschreibung || "";
-    if (infoFsk) infoFsk.textContent = movie.fsk ?? "-";
-    if (infoKategorie) infoKategorie.textContent = movie.kategorie ?? "-";
-    if (infoPreis) infoPreis.textContent = formatEuroFromCents(movie.basispreis ?? 0);
-
-    // Format gibt’s im Backend ggf. nicht -> neutral lassen
-    if (infoFormat) infoFormat.textContent = "-";
-
+    inhaltTitel.textContent = currentMovie.filmname ?? "Film";
     detailsWrapper?.classList.remove("hidden");
+
+    infoFsk.textContent = currentMovie.fsk ?? "-";
+    infoFormat.textContent = currentMovie.darstellungstyp ?? currentMovie.format ?? "-";
+    infoKategorie.textContent = currentMovie.kategorie ?? "-";
+    infoLaufzeit.textContent = (currentMovie?.filmdauer != null) ? formatDuration(currentMovie.filmdauer) : "-";
+    infoPreis.textContent = formatEuroFromCents(currentMovie.basispreis ?? 0);
+    inhaltText.textContent = currentMovie.beschreibung ?? "";
+
+    // Preis aktualisieren
+    updateErwachsenenPreis();
   }
 
+  // ============================
+  // RENDER: VORSTELLUNGEN LISTE
+  // ============================
   function renderShowList() {
     if (!vorstellungenTbody) return;
     vorstellungenTbody.innerHTML = "";
-    ausgewaehlteVorstellung = null;
 
-    const relevant = shows
-      .filter(s => String(getShowFilmId(s)) === String(currentMovieId))
-      .sort((a,b) => String(a.datum || "").localeCompare(String(b.datum || "")));
-
-    if (!relevant.length) {
+    if (!currentMovie) {
       const tr = document.createElement("tr");
-      const td = document.createElement("td");
-      td.colSpan = 3;
-      td.textContent = "Keine Vorstellungen vorhanden.";
-      tr.appendChild(td);
+      tr.innerHTML = `<td colspan="3">Bitte Film auswählen.</td>`;
       vorstellungenTbody.appendChild(tr);
-      if (buchenBtn) buchenBtn.disabled = true;
       return;
     }
 
-    relevant.forEach(show => {
-      const { datum, uhrzeit } = splitISO(show.datum);
-      const saalText = show?.saalId?.id ? `Saal ${show.saalId.id}` : "-";
+    const filtered = shows
+      .filter(s => String(getShowFilmId(s)) === String(currentMovie.id))
+      .sort((a, b) => String(getShowDatumISO(a)).localeCompare(String(getShowDatumISO(b))));
+
+    if (!filtered.length) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="3">Keine Vorstellungen vorhanden.</td>`;
+      vorstellungenTbody.appendChild(tr);
+      return;
+    }
+
+    filtered.forEach((show) => {
+      const sid = getShowId(show);
+      const saalId = getShowSaalId(show);
+      const { datum, uhrzeit } = splitZeit(getShowDatumISO(show));
 
       const tr = document.createElement("tr");
-      const tdDatum = document.createElement("td");
-      const tdZeit = document.createElement("td");
-      const tdSaal = document.createElement("td");
+      tr.style.cursor = "pointer";
 
-      tdDatum.textContent = datum || "-";
-      tdZeit.textContent = uhrzeit || "-";
-      tdSaal.textContent = saalText;
-
-      tr.appendChild(tdDatum);
-      tr.appendChild(tdZeit);
-      tr.appendChild(tdSaal);
+      tr.innerHTML = `
+        <td>${formatDateDE(datum) || "-"}</td>
+        <td>${uhrzeit || "-"}</td>
+        <td>${hallNameById(saalId)}</td>
+      `;
 
       tr.addEventListener("click", () => {
-        // markieren
-        [...vorstellungenTbody.querySelectorAll("tr")].forEach(x => x.classList.remove("selected-show"));
+        // Visually mark the clicked row and unmark others
+        try {
+          vorstellungenTbody.querySelectorAll("tr").forEach(r => r.classList.remove("selected-show"));
+        } catch (e) {}
         tr.classList.add("selected-show");
 
-        ausgewaehlteVorstellung = show;
+        currentShow = show;
+        selectedSeats = [];
+        seatStatusList = [];
+        renderSelectedShowInfo();
 
-        if (buchungVorstellungInfo) {
-          const movie = getMovieById(currentMovieId);
-          buchungVorstellungInfo.textContent =
-            `Ausgewählte Vorstellung: ${movie?.filmname || "Film"} – ${datum}, ${uhrzeit} Uhr, ${saalText}`;
-        }
+        // wenn Show gewählt: Erwachsene wieder "Parkett" anzeigen, da noch kein Sitz gewählt
+        updateErwachsenenPreis();
 
-        if (buchenBtn) buchenBtn.disabled = false;
-        if (buchenContainer) buchenContainer.classList.remove("hidden");
+        // optional modal info:
+        showInfoFilm && (showInfoFilm.textContent = currentMovie?.filmname || "-");
+        showInfoDate && (showInfoDate.textContent = formatDateDE(datum) || "-");
+        showInfoTime && (showInfoTime.textContent = uhrzeit || "-");
+        showInfoSaal && (showInfoSaal.textContent = hallNameById(saalId));
+        showInfoRuntime && (showInfoRuntime.textContent = (currentMovie?.filmdauer != null) ? formatDuration(currentMovie?.filmdauer) : "-");
+        showInfoPrice && (showInfoPrice.textContent = formatEuroFromCents(currentMovie?.basispreis || 0));
       });
 
       vorstellungenTbody.appendChild(tr);
     });
+  }
 
-    if (buchenBtn) buchenBtn.disabled = true; // erst nach Auswahl
-    if (buchenContainer) buchenContainer.classList.remove("hidden");
+  function renderSelectedShowInfo() {
+    if (!buchungVorstellungInfo) return;
+    if (!currentShow) {
+      buchungVorstellungInfo.textContent = "Ausgewählte Vorstellung: keine";
+      return;
+    }
+    const saalId = getShowSaalId(currentShow);
+    const { datum, uhrzeit } = splitZeit(getShowDatumISO(currentShow));
+    buchungVorstellungInfo.textContent =
+      `Ausgewählte Vorstellung: ${formatDateDE(datum) || "-"} ${uhrzeit || ""} • ${hallNameById(saalId)}`;
+  }
+
+  // ============================
+  // RENDER: KALENDER
+  // ============================
+  function getMonatsName(m) {
+    const arr = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+    return arr[m] || "";
   }
 
   function renderCalendar() {
@@ -203,47 +513,60 @@ document.addEventListener("DOMContentLoaded", () => {
     kalenderBody.innerHTML = "";
     kalMonatLabel.textContent = `${getMonatsName(currentMonth)} ${currentYear}`;
 
+    if (!currentMovie) return;
+
+    const filtered = shows.filter(s => String(getShowFilmId(s)) === String(currentMovie.id));
+
+    const map = {};
+    filtered.forEach((show) => {
+      const { datum, uhrzeit } = splitZeit(getShowDatumISO(show));
+      if (!datum) return;
+      if (!map[datum]) map[datum] = [];
+      map[datum].push({ show, uhrzeit });
+    });
+
     const firstDay = new Date(currentYear, currentMonth, 1);
     const lastDay = new Date(currentYear, currentMonth + 1, 0);
     const startWochentag = (firstDay.getDay() + 6) % 7;
     const tageImMonat = lastDay.getDate();
 
-    const relevant = shows.filter(s => String(getShowFilmId(s)) === String(currentMovieId));
-    const map = {};
-    relevant.forEach(s => {
-      const { datum, uhrzeit } = splitISO(s.datum);
-      if (!datum) return;
-      if (!map[datum]) map[datum] = [];
-      map[datum].push({ uhrzeit, show: s });
-    });
-
-    let tag = 1;
+    let dayNr = 1;
     for (let r = 0; r < 6; r++) {
       const tr = document.createElement("tr");
 
       for (let c = 0; c < 7; c++) {
         const td = document.createElement("td");
 
-        if ((r === 0 && c < startWochentag) || tag > tageImMonat) {
+        if ((r === 0 && c < startWochentag) || dayNr > tageImMonat) {
           td.classList.add("kalender-empty");
         } else {
           const daySpan = document.createElement("span");
           daySpan.classList.add("tag-nr");
-          daySpan.textContent = tag;
+          daySpan.textContent = dayNr;
           td.appendChild(daySpan);
 
-          const dateStr = `${currentYear}-${pad2(currentMonth + 1)}-${pad2(tag)}`;
-          const showsForDate = (map[dateStr] || []).sort((a,b) => String(a.uhrzeit).localeCompare(String(b.uhrzeit)));
+          const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(dayNr).padStart(2, "0")}`;
+          const items = map[dateStr] || [];
 
-          showsForDate.forEach(({ uhrzeit, show }) => {
-            const saalText = show?.saalId?.id ? `Saal ${show.saalId.id}` : "-";
+          items.forEach(({ show, uhrzeit }) => {
             const ev = document.createElement("span");
             ev.classList.add("kal-event");
-            ev.textContent = `${uhrzeit || "--:--"} • ${saalText}`;
+            ev.textContent = `${uhrzeit || "--:--"} • ${hallNameById(getShowSaalId(show))}`;
+            ev.style.cursor = "pointer";
+            ev.addEventListener("click", () => {
+              currentShow = show;
+              selectedSeats = [];
+              seatStatusList = [];
+              renderSelectedShowInfo();
+              resetBookingTable();
+
+              // Erwachsene Preis zurück auf Parkett (weil keine Seats gewählt)
+              updateErwachsenenPreis();
+            });
             td.appendChild(ev);
           });
 
-          tag++;
+          dayNr++;
         }
 
         tr.appendChild(td);
@@ -252,48 +575,6 @@ document.addEventListener("DOMContentLoaded", () => {
       kalenderBody.appendChild(tr);
     }
   }
-
-  function setView(mode) {
-    if (!listenView || !kalenderView || !btnViewList || !btnViewCalendar) return;
-    if (mode === "list") {
-      listenView.classList.remove("hidden");
-      kalenderView.classList.add("hidden");
-      btnViewList.classList.add("active-view");
-      btnViewCalendar.classList.remove("active-view");
-    } else {
-      listenView.classList.add("hidden");
-      kalenderView.classList.remove("hidden");
-      btnViewList.classList.remove("active-view");
-      btnViewCalendar.classList.add("active-view");
-    }
-  }
-
-  function selectMovie(movieId) {
-    currentMovieId = movieId;
-    renderMovieList();
-    renderDetailsForMovie(movieId);
-    renderShowList();
-    renderCalendar();
-    setView("list");
-  }
-
-  async function reloadAll() {
-    movies = await apiGet("/api/filme");
-    shows = await apiGet("/api/vorstellungen");
-    renderMovieList();
-
-    // Wenn noch kein Film gewählt: automatisch ersten wählen
-    if (movies.length && currentMovieId == null) {
-      selectMovie(movies[0].id);
-    }
-  }
-
-  // Events
-  btnViewList?.addEventListener("click", () => setView("list"));
-  btnViewCalendar?.addEventListener("click", () => {
-    setView("calendar");
-    renderCalendar();
-  });
 
   kalPrev?.addEventListener("click", () => {
     currentMonth--;
@@ -307,40 +588,330 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCalendar();
   });
 
-  btnFilterApply?.addEventListener("click", renderMovieList);
-  suchBtn?.addEventListener("click", renderMovieList);
-  filmSuche?.addEventListener("keyup", (e) => { if (e.key === "Enter") renderMovieList(); });
+  // ============================
+  // BOOKING FLOW
+  // ============================
+  function resetBookingTable() {
+    selectedSeats = [];
+    seatStatusList = [];
+    if (ticketsTbody) ticketsTbody.innerHTML = "";
+    if (ausgewaehlteSitzeEl) ausgewaehlteSitzeEl.textContent = "keine";
+    if (summeAnzeige) summeAnzeige.textContent = "0,00 €";
+    if (sitzContainer) sitzContainer.innerHTML = "";
 
-  // Buchen / Zurück / Bezahlen (minimal)
-  buchenBtn?.addEventListener("click", () => {
-    if (!ausgewaehlteVorstellung) {
-      alert("Bitte zuerst eine Vorstellung auswählen.");
+    // Erwachsene Preis (Parkett) setzen
+    updateErwachsenenPreis();
+  }
+
+  function resetBookingUI() {
+    buchenBox?.classList.add("hidden");
+    inhaltBox?.classList.remove("hidden");
+    resetBookingTable();
+    renderSelectedShowInfo();
+  }
+
+  buchenBtn?.addEventListener("click", async () => {
+    const user = getUser();
+    if (!user?.id) {
+      alert("Bitte zuerst einloggen, um zu buchen.");
+      window.location.href = "login.html";
       return;
     }
+
+    if (!currentMovie) return alert("Bitte zuerst einen Film auswählen.");
+    if (!currentShow) return alert("Bitte zuerst eine Vorstellung auswählen (Datum/Uhrzeit/Saal).");
+
+    // UI switch
     inhaltBox?.classList.add("hidden");
     buchenBox?.classList.remove("hidden");
+
+    renderSelectedShowInfo();
+    resetBookingTable();
+
+    try {
+      await loadSeatPlan();
+      // Nach Laden: Erwachsene Preis nochmal setzen (Parkett default)
+      updateErwachsenenPreis();
+    } catch (e) {
+      console.error(e);
+      alert("Sitzplan konnte nicht geladen werden.\n\n" + e.message);
+      resetBookingUI();
+    }
   });
 
   zurueckBtn?.addEventListener("click", () => {
-    buchenBox?.classList.add("hidden");
-    inhaltBox?.classList.remove("hidden");
+    resetBookingUI();
   });
 
-  bezahlenBtn?.addEventListener("click", () => {
-    alert("Buchung übernommen (Demo).");
+  async function loadSeatPlan() {
+    const sid = getShowId(currentShow);
+    const saalId = getShowSaalId(currentShow);
+
+    if (sid == null || saalId == null) {
+      throw new Error("VorstellungId oder SaalId fehlt in den Daten.");
+    }
+
+    seatStatusList = await apiGet(API.seatStatus(sid, saalId));
+    renderSeatGrid(seatStatusList);
+  }
+
+  function renderSeatGrid(list) {
+    if (!sitzContainer) return;
+    sitzContainer.innerHTML = "";
+
+    if (!Array.isArray(list) || !list.length) {
+      sitzContainer.textContent = "Keine Sitzdaten vorhanden.";
+      return;
+    }
+
+    // gruppiere nach Reihe
+    const rows = new Map();
+    list.forEach(s => {
+      const r = Number(s.reihe || 0);
+      if (!rows.has(r)) rows.set(r, []);
+      rows.get(r).push(s);
+    });
+
+    const sortedRowNumbers = Array.from(rows.keys()).sort((a, b) => a - b);
+
+    sortedRowNumbers.forEach((r, rowIndex) => {
+      const rowDiv = document.createElement("div");
+      rowDiv.classList.add("sitzreihe");
+
+      const seats = rows.get(r).sort((a, b) => Number(a.platzNr) - Number(b.platzNr));
+
+      // label: Reihe als Buchstabe (A, B, C, ... AA, AB) + belegte/gesamt
+      const labelDiv = document.createElement("div");
+      labelDiv.classList.add("sitzreihe-label");
+      const bookedCount = seats.filter(s => !!s.belegt).length;
+      // convert 0-based rowIndex to letters (A, B, ..., Z, AA, AB...)
+      function indexToLetters(i) {
+        let n = i + 1;
+        let out = "";
+        while (n > 0) {
+          const rem = (n - 1) % 26;
+          out = String.fromCharCode(65 + rem) + out;
+          n = Math.floor((n - 1) / 26);
+        }
+        return out;
+      }
+      const letter = indexToLetters(rowIndex);
+      labelDiv.textContent = letter;
+      // If you prefer only the letter label (e.g. "A"), do not show booked/total here.
+      rowDiv.appendChild(labelDiv);
+
+      seats.forEach((seat) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.classList.add("sitz");
+        // data attribute for easy lookup when toggling
+        const sid = seat.sitzId ?? seat.id;
+        if (sid != null) btn.dataset.sitzId = String(sid);
+
+        const isLoge = (seat.bereich || "").toLowerCase().includes("loge");
+        if (seat.belegt) btn.classList.add("belegt");
+        else btn.classList.add(isLoge ? "premium" : "standard");
+
+        btn.textContent = String(seat.platzNr ?? "");
+        btn.title = `Reihe ${seat.reihe} Platz ${seat.platzNr} (${seat.bereich})`;
+
+        if (seat.belegt) {
+          btn.disabled = true;
+        } else {
+          btn.addEventListener("click", () => {
+            toggleSeat(seat);
+            // toggle visual class immediately
+            try {
+              const id = seat.sitzId ?? seat.id;
+              const el = sitzContainer.querySelector(`button.sitz[data-sitz-id="${id}"]`);
+              if (el) el.classList.toggle('gewaehlt');
+            } catch (e) {}
+          });
+        }
+
+        rowDiv.appendChild(btn);
+      });
+
+      sitzContainer.appendChild(rowDiv);
+    });
+  }
+
+  function toggleSeat(seat) {
+    const id = seat.sitzId ?? seat.id;
+    if (id == null) return;
+
+    const idx = selectedSeats.findIndex(s => String(s.sitzId) === String(id));
+    if (idx >= 0) {
+      selectedSeats.splice(idx, 1);
+    } else {
+      selectedSeats.push({
+        sitzId: id,
+        reihe: seat.reihe,
+        platzNr: seat.platzNr,
+        bereich: seat.bereich,
+        discount: "NONE",
+        priceCents: 0,
+      });
+    }
+
+    // Erwachsene Preis aktualisieren (je nach letztem Bereich)
+    updateErwachsenenPreis();
+
+    renderTicketsTable();
+  }
+
+  function renderTicketsTable() {
+    if (!ticketsTbody) return;
+    ticketsTbody.innerHTML = "";
+
+    if (!selectedSeats.length) {
+      if (ausgewaehlteSitzeEl) ausgewaehlteSitzeEl.textContent = "keine";
+      if (summeAnzeige) summeAnzeige.textContent = "0,00 €";
+
+      // Wenn keine Seats: Parkett/Einzelpreis anzeigen
+      updateErwachsenenPreis();
+      return;
+    }
+
+    // Anzeige: ausgewählte Plätze
+    if (ausgewaehlteSitzeEl) {
+      const txt = selectedSeats
+        .map(s => `R${s.reihe}-P${s.platzNr}`)
+        .join(", ");
+      ausgewaehlteSitzeEl.textContent = txt || "keine";
+    }
+
+    const base = Number(currentMovie?.basispreis || 0);
+
+    selectedSeats.forEach((s) => {
+      const tr = document.createElement("tr");
+
+      const tdPlatz = document.createElement("td");
+      tdPlatz.textContent = String(s.sitzId);
+
+      const tdBereich = document.createElement("td");
+      tdBereich.textContent = s.bereich || "-";
+
+      const tdDiscount = document.createElement("td");
+      const sel = document.createElement("select");
+      sel.innerHTML = `
+        <option value="NONE">-</option>
+        <option value="STUDENT">Student (-20%)</option>
+        <option value="SENIOR">Senior (-15%)</option>
+        <option value="CHILD">Kind (-30%)</option>
+      `;
+      sel.value = s.discount || "NONE";
+      tdDiscount.appendChild(sel);
+
+      const tdPreis = document.createElement("td");
+
+      function updatePrice() {
+        const key = sel.value || "NONE";
+        s.discount = key;
+
+        const seatBase = calcSeatBasePriceCents(base, s.bereich);
+        const factor = DISCOUNTS[key] ?? 1.0;
+        s.priceCents = Math.round(seatBase * factor);
+
+        tdPreis.textContent = formatEuroFromCents(s.priceCents);
+        renderSum();
+
+        // optional: Erwachsene Preis aktuell halten
+        updateErwachsenenPreis();
+      }
+
+      sel.addEventListener("change", updatePrice);
+
+      // initial
+      updatePrice();
+
+      tr.appendChild(tdPlatz);
+      tr.appendChild(tdBereich);
+      tr.appendChild(tdDiscount);
+      tr.appendChild(tdPreis);
+
+      ticketsTbody.appendChild(tr);
+    });
+
+    renderSum();
+    updateErwachsenenPreis();
+  }
+
+  function renderSum() {
+    const total = selectedSeats.reduce((acc, s) => acc + Number(s.priceCents || 0), 0);
+    if (summeAnzeige) summeAnzeige.textContent = formatEuroFromCents(total);
+  }
+
+  // ============================
+  // CHECKOUT
+  // ============================
+  bezahlenBtn?.addEventListener("click", async () => {
+    const user = getUser();
+    if (!user?.id) return alert("Bitte einloggen.");
+
+    const sid = getShowId(currentShow);
+    const seatIds = selectedSeats.map(s => s.sitzId).filter(Boolean);
+
+    if (!sid) return alert("Vorstellung fehlt.");
+    if (!seatIds.length) return alert("Bitte mindestens einen Sitz auswählen.");
+
+    const body = {
+      benutzerId: user.id,
+      vorstellungId: sid,
+      sitzplatzIds: seatIds,
+    };
+
+    try {
+      const resp = await apiPost(API.checkout, body);
+      if (!resp?.ok) {
+        alert("Checkout fehlgeschlagen: " + (resp?.message || "Unbekannter Fehler"));
+        return;
+      }
+
+      alert(
+        `Buchung gespeichert!\n\nBuchungs-ID: ${resp.buchungId}\nSumme: ${formatEuroFromCents(resp.totalCents)}`
+      );
+
+      // danach Sitzplan neu laden (damit belegt aktualisiert)
+      await loadSeatPlan();
+      resetBookingTable();
+      renderSelectedShowInfo();
+      resetBookingUI();
+    } catch (e) {
+      console.error(e);
+      alert("Checkout fehlgeschlagen.\n\n" + e.message);
+    }
   });
 
-  // INIT
-  detailsWrapper?.classList.add("hidden");
-  buchenContainer?.classList.add("hidden");
-  if (buchenBtn) buchenBtn.disabled = true;
+  // ============================
+  // INIT LOAD
+  // ============================
+  async function reloadAll() {
+    updateLoginButtons();
 
+    movies = await apiGet(API.filmeList);
+    shows = await apiGet(API.showsList);
+    halls = await apiGet(API.hallsList);
+
+    renderMovieList();
+    renderMovieDetails();
+    renderShowList();
+    renderCalendar();
+    renderSelectedShowInfo();
+
+    setView("list");
+
+    // initial setzen
+    updateErwachsenenPreis();
+  }
+
+  // Start
   (async () => {
     try {
       await reloadAll();
     } catch (e) {
       console.error(e);
-      alert("Konnte Daten nicht laden. Läuft Backend auf http://localhost:8080 ?");
+      alert("Konnte Daten nicht laden.\n\nBackend erreichbar? " + API_BASE + "\n\n" + e.message);
     }
   })();
 });

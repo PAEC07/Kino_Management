@@ -3,39 +3,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const form = document.getElementById("registerForm");
   const err = document.getElementById("regError");
+  if (!form) return;
 
-  form?.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     err.textContent = "";
 
-    const username = document.getElementById("regUsername").value.trim();
-    const email = document.getElementById("regEmail").value.trim();
-    const password = document.getElementById("regPassword").value;
-    const passwordConfirm = document.getElementById("regPasswordConfirm").value;
+    const username = document.getElementById("regUsername")?.value.trim();
+    const email = document.getElementById("regEmail")?.value.trim();
+    const password = document.getElementById("regPassword")?.value;
+    const passwordConfirm = document.getElementById("regPasswordConfirm")?.value;
 
+    if (!username || !email || !password || !passwordConfirm) {
+      err.textContent = "Bitte alle Felder ausfüllen.";
+      return;
+    }
     if (password !== passwordConfirm) {
       err.textContent = "Passwörter stimmen nicht überein.";
       return;
     }
 
     try {
-      const res = await fetch(API_BASE + "/api/auth/register", {
+      const res = await fetch(API_BASE + "/api/benutzer/register", {
         method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ username, email, password, passwordConfirm })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password, passwordConfirm }),
       });
 
-      if (!res.ok) {
-        const t = await res.text();
-        throw new Error(t || ("Register fehlgeschlagen (" + res.status + ")"));
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok || !data?.ok) {
+        err.textContent = data?.message || "Registrierung fehlgeschlagen.";
+        return;
       }
 
-      const user = await res.json();
-      localStorage.setItem("kino_user", JSON.stringify(user));
-
-      window.location.href = "index.html";
+      alert(data.message || "Registrierung erfolgreich!");
+      window.location.href = "login.html";
     } catch (e2) {
-      err.textContent = e2.message || "Registrierung fehlgeschlagen";
+      console.error(e2);
+      err.textContent = "Server nicht erreichbar.";
     }
   });
 });

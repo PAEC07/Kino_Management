@@ -1,46 +1,91 @@
 package de.kinoapplikation.kino.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
-/**
- * Entität für Accounts im Kino-System.
- * Enthält Informationen über Benutzerkonten wie Benutzername, Passwort und E-Mail.
- * @author Niklas
- */
+import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "Accounts", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "Benutzername" }),
+        @UniqueConstraint(columnNames = { "Email" })
+})
 public class Benutzer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "AccountId")
+    private Long id;
 
-    private Long accountId;
-    private String benutzername;
-    private String password;
+    @Column(name = "Benutzername", nullable = false)
+    private String username;
+
+    @Column(name = "Email", nullable = false)
     private String email;
 
-    // Getter & Setter
+    @JsonIgnore
+    @Column(name = "Passwort", nullable = false)
+    private String passwordHash;
+
+    @Column(name = "Role", nullable = false)
+    private String role = "USER"; // USER oder ADMIN
+
+    @Column(name = "CreatedAt", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    public Benutzer() {
+    }
+
+    public Benutzer(String username, String email, String passwordHash) {
+        this.username = username;
+        this.email = email;
+        this.passwordHash = passwordHash;
+    }
+
     public Long getId() {
-        return accountId;
+        return id;
     }
-    public void setId(Long accountId) {
-        this.accountId = accountId;
+
+    public String getUsername() {
+        return username;
     }
-    public String getBenutzername() {
-        return benutzername;
-    }
-    public void setBenutzername(String benutzername) {
-        this.benutzername = benutzername;
-    }
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
-    }
+
     public String getEmail() {
         return email;
     }
+
+    public String getRole() {
+        return role;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 }

@@ -1,43 +1,33 @@
 package de.kinoapplikation.kino.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-
-/**
- * Entität für Tickets im Kino-System.
- * Verknüpft Buchungen, Vorstellungen, Accounts, Discounts, PreisZuschläge und Sitzplätze.
- * @author Niklas
- */
+import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
+@Table(name = "Tickets")
 public class Tickets {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "TicketId")
     private int ticketId;
 
+    @JsonIgnore
     @ManyToOne
-    private Buchung buchung;
-
-    @ManyToOne
+    @JoinColumn(name = "VorstellungId")
     private Vorstellung vorstellungId;
 
     @ManyToOne
-    private Benutzer benutzer;
-
-    @ManyToOne
-    private Discounts discountId;
-
-    @ManyToOne
-    private PreisZuschlag preisZuschlagId;
-
-    @ManyToOne
+    @JoinColumn(name = "SitzplatzId")
     private Sitzplatz sitzplatz;
 
-    // Getter & Setter
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "AccountId")
+    private Benutzer benutzerId;
+
+    @Column(name = "BuchungsId")
+    private Long buchungId;
 
     public int getTicketId() {
         return ticketId;
@@ -45,14 +35,6 @@ public class Tickets {
 
     public void setTicketId(int ticketId) {
         this.ticketId = ticketId;
-    }
-
-    public Buchung getBuchung() {
-        return buchung;
-    }
-
-    public void setBuchung(Buchung buchung) {
-        this.buchung = buchung;
     }
 
     public Vorstellung getVorstellungId() {
@@ -63,35 +45,27 @@ public class Tickets {
         this.vorstellungId = vorstellungId;
     }
 
-    public Benutzer getBenutzer() {
-        return benutzer;
-    }
-
-    public void setBenutzer(Benutzer benutzer) {
-        this.benutzer = benutzer;
-    }
-
-    public Discounts getDiscountId() {
-        return discountId;
-    }
-
-    public void setDiscountId(Discounts discountId) {
-        this.discountId = discountId;
-    }
-
-    public PreisZuschlag getPreisZuschlagId() {
-        return preisZuschlagId;
-    }
-
-    public void setPreisZuschlagId(PreisZuschlag preisZuschlagId) {
-        this.preisZuschlagId = preisZuschlagId;
-    }
-
-    public Sitzplatz getSitzplatzId() {
+    public Sitzplatz getSitzplatz() {
         return sitzplatz;
     }
 
-    public void setSitzplatzId(Sitzplatz sitzplatz1) {
-        this.sitzplatz = sitzplatz1;
+    public void setSitzplatz(Sitzplatz sitzplatz) {
+        this.sitzplatz = sitzplatz;
+    }
+
+    public Benutzer getBenutzerId() {
+        return benutzerId;
+    }
+
+    public void setBenutzerId(Benutzer benutzerId) {
+        this.benutzerId = benutzerId;
+    }
+
+    public Long getBuchungId() {
+        return buchungId;
+    }
+
+    public void setBuchungId(Long buchungId) {
+        this.buchungId = buchungId;
     }
 }

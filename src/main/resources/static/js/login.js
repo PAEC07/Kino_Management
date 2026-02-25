@@ -4,32 +4,64 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
   const err = document.getElementById("loginError");
 
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    err.textContent = "";
+  if (!form) return;
 
-    const username = document.getElementById("loginUsername").value.trim();
-    const password = document.getElementById("loginPassword").value;
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (err) err.textContent = "";
+
+    const username = document.getElementById("loginUsername")?.value.trim();
+    const password = document.getElementById("loginPassword")?.value;
+
+    if (!username || !password) {
+      if (err) err.textContent = "Bitte Benutzername und Passwort eingeben.";
+      return;
+    }
 
     try {
-      const res = await fetch(API_BASE + "/api/auth/login", {
+      const res = await fetch(API_BASE + "/api/benutzer/login", {
         method: "POST",
-        headers: {"Content-Type":"application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
       });
 
-      if (!res.ok) {
-        const t = await res.text();
-        throw new Error(t || ("Login fehlgeschlagen (" + res.status + ")"));
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok || !data?.ok) {
+        if (err) err.textContent = data?.message || "Login fehlgeschlagen.";
+        return;
       }
 
-      const user = await res.json();
+      // ✅ Token speichern
+      localStorage.setItem("kino_token", data.token || "");
+
+      // ✅ User speichern (inkl. role)
+      const user = {
+        id: data.id,
+        username: data.username,
+        email: data.email,
+        role: data.role // "ADMIN" oder "USER"
+      };
       localStorage.setItem("kino_user", JSON.stringify(user));
 
-      // zurück zur Startseite
-      window.location.href = "index.html";
+      // ✅ Redirect abhängig von role
+      const role = (data.role || "").toUpperCase();
+      if (role === "ADMIN") {
+        window.location.href = "Admin.html";
+      } else {
+        window.location.href = "index.html";
+      }
     } catch (e2) {
-      err.textContent = e2.message || "Login fehlgeschlagen";
+      console.error(e2);
+      if (err) err.textContent = "Server nicht erreichbar.";
     }
+  });
+
+  // ✅ Gastbutton
+  document.getElementById("guestBtn")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.removeItem("kino_token");
+    localStorage.removeItem("kino_user");
+    window.location.href = "index.html";
   });
 });
